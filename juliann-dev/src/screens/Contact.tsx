@@ -5,6 +5,7 @@ import { Input } from '../components/ds/Input'
 import { Textarea } from '../components/ds/Textarea'
 import { Button } from '../components/ds/Button'
 import { Tetromino } from '../components/ds/Tetromino'
+import { PileFooter } from '../components/PileFooter'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 
@@ -20,7 +21,8 @@ const LINKS: { label: string; handle: string; icon: string; piece: Piece; href: 
 export function Contact() {
   const [sent, setSent] = useState(false)
   return (
-    <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px' }}>
+    <>
+      <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px' }}>
       <div style={{ marginBottom: 28 }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Enter player 2</div>
         <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Let's Connect</h2>
@@ -69,6 +71,8 @@ export function Contact() {
           ))}
         </div>
       </div>
-    </section>
+      </section>
+      <PileFooter />
+    </>
   )
 }

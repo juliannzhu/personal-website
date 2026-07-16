@@ -302,7 +302,7 @@ function SettingsModal({ settings, keybinds, onSave, onClose }: SettingsModalPro
 
         {/* Title bar */}
         <div style={{ display: 'flex', alignItems: 'center', padding: '12px 18px', borderBottom: '2px solid var(--border-strong)', background: 'var(--ink-900)', flexShrink: 0 }}>
-          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--text-strong)', textTransform: 'uppercase', flex: 1, letterSpacing: '0.04em' }}>⚙ SETTINGS</span>
+          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--text-strong)', textTransform: 'uppercase', flex: 1, letterSpacing: '0.04em', display: 'flex', alignItems: 'flex-end', gap: 8 }}><span style={{ fontSize: 22, lineHeight: 1, marginBottom: 4 }}>⚙</span> SETTINGS</span>
           <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 4px' }}>✕</button>
         </div>
 
@@ -705,14 +705,14 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
                 </div>
               )}
             </div>
-            <div style={{ display: 'flex', gap: 10, width: COLS * CELL + 12 }}>
+            <div style={{ display: 'flex', gap: 10, width: COLS * CELL + 20 }}>
               <BigStat label="Lines Left" val={String(linesLeft)} color={linesLeft === 0 ? 'var(--piece-s)' : 'var(--piece-i)'} />
               <BigStat label="Time" val={fmtTime(elapsed)} color="var(--piece-o)" />
             </div>
           </div>
 
           {/* NEXT + controls + settings */}
-          <div style={{ width: 96, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ width: 96, position: 'relative', display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div style={{ ...panel, padding: 12 }}>
               <div style={panelHead}>Next</div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
@@ -727,11 +727,14 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
               {keyLabel(keybinds.hold)} HOLD<br/>
               ESC QUIT
             </div>
+            {/* absolutely positioned so it stays bottom-aligned with the Lines Left / Time
+                row regardless of how tall the Next preview happens to be for the current queue */}
             <button onClick={() => setShowSettings(true)}
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--piece-i)'; e.currentTarget.style.color = 'var(--piece-i)' }}
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-faint)' }}
-              style={{ fontFamily: 'var(--font-pixel)', fontSize: 9, textTransform: 'uppercase', color: 'var(--text-faint)', background: 'transparent', border: '2px solid var(--border-strong)', padding: '9px', cursor: 'pointer', borderRadius: 'var(--radius-1)', letterSpacing: '0.04em' }}>
-              ⚙ Settings
+              style={{ position: 'absolute', top: ROWS * CELL + 32, left: 0, right: 0, height: 97, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 9, fontFamily: 'var(--font-pixel)', fontSize: 9, textTransform: 'uppercase', color: 'var(--text-faint)', background: 'transparent', border: '2px solid var(--border-strong)', paddingTop: 4, paddingRight: 9, paddingBottom: 9, paddingLeft: 9, cursor: 'pointer', borderRadius: 'var(--radius-1)', letterSpacing: '0.04em' }}>
+              <span style={{ fontSize: 44, lineHeight: 1 }}>⚙</span>
+              <span>Settings</span>
             </button>
           </div>
 
@@ -769,8 +772,9 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
             <button onClick={onClose}
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--piece-z)'; e.currentTarget.style.color = 'var(--piece-z)' }}
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-muted)' }}
-              style={{ flexShrink: 0, marginTop: 12, fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', color: 'var(--text-muted)', background: 'transparent', border: '2px solid var(--border-strong)', padding: '12px', cursor: 'pointer', borderRadius: 'var(--radius-1)' }}>
-              ✕ Close [esc]
+              style={{ flexShrink: 0, marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', color: 'var(--text-muted)', background: 'transparent', border: '2px solid var(--border-strong)', padding: '12px', cursor: 'pointer', borderRadius: 'var(--radius-1)' }}>
+              <span style={{ lineHeight: 1, position: 'relative', top: -3 }}>✕</span>
+              <span>Close [esc]</span>
             </button>
           </div>
         </div>
