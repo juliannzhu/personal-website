@@ -1,6 +1,7 @@
 import { useState, useRef, useLayoutEffect, useCallback } from 'react'
 import { TopNav, FixedFooter, type Screen } from './components/layout/TopNav'
 import { FallingField } from './components/layout/FallingField'
+import { RevealOnScroll } from './components/ds/RevealOnScroll'
 import { Hero } from './screens/Hero'
 import { About } from './screens/About'
 import { Projects } from './screens/Projects'
