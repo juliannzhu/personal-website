@@ -1,0 +1,347 @@
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+
+type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
+type Shape = { cells: [number, number][]; w: number; h: number }
+
+// Every real rotation of every tetromino (matching the classic 4 orientations, minus the
+// ones that are duplicates by symmetry) — placing pieces in varied rotations instead of
+// always the same one is what makes a real Tetris board look mixed instead of repetitive.
+const PIECE_ROTATIONS: Record<Piece, Shape[]> = {
+  i: [
+    { cells: [[0, 0], [1, 0], [2, 0], [3, 0]], w: 4, h: 1 },
+    { cells: [[0, 0], [0, 1], [0, 2], [0, 3]], w: 1, h: 4 },
+  ],
+  o: [
+    { cells: [[0, 0], [1, 0], [0, 1], [1, 1]], w: 2, h: 2 },
+  ],
+  t: [
+    { cells: [[1, 0], [0, 1], [1, 1], [2, 1]], w: 3, h: 2 }, // nub up
+    { cells: [[0, 0], [1, 0], [2, 0], [1, 1]], w: 3, h: 2 }, // nub down
+    { cells: [[0, 0], [0, 1], [1, 1], [0, 2]], w: 2, h: 3 }, // nub right
+    { cells: [[1, 0], [0, 1], [1, 1], [1, 2]], w: 2, h: 3 }, // nub left
+  ],
+  s: [
+    { cells: [[1, 0], [2, 0], [0, 1], [1, 1]], w: 3, h: 2 },
+    { cells: [[0, 0], [0, 1], [1, 1], [1, 2]], w: 2, h: 3 },
+  ],
+  z: [
+    { cells: [[0, 0], [1, 0], [1, 1], [2, 1]], w: 3, h: 2 },
+    { cells: [[1, 0], [0, 1], [1, 1], [0, 2]], w: 2, h: 3 },
+  ],
+  j: [
+    { cells: [[0, 0], [0, 1], [1, 1], [2, 1]], w: 3, h: 2 },
+    { cells: [[0, 0], [1, 0], [0, 1], [0, 2]], w: 2, h: 3 },
+    { cells: [[0, 0], [1, 0], [2, 0], [2, 1]], w: 3, h: 2 },
+    { cells: [[1, 0], [1, 1], [0, 2], [1, 2]], w: 2, h: 3 },
+  ],
+  l: [
+    { cells: [[2, 0], [0, 1], [1, 1], [2, 1]], w: 3, h: 2 },
+    { cells: [[0, 0], [0, 1], [0, 2], [1, 2]], w: 2, h: 3 },
+    { cells: [[0, 0], [1, 0], [2, 0], [0, 1]], w: 3, h: 2 },
+    { cells: [[0, 0], [1, 0], [1, 1], [1, 2]], w: 2, h: 3 },
+  ],
+}
+const PIECE_SEQUENCE: Piece[] = ['i', 'o', 't', 's', 'z', 'j', 'l']
+// how many extra copies of each piece's rotation set go into the cycle — o/t/j are boosted
+// (yellow O, purple T, dark blue J across its 4 rotations show up more often), s is dialed back
+const PIECE_WEIGHT: Record<Piece, number> = { i: 1, o: 3, t: 3, s: 1, z: 2, j: 3, l: 1 }
+// every (piece, rotation) combination, repeated per its weight and cycled through — this alone
+// gives far more variation than cycling through 7 colors, since almost every piece shows up in
+// a different orientation each time it appears
+const ALL_VARIANTS: { piece: Piece; shape: Shape }[] = PIECE_SEQUENCE.flatMap((piece) =>
+  Array.from({ length: PIECE_WEIGHT[piece] }, () => PIECE_ROTATIONS[piece].map((shape) => ({ piece, shape }))).flat()
+)
+
+const TARGET_CELL = 20
+const GRID_GAP = 2
+const BASE_HEIGHT = 10
+const JAG_1 = 2
+const JAG_2 = 1.3
+
+type PlacedPiece = { piece: Piece; shape: Shape; col: number; topHeight: number }
+type Filler = { piece: Piece; col: number; from: number; to: number }
+
+// Flat skyline with gentle jaggedness (two low-amplitude sine terms), not a big wave.
+function jaggedTarget(cols: number): number[] {
+  return Array.from({ length: cols }, (_, i) =>
+    Math.max(1, Math.round(BASE_HEIGHT + JAG_1 * Math.sin(i * 1.3) + JAG_2 * Math.sin(i * 0.53 + 2)))
+  )
+}
+
+function colProfile(shape: Shape) {
+  const colMinRow = new Array(shape.w).fill(Infinity)
+  const colMaxRow = new Array(shape.w).fill(-Infinity)
+  shape.cells.forEach(([c, r]) => {
+    colMinRow[c] = Math.min(colMinRow[c], r)
+    colMaxRow[c] = Math.max(colMaxRow[c], r)
+  })
+  return { colMinRow, colMaxRow }
+}
+
+// Greedily drops REAL tetromino pieces (real Tetris landing physics, in varied rotations) at
+// the leftmost column still under its target height, until the whole width is filled — no
+// empty columns. Among every rotation that wouldn't touch the same color to its left, right,
+// or directly underneath, the one that lands flattest (smallest gap under it) wins, which
+// keeps the pile dense and well mixed. Whatever small gap is still left under a piece's
+// uneven underside is patched with that same piece's own color, so nothing merges into an
+// unrelated neighbor's color.
+function layoutPile(cols: number): { placed: PlacedPiece[]; fillers: Filler[]; colHeight: number[] } {
+  const target = jaggedTarget(cols)
+  const colHeight = new Array(cols).fill(0)
+  const colorAtCol: (Piece | null)[] = new Array(cols).fill(null)
+  const placed: PlacedPiece[] = []
+  const fillers: Filler[] = []
+  // tracks how many times each piece has actually been placed so far, so selection can
+  // favor whichever piece is currently under-represented relative to its target weight —
+  // just having more copies in ALL_VARIANTS isn't enough, since simple shapes like I are
+  // easy to land flush almost anywhere and would otherwise dominate regardless of weight
+  const placedCount: Record<Piece, number> = { i: 0, o: 0, t: 0, s: 0, z: 0, j: 0, l: 0 }
+  let vi = 0
+  let guard = 0
+  while (guard++ < cols * 20 + 200) {
+    let col = -1
+    for (let c = 0; c < cols; c++) { if (colHeight[c] < target[c]) { col = c; break } }
+    if (col === -1) break
+
+    type Candidate = { variant: typeof ALL_VARIANTS[0]; start: number; topHeight: number; gapSize: number; deficit: number }
+    let best: Candidate | null = null
+    let bestUnsafe: Candidate | null = null
+    for (let attempt = 0; attempt < ALL_VARIANTS.length; attempt++) {
+      const variant = ALL_VARIANTS[(vi + attempt) % ALL_VARIANTS.length]
+      const w = variant.shape.w
+      let start = col
+      if (start + w > cols) start = Math.max(0, cols - w)
+      const leftNeighbor = start > 0 ? colorAtCol[start - 1] : null
+      const rightNeighbor = start + w < cols ? colorAtCol[start + w] : null
+      let belowConflict = false
+      for (let c = 0; c < w; c++) { if (colorAtCol[start + c] === variant.piece) { belowConflict = true; break } }
+      const safe = variant.piece !== leftNeighbor && variant.piece !== rightNeighbor && !belowConflict
+
+      const { colMaxRow } = colProfile(variant.shape)
+      let topHeight = 0
+      for (let c = 0; c < w; c++) { if (colMaxRow[c] === -Infinity) continue; topHeight = Math.max(topHeight, colHeight[start + c] + colMaxRow[c]) }
+      let gapSize = 0
+      for (let c = 0; c < w; c++) { if (colMaxRow[c] === -Infinity) continue; gapSize += Math.max(0, (topHeight - colMaxRow[c]) - colHeight[start + c]) }
+      // how under-represented this piece type is right now vs. its target share — lower is "owed" more
+      const deficit = placedCount[variant.piece] / PIECE_WEIGHT[variant.piece]
+
+      const candidate: Candidate = { variant, start, topHeight, gapSize, deficit }
+      if (safe) {
+        if (!best || deficit < best.deficit || (deficit === best.deficit && gapSize < best.gapSize)) best = candidate
+      } else if (!bestUnsafe || gapSize < bestUnsafe.gapSize) {
+        bestUnsafe = candidate
+      }
+    }
+    const chosen = (best ?? bestUnsafe)!
+    vi++
+    placedCount[chosen.variant.piece]++
+
+    const { piece: type, shape } = chosen.variant
+    const startCol = chosen.start
+    const { colMinRow, colMaxRow } = colProfile(shape)
+    // this piece's own color patches any gap between the previous terrain and where it actually lands
+    for (let c = 0; c < shape.w; c++) {
+      if (colMaxRow[c] === -Infinity) continue
+      const trueLowestRow = chosen.topHeight - colMaxRow[c]
+      const prevHeight = colHeight[startCol + c]
+      if (trueLowestRow > prevHeight) fillers.push({ piece: type, col: startCol + c, from: prevHeight, to: trueLowestRow })
+    }
+    for (let c = 0; c < shape.w; c++) {
+      if (colMinRow[c] === Infinity) continue
+      colHeight[startCol + c] = chosen.topHeight - colMinRow[c] + 1
+      colorAtCol[startCol + c] = type
+    }
+    placed.push({ piece: type, shape, col: startCol, topHeight: chosen.topHeight })
+  }
+  return { placed, fillers, colHeight }
+}
+
+// Explicit, hand-picked falling pieces (not derived from the pile's cycling sequence) so each
+// one has a stable identity to tweak — position is a fraction of the total width (stable across
+// screen sizes), with an optional colOffset to nudge a specific piece left/right by N squares.
+type FallingSlotDef = { piece: Piece; shape: Shape; xFraction: number; colOffset?: number; smearFrom?: 'center' | 'bottom' }
+const FALLING_SLOTS: FallingSlotDef[] = [
+  { piece: 'i', shape: PIECE_ROTATIONS.i[1], xFraction: 0.04, colOffset: 0 }, // leftmost, shifted right
+  { piece: 'o', shape: PIECE_ROTATIONS.o[0], xFraction: 0.22, colOffset: 1 }, // shifted left
+  { piece: 't', shape: PIECE_ROTATIONS.t[0], xFraction: 0.40, colOffset: -2 }, // middle slot: was a red Z, now a T
+  { piece: 'j', shape: PIECE_ROTATIONS.j[3], xFraction: 0.58, smearFrom: 'bottom' }, // was green S, now a purple J, rotated one step CCW from spawn; smear from its bottom
+  { piece: 'i', shape: PIECE_ROTATIONS.i[1], xFraction: 0.76, colOffset: -2 }, // was a red Z, now a vertical I piece
+  { piece: 't', shape: PIECE_ROTATIONS.t[0], xFraction: 0.94 }, // rightmost slot: was a red Z, now a T with its 3-wide side facing down
+]
+
+// A handful of columns get a piece that endlessly re-falls into place, aligned to the exact
+// same grid as the stationary pile — its rest position is precisely where it would actually
+// land if it were a real placement, so it visibly touches the top of the highest block there
+// before fading out and repeating.
+function pickFallingSpots(cols: number, colHeight: number[]): { piece: Piece; shape: Shape; col: number; restRow: number; smearFrom: 'center' | 'bottom' }[] {
+  return FALLING_SLOTS.map(({ piece, shape, xFraction, colOffset = 0, smearFrom = 'center' }) => {
+    let col = Math.round(xFraction * cols) + colOffset
+    col = Math.max(0, Math.min(col, cols - shape.w))
+    let restRow = 0
+    for (let c = 0; c < shape.w; c++) restRow = Math.max(restRow, colHeight[col + c])
+    return { piece, shape, col, restRow, smearFrom }
+  })
+}
+
+// Stationary extra piece (no falling animation, no smear) — a vertical orange L parked near
+// where the green S falling piece used to sit, shifted right so part of it hangs off-screen.
+function pickExtraStationaryPieces(cols: number, colHeight: number[]): { piece: Piece; shape: Shape; col: number; restRow: number }[] {
+  const sShape = PIECE_ROTATIONS.s[0]
+  const anchorCol = Math.max(0, Math.min(Math.round(0.76 * cols), cols - sShape.w))
+  const lShape = PIECE_ROTATIONS.l[1]
+  const col = anchorCol + 1 // intentionally left unclamped so it can sit partially off-screen
+  let restRow = 0
+  for (let c = 0; c < lShape.w; c++) {
+    const cc = Math.min(col + c, cols - 1)
+    restRow = Math.max(restRow, colHeight[cc] ?? 0)
+  }
+  return [{ piece: 'l', shape: lShape, col, restRow }]
+}
+
+function renderCells(piece: Piece, shape: Shape, cellSize: number) {
+  const filled = new Set(shape.cells.map(([c, r]) => `${c},${r}`))
+  const cells: React.ReactNode[] = []
+  for (let r = 0; r < shape.h; r++) {
+    for (let c = 0; c < shape.w; c++) {
+      const on = filled.has(`${c},${r}`)
+      cells.push(
+        <div key={`${c}-${r}`} style={{
+          width: cellSize, height: cellSize,
+          background: on ? `var(--piece-${piece})` : 'transparent',
+          boxShadow: on ? 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.35)' : 'none',
+        }} />
+      )
+    }
+  }
+  return cells
+}
+
+function PieceShape({ piece, shape, cellSize, style }: { piece: Piece; shape: Shape; cellSize: number; style: React.CSSProperties }) {
+  return (
+    <div style={{ position: 'absolute', display: 'grid', gridTemplateColumns: `repeat(${shape.w}, ${cellSize}px)`, gridTemplateRows: `repeat(${shape.h}, ${cellSize}px)`, gap: GRID_GAP, ...style }}>
+      {renderCells(piece, shape, cellSize)}
+    </div>
+  )
+}
+
+function FallingPiece({ piece, shape, unit, cellSize, left, restBottom, delay, smearFrom = 'center' }: {
+  piece: Piece; shape: Shape; unit: number; cellSize: number
+  left: number; restBottom: number; delay: number; smearFrom?: 'center' | 'bottom'
+}) {
+  const pieceWidth = shape.w * unit - GRID_GAP
+  const pieceHeight = shape.h * unit - GRID_GAP
+  const smearWidth = shape.w * unit - unit + unit * 0.36
+  const trailHeight = pieceHeight * 5
+  const smearBottom = smearFrom === 'bottom' ? 0 : pieceHeight / 2
+  return (
+    <div style={{
+      position: 'absolute', left, bottom: restBottom, width: shape.w * unit,
+      animation: 'tj-pile-fall-loop 4.5s cubic-bezier(0.36,0.6,0.4,1) infinite',
+      animationDelay: `${delay}ms`,
+    }}>
+      {/* originates from the piece's center (or its bottom, for smearFrom:'bottom'), extends upward */}
+      <div style={{
+        position: 'absolute', left: pieceWidth / 2 - smearWidth / 2, bottom: smearBottom,
+        width: smearWidth, height: trailHeight,
+        background: `linear-gradient(to top, var(--piece-${piece}) 0%, color-mix(in srgb, var(--piece-${piece}) 60%, transparent) 20%, transparent 100%)`,
+        opacity: 0.6, pointerEvents: 'none',
+      }} />
+      <div style={{ position: 'absolute', display: 'grid', gridTemplateColumns: `repeat(${shape.w}, ${cellSize}px)`, gridTemplateRows: `repeat(${shape.h}, ${cellSize}px)`, gap: GRID_GAP, bottom: 0, left: 0, opacity: 0.92 }}>
+        {renderCells(piece, shape, cellSize)}
+      </div>
+    </div>
+  )
+}
+
+const PILE_CSS = `
+@keyframes tj-pile-fall-loop {
+  0%   { transform: translateY(-260px); opacity: 0; }
+  10%  { opacity: 1; }
+  70%  { transform: translateY(0); opacity: 1; }
+  85%  { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+`
+let pileCssInjected = false
+function ensurePileCSS() {
+  if (!pileCssInjected && typeof document !== 'undefined') {
+    const s = document.createElement('style'); s.textContent = PILE_CSS; document.head.appendChild(s); pileCssInjected = true
+  }
+}
+
+export function PileFooter() {
+  ensurePileCSS()
+  const ref = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState(0)
+  const [breakout, setBreakout] = useState({ width: 0, marginLeft: 0 })
+
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const measure = () => {
+      const rect = el.getBoundingClientRect()
+      const viewportWidth = document.documentElement.clientWidth
+      setBreakout({ width: viewportWidth, marginLeft: -rect.left })
+      setWidth(rect.width)
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => { window.removeEventListener('resize', measure); ro.disconnect() }
+  }, [])
+
+  const cols = width > 0 ? Math.max(10, Math.round(breakout.width / TARGET_CELL)) : 10
+  const unit = breakout.width > 0 ? breakout.width / cols : TARGET_CELL
+  const cellSize = Math.max(1, unit - GRID_GAP)
+
+  const { placed, fillers, fallingSpots, stationaryExtras, maxRow } = useMemo(() => {
+    const { placed, fillers, colHeight } = layoutPile(cols)
+    const fallingSpots = pickFallingSpots(cols, colHeight)
+    const stationaryExtras = pickExtraStationaryPieces(cols, colHeight)
+    return { placed, fillers, fallingSpots, stationaryExtras, maxRow: Math.max(1, ...colHeight) }
+  }, [cols])
+
+  return (
+    <div ref={ref} style={{
+      width: breakout.width || undefined, marginLeft: breakout.width ? breakout.marginLeft : undefined,
+      background: 'var(--bg-well)', height: '49.5vh', minHeight: 330, maxHeight: 630,
+      borderTop: '2px solid var(--border-strong)', position: 'relative', overflow: 'hidden',
+      opacity: 0.7,
+      backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)',
+      backgroundSize: `${unit}px ${unit}px`,
+    }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: maxRow * unit }}>
+        {placed.map((p, i) => {
+          const bottomRows = p.topHeight - (p.shape.h - 1)
+          return (
+            <PieceShape key={`p${i}`} piece={p.piece} shape={p.shape} cellSize={cellSize}
+              style={{ left: p.col * unit, bottom: bottomRows * unit }} />
+          )
+        })}
+        {fillers.flatMap((f, fi) => {
+          const squares = []
+          for (let row = f.from; row < f.to; row++) {
+            squares.push(
+              <div key={`f${fi}-${row}`} style={{
+                position: 'absolute', left: f.col * unit, bottom: row * unit,
+                width: cellSize, height: cellSize,
+                background: `var(--piece-${f.piece})`,
+                boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.35)',
+              }} />
+            )
+          }
+          return squares
+        })}
+        {stationaryExtras.map((p, i) => (
+          <PieceShape key={`extra${i}`} piece={p.piece} shape={p.shape} cellSize={cellSize}
+            style={{ left: p.col * unit, bottom: p.restRow * unit }} />
+        ))}
+        {fallingSpots.map((f, i) => (
+          <FallingPiece key={`fall${i}`} piece={f.piece} shape={f.shape} unit={unit} cellSize={cellSize}
+            left={f.col * unit} restBottom={f.restRow * unit} delay={i * 620} smearFrom={f.smearFrom} />
+        ))}
+      </div>
+    </div>
+  )
+}
