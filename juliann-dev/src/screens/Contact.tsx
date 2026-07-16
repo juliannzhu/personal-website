@@ -49,8 +49,8 @@ export function Contact() {
           )}
         </Card>
 
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: 'var(--text-strong)', margin: '0 0 14px', textTransform: 'uppercase' }}>Find me</h3>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: 'var(--text-strong)', margin: '0 0 14px', textTransform: 'uppercase', textAlign: 'right' }}>Find me</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
             {LINKS.map((l) => (
               <a key={l.label} href={l.href}
@@ -59,7 +59,7 @@ export function Contact() {
                 onClick={l.href === '#' ? (e) => e.preventDefault() : undefined}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = `var(--piece-${l.piece})`; e.currentTarget.style.transform = 'translateX(4px)' }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.transform = 'translateX(0)' }}
-                style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 14px', textDecoration: 'none', background: 'var(--surface-card)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', transition: 'border-color 140ms, transform 140ms' }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 14px', flex: 1, textDecoration: 'none', background: 'var(--surface-card)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', transition: 'border-color 140ms, transform 140ms' }}>
                 <span style={{ color: `var(--piece-${l.piece})`, fontSize: 20, display: 'flex' }}><Icon icon={l.icon} /></span>
                 <span style={{ flex: 1 }}>
                   <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>{l.label}</span>
