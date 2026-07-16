@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Card } from '../components/ds/Card'
 import { Tag } from '../components/ds/Tag'
 import { Tetromino } from '../components/ds/Tetromino'
+import { RevealOnScroll } from '../components/ds/RevealOnScroll'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 
@@ -395,11 +396,11 @@ function QuestTile({ q, onClick }: { q: QuestCard; onClick: () => void }) {
   return (
     <div className="tj-quest-card" onClick={onClick}>
       <Card accent={q.piece} accentBar style={{ display: 'flex', flexDirection: 'column', height: '100%', userSelect: 'none' }}>
-        <div className="tj-quest-media">
+        <RevealOnScroll className="tj-quest-media" threshold={0.35}>
           {q.images[0] && <img src={q.images[0]} alt={q.title} className="tj-quest-img" />}
           {!q.images[0] && <span style={{ fontSize: 48 }}>{q.placeholder}</span>}
           <div className="tj-quest-hint">Click to explore</div>
-        </div>
+        </RevealOnScroll>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
           <Tetromino piece={q.piece} size={11} />
           <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color: 'var(--text-strong)', margin: 0, textTransform: 'uppercase' }}>{q.title}</h3>

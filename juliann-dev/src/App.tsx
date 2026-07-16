@@ -11,6 +11,10 @@ import { SideQuests } from './screens/SideQuests'
 import { TetrisGame, HoldBox } from './features/tetris/TetrisGame'
 import { Loader } from './components/Loader'
 
+type StackId = Exclude<Screen, 'home'>
+const STACK_IDS: StackId[] = ['about', 'projects', 'sidequests', 'now', 'contact']
+const SCROLL_MASK = 'linear-gradient(to bottom, transparent 0, black 56px, black calc(100% - 56px), transparent 100%)'
+
 const CSS = `
 /* ---- page transitions ---- */
 @keyframes tj-elem-fall {
@@ -55,6 +59,7 @@ body::before {
   .tj-about-grid { grid-template-columns: 1fr !important; }
   .tj-contact-grid { grid-template-columns: 1fr !important; }
   .tj-stats-grid { grid-template-columns: 1fr 1fr !important; }
+  .tj-radar-grid { grid-template-columns: 1fr !important; }
 
   /* hero padding so it clears the mobile nav */
   .tj-hero-section { padding-top: 24px !important; }
@@ -91,20 +96,40 @@ function collectRows(root: HTMLElement): Element[] {
 
 const stepFor = (n: number) => n > 1 ? Math.min(STEP, CAP / (n - 1)) : STEP
 
+const STACK_SCREENS: Record<StackId, React.ReactNode> = {
+  about: <About />,
+  projects: <Projects />,
+  sidequests: <SideQuests />,
+  now: <Now />,
+  contact: <Contact />,
+}
+
 export default function App() {
   ensureCSS()
   const [screen, setScreen] = useState<Screen>('home')
+  const [activeSection, setActiveSection] = useState<StackId>('about')
   const [loading, setLoading] = useState(true)
   const [gameOpen, setGameOpen] = useState(false)
   const [transId, setTransId] = useState(0)
   const mainRef = useRef<HTMLElement>(null)
+  const scrollPaneRef = useRef<HTMLDivElement>(null)
+  const sectionRefs = useRef<Partial<Record<StackId, HTMLDivElement | null>>>({})
   const firstLoad = useRef(true)
   const navTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const pendingTarget = useRef<StackId | null>(null)
 
   const go = useCallback((id: Screen) => {
+    // Already inside the continuous stack: just smooth-scroll to the section, no remount.
+    if (screen !== 'home' && id !== 'home') {
+      if (id === activeSection) return
+      sectionRefs.current[id as StackId]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setActiveSection(id as StackId)
+      return
+    }
     if (id === screen) return
     clearTimeout(navTimer.current)
-    const rows = mainRef.current ? collectRows(mainRef.current) : []
+    const outRoot = screen !== 'home' ? sectionRefs.current[activeSection] ?? mainRef.current : mainRef.current
+    const rows = outRoot ? collectRows(outRoot) : []
     const n = rows.length
     const step = stepFor(n)
     rows.forEach((el, i) => {
@@ -112,16 +137,24 @@ export default function App() {
       ;(el as HTMLElement).style.animation = `tj-elem-fall ${OUT_MS}ms cubic-bezier(0.5,0,0.75,0) ${Math.round(order * step)}ms forwards`
     })
     const outTotal = OUT_MS + Math.max(0, n - 1) * step + 20
+    if (id !== 'home') pendingTarget.current = id as StackId
     navTimer.current = setTimeout(() => {
       setScreen(id)
-      window.scrollTo({ top: 0 })
+      if (id !== 'home') setActiveSection(id as StackId)
+      else if (scrollPaneRef.current) scrollPaneRef.current.scrollTop = 0
       setTransId(t => t + 1)
     }, outTotal)
-  }, [screen])
+  }, [screen, activeSection])
 
   useLayoutEffect(() => {
     if (firstLoad.current) { firstLoad.current = false; return }
-    const rows = mainRef.current ? collectRows(mainRef.current) : []
+    let root: HTMLElement | null = mainRef.current
+    if (pendingTarget.current) {
+      const el = sectionRefs.current[pendingTarget.current]
+      if (el) { el.scrollIntoView({ block: 'start' }); root = el }
+      pendingTarget.current = null
+    }
+    const rows = root ? collectRows(root) : []
     const n = rows.length
     const step = stepFor(n)
     rows.forEach((el, i) => {
@@ -133,28 +166,59 @@ export default function App() {
     return () => clearTimeout(clearT)
   }, [transId])
 
-  const isHome = screen === 'home'
+  // Scroll-spy: keep nav highlight in sync while the user free-scrolls the stack.
+  useLayoutEffect(() => {
+    if (screen === 'home') return
+    const root = scrollPaneRef.current
+    if (!root) return
+    const ratios = new Map<StackId, number>()
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const id = (entry.target as HTMLElement).dataset.section as StackId
+        ratios.set(id, entry.intersectionRatio)
+      })
+      let best: StackId | null = null
+      let bestRatio = 0
+      ratios.forEach((ratio, id) => { if (ratio > bestRatio) { bestRatio = ratio; best = id } })
+      if (best) setActiveSection(best)
+    }, { root, threshold: [0.15, 0.3, 0.45, 0.6, 0.75] })
+    STACK_IDS.forEach((id) => { const el = sectionRefs.current[id]; if (el) io.observe(el) })
+    return () => io.disconnect()
+  }, [screen])
 
-  let view: React.ReactNode
-  if (screen === 'home')            view = <Hero onNav={go} />
-  else if (screen === 'about')      view = <About />
-  else if (screen === 'projects')   view = <Projects />
-  else if (screen === 'now')        view = <Now />
-  else if (screen === 'sidequests') view = <SideQuests />
-  else if (screen === 'contact')    view = <Contact />
+  const isHome = screen === 'home'
 
   // Footer height: 2px border + 6px rainbow + ~78px copyright row (28px padding each side) = ~86px
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: isHome ? 'hidden' : 'auto', paddingBottom: 86 }}>
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <FallingField />
-      <TopNav current={screen} onNav={go} onPlay={() => setGameOpen(true)} />
+      <TopNav current={isHome ? 'home' : activeSection} onNav={go} onPlay={() => setGameOpen(true)} />
       <aside className="tj-holdbox" style={{ display: isHome ? undefined : 'none' }}>
         {isHome && <HoldBox onPlay={() => setGameOpen(true)} />}
       </aside>
       <div style={{ position: 'relative', zIndex: 1, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-        <main ref={mainRef} className="tj-main" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', paddingLeft: isHome ? 248 : undefined }}>
-          {view}
-        </main>
+        <div
+          ref={scrollPaneRef}
+          className="tj-scrollpane"
+          style={{
+            flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column',
+            overflow: isHome ? 'hidden' : 'auto', paddingBottom: 86,
+            WebkitMaskImage: isHome ? undefined : SCROLL_MASK,
+            maskImage: isHome ? undefined : SCROLL_MASK,
+          }}
+        >
+          <main ref={mainRef} className="tj-main" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', paddingLeft: isHome ? 248 : undefined }}>
+            {isHome ? (
+              <Hero onNav={go} />
+            ) : (
+              STACK_IDS.map((id) => (
+                <div key={id} data-section={id} ref={(el) => { sectionRefs.current[id] = el }}>
+                  <RevealOnScroll>{STACK_SCREENS[id]}</RevealOnScroll>
+                </div>
+              ))
+            )}
+          </main>
+        </div>
       </div>
       <FixedFooter onNav={go} />
       {gameOpen && <TetrisGame onClose={() => setGameOpen(false)} />}
