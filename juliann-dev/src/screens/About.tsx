@@ -1,8 +1,10 @@
+import { useLayoutEffect, useRef, useState } from 'react'
 import { Card } from '../components/ds/Card'
 import { ProgressBar } from '../components/ds/ProgressBar'
 import { Tag } from '../components/ds/Tag'
 import { Tetromino } from '../components/ds/Tetromino'
 import { Avatar } from '../components/ds/Avatar'
+import { RadarChart } from '../components/ds/RadarChart'
 
 const SKILLS = [
   { name: 'Python',              value: 92, piece: 'o' },
@@ -19,6 +21,8 @@ const TIMELINE = [
   { piece: 'l' as const, when: 'May 2026 – Present',  what: 'Network Engineering Intern', where: 'ORBCOMM / Skywave: satellite system dashboards, SQL, Grafana' },
   { piece: 's' as const, when: 'Jan 2026 – Present',  what: 'Undergraduate Research Mentee', where: 'UW Usable Security & Privacy Research: co-authoring SOUPS paper on LLM security advice' },
   { piece: 't' as const, when: 'May 2024',            what: 'Hackathon: Gender Equality Award', where: 'Project Tech Careers: platform for women in CS (UN SDG track)' },
+  { piece: 'j' as const, when: 'Sep 2021 – Jun 2025', what: 'Volleyball Team Captain, NCSSAA Tier 1 Finalist', where: "Merivale HS Volleyball Club: 2x MVP (2021, 2023), 7 regional tournament wins, 4 straight Marauder's Cups" },
+  { piece: 'o' as const, when: 'Sep 2012 – Jun 2025', what: 'RCM Level 10 Piano Certificate', where: 'Royal Conservatory of Music: 13 years of weekly lessons, 6 workshops a year, 10 hrs/week practicing technique and repertoire' },
 ]
 
 type PK = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
@@ -33,6 +37,30 @@ const MINI_BOARD: (PK | 0)[][] = [
   ['z', 'z', 'o', 'o', 't', 't'],
   [0,  'z', 'o', 'o', 't',  0  ],
   ['j', 'j', 'j', 'l', 'l', 'l'],
+]
+
+const JSTRIS_PBS = [
+  { label: '20L',  piece: 'i' as const, time: '24.115',    blocks: '51',  date: 'MAY 31, 2022' },
+  { label: '40L',  piece: 'o' as const, time: '45.480',    blocks: '103', date: 'DEC 27, 2022' },
+  { label: '100L', piece: 't' as const, time: '2:12.887',  blocks: '253', date: 'DEC 31, 2021' },
+]
+
+const JSTRIS_STATS: [string, string, string, string][] = [
+  ['Games',        '1,591',    'Max. APM',     '121.49'],
+  ['Total time',   '48 hours', 'Max. Combo',   '11'],
+  ['Lines sent',   '70,956',   'Longest game', '3.07 min'],
+  ['Lines received', '66,895', 'Total B2Bs',   '2,010'],
+  ['Placed blocks', '218,216', 'Most sent',    '132'],
+  ['10-games APM', '13.54',    '10-games PPS', '0.75'],
+]
+
+const ATTRIBUTES = [
+  { key: 'str', label: 'STR', name: 'Strength',     desc: 'Backend/Systems Processing: handling heavy computations and low-level code.', value: 6, piece: 'z' as const },
+  { key: 'agi', label: 'AGI', name: 'Agility',      desc: 'Frontend Performance: writing fluid animations and highly responsive, fast web interfaces.', value: 7, piece: 'i' as const },
+  { key: 'int', label: 'INT', name: 'Intelligence', desc: 'AI & LLM Research: technical depth across data, models, and machine learning.', value: 9, piece: 't' as const },
+  { key: 'vit', label: 'VIT', name: 'Vitality',     desc: 'Resilience / Bug Fixing: untangling chaotic logic and surviving intense study terms.', value: 7, piece: 's' as const },
+  { key: 'dex', label: 'DEX', name: 'Dexterity',    desc: 'Piano & UI Crafting: fine motor skills, typing speed, and aesthetic precision.', value: 9, piece: 'o' as const },
+  { key: 'cha', label: 'CHA', name: 'Charisma',     desc: 'User Experience & Human Impact: designing tools that make people happy.', value: 8, piece: 'l' as const },
 ]
 
 function SectionTitle({ kicker, children }: { kicker: string; children: string }) {
@@ -72,6 +100,19 @@ function ensureAboutCSS() {
 
 export function About() {
   ensureAboutCSS()
+  const achievementsRef = useRef<HTMLDivElement>(null)
+  const [achHeight, setAchHeight] = useState<number>()
+
+  useLayoutEffect(() => {
+    const el = achievementsRef.current
+    if (!el) return
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) setAchHeight(entry.contentRect.height)
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
   return (
     <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px' }}>
       <SectionTitle kicker="// Player 1">About</SectionTitle>
@@ -105,10 +146,10 @@ export function About() {
             <Tag piece="l">UI/UX</Tag>
           </div>
 
-          <div style={{ marginTop: 40 }}>
+          <div ref={achievementsRef} style={{ marginTop: 40 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 16 }}>
               <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, color: 'var(--piece-o)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Achievements Unlocked</h3>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)' }}>4 / 4</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)' }}>6 / 6</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {TIMELINE.map((t, i) => {
@@ -148,41 +189,85 @@ export function About() {
             </div>
           </Card>
 
-          {/* Bottom-right: mini Tetris board graphic */}
-          <div style={{ marginTop: 20, border: '2px solid var(--border-hairline)', borderRadius: 'var(--radius-1)', background: 'var(--bg-well)', overflow: 'hidden' }}>
-            <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-hairline)', fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-              // current board
+          {/* Bottom-right: Jstris profile card, height synced to Achievements Unlocked */}
+          <div style={{
+            marginTop: 20, minHeight: achHeight,
+            border: '2px solid var(--border-hairline)', borderRadius: 'var(--radius-1)',
+            background: 'var(--bg-well)', overflow: 'hidden',
+            display: 'flex', flexDirection: 'column',
+          }}>
+            <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-hairline)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>// jstris profile</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)' }}>jstris.jezevec10.eu</span>
             </div>
-            <div style={{ padding: '14px 16px', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 11px)', gridTemplateRows: 'repeat(10, 11px)', gap: 2, flexShrink: 0 }}>
+
+            <div style={{ padding: '14px 16px', display: 'flex', gap: 14, alignItems: 'center', borderBottom: '1px solid var(--border-hairline)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 6px)', gridTemplateRows: 'repeat(10, 6px)', gap: 1, flexShrink: 0 }}>
                 {MINI_BOARD.flat().map((cell, i) => (
                   <div key={i} style={{
-                    width: 11, height: 11,
+                    width: 6, height: 6,
                     background: cell !== 0 ? `var(--piece-${cell})` : 'rgba(255,255,255,0.04)',
                     boxShadow: cell !== 0 ? 'inset 1px 1px 0 rgba(255,255,255,0.32), inset -1px -1px 0 rgba(0,0,0,0.38)' : 'none',
                   }} />
                 ))}
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, flex: 1 }}>
-                {([
-                  { label: 'SCORE', value: '048,270', color: 'var(--piece-o)' },
-                  { label: 'LINES', value: '128', color: 'var(--piece-i)' },
-                  { label: 'LEVEL', value: '09', color: 'var(--piece-s)' },
-                  { label: 'B2B', value: '47', color: 'var(--piece-t)' },
-                ] as const).map(({ label, value, color }) => (
-                  <div key={label}>
-                    <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 7, color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 3 }}>{label}</div>
-                    <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color, letterSpacing: '0.04em' }}>{value}</div>
+              <div>
+                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color: 'var(--text-strong)' }}>JAMBO722</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', marginTop: 5 }}>40L PB 45.480 · 103 BLOCKS</div>
+              </div>
+            </div>
+
+            <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-hairline)' }}>
+              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 8, color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 9 }}>PERSONAL BESTS</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+                {JSTRIS_PBS.map((pb) => (
+                  <div key={pb.label} style={{ display: 'grid', gridTemplateColumns: '38px 1fr auto', gap: 8, alignItems: 'baseline' }}>
+                    <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, color: `var(--piece-${pb.piece})` }}>{pb.label}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-strong)' }}>{pb.time} <span style={{ color: 'var(--text-faint)', fontSize: 10 }}>· {pb.blocks} blocks</span></span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)', whiteSpace: 'nowrap' }}>{pb.date}</span>
                   </div>
                 ))}
               </div>
             </div>
+
+            <div style={{ padding: '12px 16px', flex: 1 }}>
+              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 8, color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 9 }}>ALL-TIME STATS</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 16px' }}>
+                {JSTRIS_STATS.flatMap(([l1, v1, l2, v2]) => [[l1, v1], [l2, v2]]).map(([label, value], i) => (
+                  <div key={i}>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
+                    <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--text-strong)', marginTop: 3 }}>{value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div style={{ borderTop: '1px solid var(--border-hairline)', padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 8, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>One block at a time</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)' }}>CS @ UW · '29</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)' }}>CS @ UW · '30</span>
             </div>
           </div>
         </div>
+      </div>
+
+      <div style={{ marginTop: 64 }}>
+        <SectionTitle kicker="// Character sheet">Core Attributes</SectionTitle>
+        <Card accent="t" accentBar>
+          <div className="tj-radar-grid" style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: 24, alignItems: 'center' }}>
+            <RadarChart points={ATTRIBUTES.map((a) => ({ key: a.key, label: a.label, value: a.value, piece: a.piece }))} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
+              {ATTRIBUTES.map((a) => (
+                <div key={a.key} style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: `var(--piece-${a.piece})`, flexShrink: 0, marginBottom: 1 }} />
+                  <div style={{ minWidth: 0 }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{a.label} · {a.name}</span>
+                    <span style={{ fontSize: 11.5, color: 'var(--text-faint)', lineHeight: 1.4 }}> · {a.desc}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
       </div>
     </section>
   )
