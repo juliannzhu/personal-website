@@ -25,7 +25,8 @@ export function Contact() {
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Enter player 2</div>
         <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Let's Connect</h2>
       </div>
-      {/* Grid stretches both columns to equal height */}
+      <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: 'var(--text-strong)', margin: '0 0 14px', textTransform: 'uppercase', textAlign: 'right' }}>Find me</h3>
+      {/* Grid stretches both columns to equal height, so both boxes start and end flush */}
       <div className="tj-contact-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 32, alignItems: 'stretch' }}>
         <Card accent="i" accentBar style={{ display: 'flex', flexDirection: 'column' }}>
           {sent ? (
@@ -49,26 +50,23 @@ export function Contact() {
           )}
         </Card>
 
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-          <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: 'var(--text-strong)', margin: '0 0 14px', textTransform: 'uppercase', textAlign: 'right' }}>Find me</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
-            {LINKS.map((l) => (
-              <a key={l.label} href={l.href}
-                target={l.href.startsWith('http') ? '_blank' : undefined}
-                rel={l.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                onClick={l.href === '#' ? (e) => e.preventDefault() : undefined}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = `var(--piece-${l.piece})`; e.currentTarget.style.transform = 'translateX(4px)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.transform = 'translateX(0)' }}
-                style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 14px', flex: 1, textDecoration: 'none', background: 'var(--surface-card)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', transition: 'border-color 140ms, transform 140ms' }}>
-                <span style={{ color: `var(--piece-${l.piece})`, fontSize: 20, display: 'flex' }}><Icon icon={l.icon} /></span>
-                <span style={{ flex: 1 }}>
-                  <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>{l.label}</span>
-                  <span style={{ display: 'block', color: 'var(--text-strong)', fontSize: 13, fontWeight: 600 }}>{l.handle}</span>
-                </span>
-                <Icon icon="pixelarticons:chevron-right" style={{ color: 'var(--text-faint)' }} />
-              </a>
-            ))}
-          </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, height: '100%' }}>
+          {LINKS.map((l) => (
+            <a key={l.label} href={l.href}
+              target={l.href.startsWith('http') ? '_blank' : undefined}
+              rel={l.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              onClick={l.href === '#' ? (e) => e.preventDefault() : undefined}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = `var(--piece-${l.piece})`; e.currentTarget.style.transform = 'translateX(4px)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.transform = 'translateX(0)' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 14px', flex: 1, textDecoration: 'none', background: 'var(--surface-card)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', transition: 'border-color 140ms, transform 140ms' }}>
+              <span style={{ color: `var(--piece-${l.piece})`, fontSize: 20, display: 'flex' }}><Icon icon={l.icon} /></span>
+              <span style={{ flex: 1 }}>
+                <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>{l.label}</span>
+                <span style={{ display: 'block', color: 'var(--text-strong)', fontSize: 13, fontWeight: 600 }}>{l.handle}</span>
+              </span>
+              <Icon icon="pixelarticons:chevron-right" style={{ color: 'var(--text-faint)' }} />
+            </a>
+          ))}
         </div>
       </div>
     </section>
