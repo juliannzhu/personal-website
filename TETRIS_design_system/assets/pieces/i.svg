@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100" shape-rendering="crispEdges">
+    <rect x="0" y="0" width="100" height="100" fill="#00a3a3"></rect>
+    <polygon points="0,0 100,0 86,14 14,14" fill="#7df9f9"></polygon>
+    <polygon points="0,0 14,14 14,86 0,100" fill="#7df9f9"></polygon>
+    <rect x="14" y="14" width="72" height="72" fill="#00f0f0"></rect>
+    <rect x="100" y="0" width="100" height="100" fill="#00a3a3"></rect>
+    <polygon points="100,0 200,0 186,14 114,14" fill="#7df9f9"></polygon>
+    <polygon points="100,0 114,14 114,86 100,100" fill="#7df9f9"></polygon>
+    <rect x="114" y="14" width="72" height="72" fill="#00f0f0"></rect>
+    <rect x="200" y="0" width="100" height="100" fill="#00a3a3"></rect>
+    <polygon points="200,0 300,0 286,14 214,14" fill="#7df9f9"></polygon>
+    <polygon points="200,0 214,14 214,86 200,100" fill="#7df9f9"></polygon>
+    <rect x="214" y="14" width="72" height="72" fill="#00f0f0"></rect>
+    <rect x="300" y="0" width="100" height="100" fill="#00a3a3"></rect>
+    <polygon points="300,0 400,0 386,14 314,14" fill="#7df9f9"></polygon>
+    <polygon points="300,0 314,14 314,86 300,100" fill="#7df9f9"></polygon>
+    <rect x="314" y="14" width="72" height="72" fill="#00f0f0"></rect>
+</svg>

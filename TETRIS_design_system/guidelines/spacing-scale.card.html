@@ -1,0 +1,11 @@
+<!-- @dsCard group="Spacing" viewport="700x170" name="The Cell Grid" subtitle="Everything snaps to an 8px block (one cell)" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css"></head>
+<body style="margin:0;background:var(--bg-page);padding:24px;font-family:var(--font-mono)">
+<div style="display:flex;align-items:flex-end;gap:14px" id="row"></div>
+<script>
+const steps=[['--space-2','8'],['--space-4','16'],['--space-5','24'],['--space-6','32'],['--space-7','48'],['--space-8','64'],['--space-9','96']];
+document.getElementById('row').innerHTML=steps.map(([t,n])=>{
+  return `<div style="text-align:center"><div style="width:var(${t});height:var(${t});background:var(--piece-i);box-shadow:var(--bevel-block)"></div><div style="margin-top:8px;color:var(--text-muted);font-size:10px">${n}px</div></div>`;
+}).join('');
+</script>
+</body></html>

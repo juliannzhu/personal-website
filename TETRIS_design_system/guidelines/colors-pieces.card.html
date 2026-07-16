@@ -1,0 +1,23 @@
+<!-- @dsCard group="Colors" viewport="700x180" name="Tetromino Palette" subtitle="The 7 signature piece colors — the heart of the brand" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css"></head>
+<body style="margin:0;background:var(--bg-page);background-image:var(--grid-bg);padding:20px;font-family:var(--font-mono)">
+<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px">
+  <!-- each swatch: beveled block -->
+  <div data-c="i" data-n="I"></div>
+  <div data-c="o" data-n="O"></div>
+  <div data-c="t" data-n="T"></div>
+  <div data-c="s" data-n="S"></div>
+  <div data-c="z" data-n="Z"></div>
+  <div data-c="j" data-n="J"></div>
+  <div data-c="l" data-n="L"></div>
+</div>
+<script>
+document.querySelectorAll('[data-c]').forEach(el=>{
+  const c=el.dataset.c, n=el.dataset.n;
+  const v=getComputedStyle(document.documentElement).getPropertyValue('--piece-'+c).trim();
+  el.innerHTML=`<div style="height:64px;background:var(--piece-${c});box-shadow:var(--bevel-block)"></div>
+    <div style="margin-top:8px;color:var(--text-strong);font-size:13px;font-weight:700">${n}-piece</div>
+    <div style="color:var(--text-faint);font-size:10px;text-transform:uppercase">${v}</div>`;
+});
+</script>
+</body></html>

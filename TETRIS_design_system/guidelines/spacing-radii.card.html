@@ -1,0 +1,9 @@
+<!-- @dsCard group="Spacing" viewport="700x150" name="Radii & Borders" subtitle="Sharp by default — blocks have crisp corners" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css"></head>
+<body style="margin:0;background:var(--bg-page);padding:24px;font-family:var(--font-mono)">
+<div style="display:flex;gap:24px;align-items:center" id="row"></div>
+<script>
+const r=[['--radius-0','0 · default'],['--radius-1','2'],['--radius-2','4 · inputs'],['--radius-pill','pill · avatars']];
+document.getElementById('row').innerHTML=r.map(([t,l])=>`<div style="text-align:center"><div style="width:64px;height:64px;background:var(--surface-card);border:2px solid var(--piece-i);border-radius:var(${t})"></div><div style="margin-top:8px;color:var(--text-muted);font-size:10px">${l}</div></div>`).join('');
+</script>
+</body></html>
