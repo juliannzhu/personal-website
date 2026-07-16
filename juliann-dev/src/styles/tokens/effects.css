@@ -1,0 +1,52 @@
+:root {
+  --shadow-block: 0 4px 0 rgba(0, 0, 0, 0.45);
+  --shadow-block-lg: 0 6px 0 rgba(0, 0, 0, 0.5);
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-inset: inset 0 0 0 var(--border, 2px) rgba(255,255,255,0.04);
+
+  --bevel-light: inset 2px 2px 0 rgba(255, 255, 255, 0.35);
+  --bevel-dark:  inset -2px -2px 0 rgba(0, 0, 0, 0.35);
+  --bevel-block: inset 2px 2px 0 rgba(255,255,255,0.35), inset -2px -2px 0 rgba(0,0,0,0.35);
+
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --ease-out: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --dur-fast: 90ms;
+  --dur: 160ms;
+  --dur-slow: 320ms;
+
+  --grid-cell: 32px;
+  --grid-bg:
+    linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / var(--grid-cell) var(--grid-cell),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / var(--grid-cell) var(--grid-cell);
+
+  --scanlines: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.18) 3px,
+    rgba(0, 0, 0, 0.18) 3px
+  );
+}
+
+@keyframes ds-drop {
+  0%   { transform: translateY(-120%); opacity: 0; }
+  70%  { transform: translateY(0); opacity: 1; }
+  85%  { transform: translateY(-6%); }
+  100% { transform: translateY(0); }
+}
+@keyframes ds-line-clear {
+  0%   { background-color: var(--text-strong); filter: brightness(2.4); }
+  100% { background-color: transparent; filter: brightness(1); }
+}
+@keyframes ds-blink {
+  0%, 49%  { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes ds-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes ds-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}

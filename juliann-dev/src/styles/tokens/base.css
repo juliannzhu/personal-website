@@ -1,0 +1,42 @@
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background-color: var(--bg-page);
+  background-image: var(--grid-bg);
+  color: var(--text-body);
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.ds-pixel {
+  font-family: var(--font-pixel);
+  letter-spacing: var(--ls-pixel);
+  line-height: var(--lh-pixel);
+  color: var(--text-strong);
+  text-transform: uppercase;
+}
+
+.ds-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--mono-xs);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.ds-well {
+  background-color: var(--bg-well);
+  background-image: var(--grid-bg);
+  border: var(--border) solid var(--border-strong);
+}
+
+::selection {
+  background: var(--piece-i);
+  color: var(--text-on-piece);
+}

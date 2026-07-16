@@ -1,0 +1,35 @@
+:root {
+  --cell: 8px;
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  --radius-0: 0px;
+  --radius-1: 2px;
+  --radius-2: 4px;
+  --radius-pill: 999px;
+
+  --border-thin: 1px;
+  --border: 2px;
+  --border-thick: 3px;
+  --bevel: 3px;
+
+  --maxw-prose: 680px;
+  --maxw-content: 1080px;
+  --maxw-wide: 1280px;
+  --nav-h: 64px;
+
+  --z-base: 0;
+  --z-raised: 10;
+  --z-nav: 100;
+  --z-overlay: 1000;
+  --z-toast: 1100;
+}

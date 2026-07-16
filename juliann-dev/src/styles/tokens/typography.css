@@ -1,0 +1,38 @@
+:root {
+  --font-pixel: 'Press Start 2P', 'Courier New', monospace;
+  --font-body:  'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:  'JetBrains Mono', 'SFMono-Regular', monospace;
+
+  --pixel-xl: 48px;
+  --pixel-lg: 32px;
+  --pixel-md: 22px;
+  --pixel-sm: 14px;
+  --pixel-xs: 10px;
+
+  --text-3xl: 40px;
+  --text-2xl: 30px;
+  --text-xl:  22px;
+  --text-lg:  18px;
+  --text-md:  16px;
+  --text-sm:  14px;
+  --text-xs:  12px;
+
+  --mono-md: 14px;
+  --mono-sm: 12px;
+  --mono-xs: 11px;
+
+  --w-regular: 400;
+  --w-medium:  500;
+  --w-semibold: 600;
+  --w-bold:    700;
+  --w-extrabold: 800;
+
+  --lh-pixel: 1.5;
+  --lh-tight: 1.15;
+  --lh-snug:  1.35;
+  --lh-body:  1.6;
+
+  --ls-pixel: 0.02em;
+  --ls-label: 0.18em;
+  --ls-tight: -0.01em;
+}
