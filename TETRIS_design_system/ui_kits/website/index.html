@@ -1,0 +1,171 @@
+<!-- @dsCard group="Website" viewport="1080x760" name="juliann.dev — full site" subtitle="Interactive Tetris-themed personal site: hero, about, work, blog, now, contact" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JULIANN · CS</title>
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  html, body { margin: 0; }
+  body { background: var(--bg-page); background-image: var(--grid-bg); color: var(--text-body); font-family: var(--font-body); }
+  /* CRT scanline overlay over everything */
+  body::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+    background-image: var(--scanlines); background-size: 100% 4px; opacity: 0.5; mix-blend-mode: multiply;
+  }
+  /* subtle screen vignette */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+    background: radial-gradient(120% 120% at 50% 40%, transparent 55%, rgba(0,0,0,0.45) 100%);
+  }
+  @media (min-width: 721px) {
+    .tj-main { padding-right: 300px; }
+  }
+  @media (max-width: 720px) {
+    nav { display: none !important; }
+  }
+  @keyframes tj-page-fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(80px) rotate(1.5deg); opacity: 0; }
+  }
+  @keyframes tj-page-drop {
+    0% { transform: translateY(-70px); opacity: 0; }
+    65% { opacity: 1; }
+    80% { transform: translateY(8px); }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  .tj-falling { animation: tj-page-fall 360ms cubic-bezier(0.5, 0, 0.75, 0) forwards; }
+  .tj-dropping { animation: tj-page-drop 460ms var(--ease-snap) both; }
+  @keyframes tj-elem-fall {
+    0% { transform: translateY(0) scaleY(1); opacity: 1; }
+    100% { transform: translateY(62px) scaleY(0.94); opacity: 0; }
+  }
+  @keyframes tj-elem-drop {
+    0% { transform: translateY(-60px) scaleY(1.06); opacity: 0; }
+    55% { opacity: 1; }
+    78% { transform: translateY(7px) scaleY(0.96); }
+    100% { transform: translateY(0) scaleY(1); opacity: 1; }
+  }
+</style>
+</head>
+<body class="ds-body">
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+
+<script type="text/babel" src="Nav.jsx"></script>
+<script type="text/babel" src="Hero.jsx"></script>
+<script type="text/babel" src="About.jsx"></script>
+<script type="text/babel" src="Projects.jsx"></script>
+<script type="text/babel" src="Contact.jsx"></script>
+<script type="text/babel" src="Now.jsx"></script>
+<script type="text/babel" src="Tetris.jsx"></script>
+<script type="text/babel" src="Loader.jsx"></script>
+
+<script type="text/babel">
+function App() {
+  const [screen, setScreen] = React.useState('home');
+  const [postId, setPostId] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const [gameOpen, setGameOpen] = React.useState(false);
+  const [transId, setTransId] = React.useState(0);
+  const mainRef = React.useRef(null);
+  const firstLoad = React.useRef(true);
+  const navTimer = React.useRef(null);
+
+  const STEP = 60, OUT_MS = 220, IN_MS = 340, CAP = 680;
+
+  // Collect the page's content blocks to stagger individually. Multi-item
+  // grid/flex rows are expanded so each card/chip falls as its own block.
+  const collectRows = () => {
+    const root = mainRef.current;
+    if (!root) return [];
+    let node = root.querySelector('section') || root.firstElementChild;
+    if (!node) return [];
+    while (node.children.length === 1 && node.children[0].children.length) node = node.children[0];
+    const out = [];
+    [...node.children].forEach((child) => {
+      const cs = getComputedStyle(child);
+      const isGroup = child.children.length > 1 && (cs.display === 'grid' || cs.display === 'flex');
+      if (isGroup) out.push(...child.children);
+      else out.push(child);
+    });
+    return out;
+  };
+
+  // Per-block stagger gap, capped so total time stays reasonable on busy pages.
+  const stepFor = (n) => (n > 1 ? Math.min(STEP, CAP / (n - 1)) : STEP);
+
+  const go = (id, post = null) => {
+    if (id === screen && post === postId) return;
+    clearTimeout(navTimer.current);
+    const rows = collectRows();
+    const n = rows.length;
+    const step = stepFor(n);
+    rows.forEach((el, i) => {
+      const order = n - 1 - i; // bottom-most falls first
+      el.style.animation = `tj-elem-fall ${OUT_MS}ms cubic-bezier(0.5, 0, 0.75, 0) ${Math.round(order * step)}ms forwards`;
+    });
+    const outTotal = OUT_MS + Math.max(0, n - 1) * step + 20;
+    navTimer.current = setTimeout(() => {
+      setPostId(post);
+      setScreen(id);
+      window.scrollTo({ top: 0 });
+      setTransId((t) => t + 1);
+    }, outTotal);
+  };
+
+  const nav = (id) => go(id);
+
+  // After the new page mounts, drop its blocks in one-by-one (bottom first),
+  // then CLEAR the inline animation so blocks rest at their natural visible
+  // state — never pinned at the hidden start frame if React re-renders.
+  React.useLayoutEffect(() => {
+    if (firstLoad.current) { firstLoad.current = false; return; }
+    const rows = collectRows();
+    const n = rows.length;
+    const step = stepFor(n);
+    rows.forEach((el, i) => {
+      const order = n - 1 - i; // bottom-most drops in first
+      el.style.animation = `tj-elem-drop ${IN_MS}ms var(--ease-snap) ${Math.round(order * step)}ms both`;
+    });
+    const total = IN_MS + Math.max(0, n - 1) * step + 80;
+    const clearT = setTimeout(() => { rows.forEach((el) => { el.style.animation = ''; }); }, total);
+    return () => clearTimeout(clearT);
+  }, [transId]);
+
+  let view;
+  if (screen === 'home') view = <window.Hero onNav={nav} />;
+  else if (screen === 'about') view = <window.About />;
+  else if (screen === 'projects') view = <window.Projects onNav={nav} />;
+  else if (screen === 'now') view = <window.Now />;
+  else if (screen === 'contact') view = <window.Contact />;
+
+  const isHome = screen === 'home';
+  return (
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: isHome ? 'hidden' : 'auto' }}>
+      <window.FallingField />
+      <window.TopNav current={screen} onNav={nav} />
+      {isHome && <window.HoldBox onPlay={() => setGameOpen(true)} />}
+      <div style={{ position: 'relative', zIndex: 1, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+        <main ref={mainRef} className="tj-main" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', paddingLeft: isHome ? 248 : undefined }}>{view}</main>
+        <window.Footer onNav={nav} />
+      </div>
+      {gameOpen && <window.TetrisGame onClose={() => setGameOpen(false)} />}
+      {loading && <window.Loader onDone={() => setLoading(false)} />}
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

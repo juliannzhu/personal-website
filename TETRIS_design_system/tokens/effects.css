@@ -1,0 +1,62 @@
+/* ===========================================================================
+   EFFECTS — TETRIS.JULIANN
+   Block bevels, neon glows, CRT scanlines, shadows. These give the arcade feel.
+   ========================================================================== */
+:root {
+  /* --- Block shadows (drop the piece onto the board) --- */
+  --shadow-block: 0 4px 0 rgba(0, 0, 0, 0.45);          /* hard offset, no blur */
+  --shadow-block-lg: 0 6px 0 rgba(0, 0, 0, 0.5);
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.5);          /* card lift            */
+  --shadow-inset: inset 0 0 0 var(--border, 2px) rgba(255,255,255,0.04);
+
+  /* --- Bevel pair: apply as box-shadow to fake a 3D block face --- */
+  --bevel-light: inset 2px 2px 0 rgba(255, 255, 255, 0.35); /* @kind shadow */
+  --bevel-dark:  inset -2px -2px 0 rgba(0, 0, 0, 0.35); /* @kind shadow */
+  --bevel-block: inset 2px 2px 0 rgba(255,255,255,0.35), inset -2px -2px 0 rgba(0,0,0,0.35); /* @kind shadow */
+
+  /* --- Transitions (snappy, like a piece locking) --- */
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.3, 1.2);   /* @kind other */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.3, 1);      /* @kind other */
+  --dur-fast: 90ms;  /* @kind other */
+  --dur: 160ms;      /* @kind other */
+  --dur-slow: 320ms; /* @kind other */
+
+  /* --- The playfield grid background (use as background-image) --- */
+  --grid-cell: 32px; /* @kind spacing */
+  --grid-bg:
+    linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / var(--grid-cell) var(--grid-cell),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / var(--grid-cell) var(--grid-cell);
+
+  /* --- CRT scanline overlay (use as background-image on a ::after layer) --- */
+  --scanlines: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0px,
+      rgba(0, 0, 0, 0) 2px,
+      rgba(0, 0, 0, 0.18) 3px,
+      rgba(0, 0, 0, 0.18) 3px
+    ); /* @kind other */
+}
+
+/* --- Reusable keyframes shipped with the system --- */
+@keyframes ds-drop {
+  0%   { transform: translateY(-120%); opacity: 0; }
+  70%  { transform: translateY(0); opacity: 1; }
+  85%  { transform: translateY(-6%); }
+  100% { transform: translateY(0); }
+}
+@keyframes ds-line-clear {
+  0%   { background-color: var(--text-strong); filter: brightness(2.4); }
+  100% { background-color: transparent; filter: brightness(1); }
+}
+@keyframes ds-blink {
+  0%, 49%  { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes ds-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes ds-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}

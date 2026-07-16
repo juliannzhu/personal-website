@@ -1,0 +1,45 @@
+/* ===========================================================================
+   SPACING & SIZING — TETRIS.JULIANN
+   Everything is built on an 8px "cell" — the size of one tetromino block.
+   The grid is the brand; spacing snaps to it.
+   ========================================================================== */
+:root {
+  /* --- The cell (one block) and its multiples --- */
+  --cell: 8px;          /* 1 block  */
+  --space-0: 0;
+  --space-1: 4px;       /* half-cell */
+  --space-2: 8px;       /* 1 cell    */
+  --space-3: 12px;
+  --space-4: 16px;      /* 2 cells   */
+  --space-5: 24px;      /* 3 cells   */
+  --space-6: 32px;      /* 4 cells   */
+  --space-7: 48px;      /* 6 cells   */
+  --space-8: 64px;      /* 8 cells   */
+  --space-9: 96px;      /* 12 cells  */
+  --space-10: 128px;    /* 16 cells  */
+
+  /* --- Radii — mostly SHARP. Blocks have crisp corners. --- */
+  --radius-0: 0px;      /* default — true to the brand   */
+  --radius-1: 2px;      /* the faintest softening        */
+  --radius-2: 4px;      /* chips, inputs                 */
+  --radius-pill: 999px; /* rare — avatars, status dots   */
+
+  /* --- Border widths --- */
+  --border-thin: 1px;
+  --border: 2px;        /* default block outline         */
+  --border-thick: 3px;
+  --bevel: 3px;         /* the 3D block edge inset        */
+
+  /* --- Layout --- */
+  --maxw-prose: 680px;
+  --maxw-content: 1080px;
+  --maxw-wide: 1280px;
+  --nav-h: 64px;
+
+  /* --- Z-index --- */
+  --z-base: 0;       /* @kind other */
+  --z-raised: 10;    /* @kind other */
+  --z-nav: 100;      /* @kind other */
+  --z-overlay: 1000; /* @kind other */
+  --z-toast: 1100;   /* @kind other */
+}
