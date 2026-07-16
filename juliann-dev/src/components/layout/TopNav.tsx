@@ -19,9 +19,12 @@ const HUD_TERMS = '02'
 
 function Logo({ onClick }: { onClick: () => void }) {
   return (
-    <button onClick={onClick} style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }}>
+    <button onClick={onClick} style={{ display: 'flex', alignItems: 'flex-end', gap: 12, background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }}>
       <Tetromino piece="t" size={9} />
-      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 14, color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>JULIANN</span>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-start' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, visibility: 'hidden' }}>&nbsp;</span>
+        <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 14, color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>JULIANN</span>
+      </div>
     </button>
   )
 }
