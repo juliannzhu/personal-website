@@ -1,0 +1,10 @@
+.claude/
+CLAUDE.md
+Claude*
+.vscode/
+node_modules/
+dist/
+*.zip
+.DS_Store
+**/node_modules/
+**/dist/
