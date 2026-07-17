@@ -31,7 +31,7 @@ export function Hero({ onNav }: { onNav: (id: Screen) => void }) {
   ensureCSS()
   const name = 'JULIANN'
   return (
-    <section style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px' }}>
+    <section className="tj-hero-section" style={{ position: 'relative', minHeight: 'calc(100vh - 58px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px' }}>
       <div style={{ position: 'relative', width: '100%', maxWidth: 680, margin: '0 auto', textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
           <Badge piece="s" dot>Now playing · CS @ UWATERLOO</Badge>
