@@ -46,7 +46,7 @@ export function Hero({ onNav }: { onNav: (id: Screen) => void }) {
           Figuring things out one block at a time.
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 36 }}>
-          <button className="tj-pressstart" onClick={() => onNav('projects')}>
+          <button className="tj-pressstart" onClick={() => onNav('about')}>
             <span style={{ color: 'var(--piece-o)' }}>▶</span>
             <span className="tj-ps-label">Press Start</span>
           </button>
