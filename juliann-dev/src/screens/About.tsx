@@ -17,12 +17,12 @@ const SKILLS = [
 ] as const
 
 const TIMELINE = [
-  { piece: 'i' as const, when: 'Sep 2025 – Present', what: 'B.CS Honours + Co-op', where: 'University of Waterloo · GPA 3.93 · President Scholarship' },
+  { piece: 'i' as const, when: 'Sep 2025 – Present', what: 'B.CS Honours + Co-op', where: 'University of Waterloo · President Scholarship' },
   { piece: 'l' as const, when: 'May 2026 – Present',  what: 'Network Engineering Intern', where: 'ORBCOMM / Skywave: satellite system dashboards, SQL, Grafana' },
-  { piece: 's' as const, when: 'Jan 2026 – Present',  what: 'Undergraduate Research Mentee', where: 'UW Usable Security & Privacy Research: co-authoring SOUPS paper on LLM security advice' },
+  { piece: 's' as const, when: 'Jan 2026 – Present',  what: 'Undergraduate Research Mentee', where: 'UW Security & Privacy Research: SOUPS paper on LLM advice' },
   { piece: 't' as const, when: 'May 2024',            what: 'Hackathon: Gender Equality Award', where: 'Project Tech Careers: platform for women in CS (UN SDG track)' },
-  { piece: 'j' as const, when: 'Sep 2021 – Jun 2025', what: 'Volleyball Team Captain, NCSSAA Tier 1 Finalist', where: "Merivale HS Volleyball Club: 2x MVP (2021, 2023), 7 regional tournament wins, 4 straight Marauder's Cups" },
-  { piece: 'o' as const, when: 'Sep 2012 – Jun 2025', what: 'RCM Level 10 Piano Certificate', where: 'Royal Conservatory of Music: 13 years of weekly lessons, 6 workshops a year, 10 hrs/week practicing technique and repertoire' },
+  { piece: 'j' as const, when: 'Sep 2021 – Jun 2025', what: 'Volleyball Team Captain, NCSSAA Tier 1 Finalist', where: "Merivale HS Volleyball Club: 2x MVP, 4 straight Marauder's Cups" },
+  { piece: 'o' as const, when: 'Sep 2012 – Jun 2025', what: 'RCM Level 10 Piano Certificate', where: 'Royal Conservatory of Music: 13 years of lessons, 10 hours / week' },
 ]
 
 type PK = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
