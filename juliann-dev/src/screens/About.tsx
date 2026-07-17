@@ -27,16 +27,12 @@ const TIMELINE = [
 
 type PK = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 const MINI_BOARD: (PK | 0)[][] = [
-  [0,   0,   0,   0,   0,   0  ],
-  [0,   0,   0,   0,   0,   0  ],
-  [0,   0,  't', 't',  0,   0  ],
-  [0,   0,   0,  't',  0,   0  ],
-  [0,  'j', 'j', 's', 's',  0  ],
-  ['l', 'j',  0,  's',  0,   0  ],
-  ['l', 'l', 'i', 'i', 'i', 'i'],
-  ['z', 'z', 'o', 'o', 't', 't'],
-  [0,  'z', 'o', 'o', 't',  0  ],
-  ['j', 'j', 'j', 'l', 'l', 'l'],
+  [0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ],
+  [0,   0,   0,  'z',  0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ],
+  [0,   0,  'z', 'z',  0,   0,   0,  's',  0,  's',  0,   0,  'z',  0 ],
+  [0,   0,  'z', 'l', 'j', 'j', 'j', 's', 's', 's', 's',  'z', 'z',  0 ],
+  [0,  'l', 'l', 'l', 'o', 'o', 'j', 't', 's', 'j', 's',  'z', 'o', 'o'],
+  ['i','i', 'i', 'i', 'o', 'o', 't', 't', 't', 'j', 'j', 'j', 'o', 'o'],
 ]
 
 const JSTRIS_PBS = [
@@ -189,9 +185,12 @@ export function About() {
             </div>
           </Card>
 
-          {/* Bottom-right: Jstris profile card, height synced to Achievements Unlocked */}
+          {/* Bottom-right: Jstris profile card, height synced to Achievements Unlocked.
+              Subtract 28px: this column starts ~28px lower than the achievements column
+              (Skill Meter card is taller than the bio header above it), so matching
+              raw heights would overshoot the achievements block's bottom edge. */}
           <div style={{
-            marginTop: 20, minHeight: achHeight,
+            marginTop: 20, minHeight: achHeight ? achHeight - 28 : achHeight,
             border: '2px solid var(--border-hairline)', borderRadius: 'var(--radius-1)',
             background: 'var(--bg-well)', overflow: 'hidden',
             display: 'flex', flexDirection: 'column',
@@ -201,8 +200,12 @@ export function About() {
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)' }}>jstris.jezevec10.eu</span>
             </div>
 
-            <div style={{ padding: '14px 16px', display: 'flex', gap: 14, alignItems: 'center', borderBottom: '1px solid var(--border-hairline)' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 6px)', gridTemplateRows: 'repeat(10, 6px)', gap: 1, flexShrink: 0 }}>
+            <div style={{ padding: '14px 16px', display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-hairline)' }}>
+              <div>
+                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color: 'var(--text-strong)' }}>JAMBO722</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', marginTop: 5 }}>40L PB 45.480 · 103 BLOCKS</div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(14, 6px)', gridTemplateRows: 'repeat(6, 6px)', gap: 1, flexShrink: 0, transform: 'translate(-8px, -8px)' }}>
                 {MINI_BOARD.flat().map((cell, i) => (
                   <div key={i} style={{
                     width: 6, height: 6,
@@ -210,10 +213,6 @@ export function About() {
                     boxShadow: cell !== 0 ? 'inset 1px 1px 0 rgba(255,255,255,0.32), inset -1px -1px 0 rgba(0,0,0,0.38)' : 'none',
                   }} />
                 ))}
-              </div>
-              <div>
-                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color: 'var(--text-strong)' }}>JAMBO722</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', marginTop: 5 }}>40L PB 45.480 · 103 BLOCKS</div>
               </div>
             </div>
 
