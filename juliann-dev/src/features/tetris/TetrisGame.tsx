@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useState, useEffect, useCallback, forwardRef } from 'react'
 import { Button } from '../../components/ds/Button'
 import { Tetromino } from '../../components/ds/Tetromino'
 import { SFX } from '../../audio/soundEngine'
@@ -811,9 +811,11 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
 }
 
 // ---- HoldBox (left rail, home only) -------------------------------------------------------
-export function HoldBox({ onPlay }: { onPlay: () => void }) {
+// Forwards its ref to the root element so the scroll-driven fade/drift in App.tsx can
+// animate it directly, rather than fighting a transformed wrapper's containing-block quirks.
+export const HoldBox = forwardRef<HTMLElement, { onPlay: () => void }>(function HoldBox({ onPlay }, ref) {
   return (
-    <aside style={{ position: 'fixed', top: '50%', left: 22, transform: 'translateY(-50%)', zIndex: 100, display: 'flex', flexDirection: 'column', gap: 12, padding: 16, width: 224, background: 'color-mix(in srgb, var(--ink-1000) 90%, transparent)', backdropFilter: 'blur(8px)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', boxShadow: 'var(--shadow-soft)' }}>
+    <aside ref={ref} className="tj-holdbox" style={{ position: 'fixed', top: '50%', left: 22, transform: 'translateY(-50%)', zIndex: 100, display: 'flex', flexDirection: 'column', gap: 12, padding: 16, width: 224, background: 'color-mix(in srgb, var(--ink-1000) 90%, transparent)', backdropFilter: 'blur(8px)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', boxShadow: 'var(--shadow-soft)' }}>
       <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center', padding: '4px 0 12px', borderBottom: '2px solid var(--border-hairline)' }}>Hold</div>
       <button onClick={onPlay} title="Play Tetris"
         onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 22px color-mix(in srgb, var(--piece-t) 60%, transparent)' }}
@@ -825,4 +827,4 @@ export function HoldBox({ onPlay }: { onPlay: () => void }) {
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', textAlign: 'center', lineHeight: 1.6 }}>20-line sprint, beat the fastest time</div>
     </aside>
   )
-}
+})

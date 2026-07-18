@@ -256,7 +256,7 @@ export function FixedFooter({ onNav }: { onNav: (id: Screen) => void }) {
           © 2026 JULIANN · BUILT ONE BLOCK AT A TIME
         </span>
         <button
-          onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); onNav('home') }}
+          onClick={() => onNav('home')}
           onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-strong)' }}
           onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-faint)' }}
           style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', background: 'none', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.08em', transition: 'color 140ms' }}>

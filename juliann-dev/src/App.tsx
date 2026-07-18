@@ -11,23 +11,11 @@ import { SideQuests } from './screens/SideQuests'
 import { TetrisGame, HoldBox } from './features/tetris/TetrisGame'
 import { Loader } from './components/Loader'
 
-type StackId = Exclude<Screen, 'home'>
-const STACK_IDS: StackId[] = ['about', 'projects', 'sidequests', 'now', 'contact']
+const STACK_IDS: Screen[] = ['home', 'about', 'projects', 'sidequests', 'now', 'contact']
 const SCROLL_MASK = 'linear-gradient(to bottom, transparent 0, black 56px, black calc(100% - 56px), transparent 100%)'
+const HOLDBOX_FADE_DISTANCE = 420
 
 const CSS = `
-/* ---- page transitions ---- */
-@keyframes tj-elem-fall {
-  0%   { transform: translateY(0)    scaleY(1);    opacity: 1; }
-  100% { transform: translateY(62px) scaleY(0.94); opacity: 0; }
-}
-@keyframes tj-elem-drop {
-  0%   { transform: translateY(-60px) scaleY(1.06); opacity: 0; }
-  55%  { opacity: 1; }
-  78%  { transform: translateY(7px)   scaleY(0.96); }
-  100% { transform: translateY(0)     scaleY(1);    opacity: 1; }
-}
-
 /* ---- CRT effects ---- */
 body::after {
   content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
@@ -42,6 +30,7 @@ body::before {
 @media (min-width: 721px) {
   .tj-main { padding-right: 300px; }
   .tj-mobile-nav { display: none !important; }
+  .tj-hero-wrap { padding-left: 248px; }
 }
 
 /* ---- mobile ---- */
@@ -78,25 +67,9 @@ function ensureCSS() {
   }
 }
 
-const STEP = 60, OUT_MS = 220, IN_MS = 340, CAP = 680
-
-function collectRows(root: HTMLElement): Element[] {
-  let node: Element | null = root.querySelector('section') || root.firstElementChild
-  if (!node) return []
-  while (node.children.length === 1 && node.children[0].children.length) node = node.children[0]
-  const out: Element[] = []
-  Array.from(node.children).forEach((child) => {
-    const cs = getComputedStyle(child)
-    const isGroup = child.children.length > 1 && (cs.display === 'grid' || cs.display === 'flex')
-    if (isGroup) out.push(...Array.from(child.children))
-    else out.push(child)
-  })
-  return out
-}
-
-const stepFor = (n: number) => n > 1 ? Math.min(STEP, CAP / (n - 1)) : STEP
-
-const STACK_SCREENS: Record<StackId, React.ReactNode> = {
+type StackScreenId = Exclude<Screen, 'home'>
+const REST_IDS: StackScreenId[] = ['about', 'projects', 'sidequests', 'now', 'contact']
+const STACK_SCREENS: Record<StackScreenId, React.ReactNode> = {
   about: <About />,
   projects: <Projects />,
   sidequests: <SideQuests />,
@@ -106,117 +79,85 @@ const STACK_SCREENS: Record<StackId, React.ReactNode> = {
 
 export default function App() {
   ensureCSS()
-  const [screen, setScreen] = useState<Screen>('home')
-  const [activeSection, setActiveSection] = useState<StackId>('about')
+  const [activeSection, setActiveSection] = useState<Screen>('home')
   const [loading, setLoading] = useState(true)
   const [gameOpen, setGameOpen] = useState(false)
-  const [transId, setTransId] = useState(0)
-  const mainRef = useRef<HTMLElement>(null)
   const scrollPaneRef = useRef<HTMLDivElement>(null)
-  const sectionRefs = useRef<Partial<Record<StackId, HTMLDivElement | null>>>({})
-  const firstLoad = useRef(true)
-  const navTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-  const pendingTarget = useRef<StackId | null>(null)
+  const sectionRefs = useRef<Partial<Record<Screen, HTMLDivElement | null>>>({})
+  const holdBoxRef = useRef<HTMLElement>(null)
 
+  // Every screen (including home) lives in one continuous scroll stack — navigating
+  // anywhere, including to/from the hero, is always just a smooth scroll to that section.
   const go = useCallback((id: Screen) => {
-    // Already inside the continuous stack: just smooth-scroll to the section, no remount.
-    if (screen !== 'home' && id !== 'home') {
-      if (id === activeSection) return
-      sectionRefs.current[id as StackId]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      setActiveSection(id as StackId)
-      return
-    }
-    if (id === screen) return
-    clearTimeout(navTimer.current)
-    const outRoot = screen !== 'home' ? sectionRefs.current[activeSection] ?? mainRef.current : mainRef.current
-    const rows = outRoot ? collectRows(outRoot) : []
-    const n = rows.length
-    const step = stepFor(n)
-    rows.forEach((el, i) => {
-      const order = n - 1 - i
-      ;(el as HTMLElement).style.animation = `tj-elem-fall ${OUT_MS}ms cubic-bezier(0.5,0,0.75,0) ${Math.round(order * step)}ms forwards`
-    })
-    const outTotal = OUT_MS + Math.max(0, n - 1) * step + 20
-    if (id !== 'home') pendingTarget.current = id as StackId
-    navTimer.current = setTimeout(() => {
-      setScreen(id)
-      if (id !== 'home') setActiveSection(id as StackId)
-      else if (scrollPaneRef.current) scrollPaneRef.current.scrollTop = 0
-      setTransId(t => t + 1)
-    }, outTotal)
-  }, [screen, activeSection])
-
-  useLayoutEffect(() => {
-    if (firstLoad.current) { firstLoad.current = false; return }
-    let root: HTMLElement | null = mainRef.current
-    if (pendingTarget.current) {
-      const el = sectionRefs.current[pendingTarget.current]
-      if (el) { el.scrollIntoView({ block: 'start' }); root = el }
-      pendingTarget.current = null
-    }
-    const rows = root ? collectRows(root) : []
-    const n = rows.length
-    const step = stepFor(n)
-    rows.forEach((el, i) => {
-      const order = n - 1 - i
-      ;(el as HTMLElement).style.animation = `tj-elem-drop ${IN_MS}ms var(--ease-snap) ${Math.round(order * step)}ms both`
-    })
-    const total = IN_MS + Math.max(0, n - 1) * step + 80
-    const clearT = setTimeout(() => { rows.forEach(el => { (el as HTMLElement).style.animation = '' }) }, total)
-    return () => clearTimeout(clearT)
-  }, [transId])
+    if (id === activeSection) return
+    sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    setActiveSection(id)
+  }, [activeSection])
 
   // Scroll-spy: keep nav highlight in sync while the user free-scrolls the stack.
   useLayoutEffect(() => {
-    if (screen === 'home') return
     const root = scrollPaneRef.current
     if (!root) return
-    const ratios = new Map<StackId, number>()
+    const ratios = new Map<Screen, number>()
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        const id = (entry.target as HTMLElement).dataset.section as StackId
+        const id = (entry.target as HTMLElement).dataset.section as Screen
         ratios.set(id, entry.intersectionRatio)
       })
-      let best: StackId | null = null
+      let best: Screen | null = null
       let bestRatio = 0
       ratios.forEach((ratio, id) => { if (ratio > bestRatio) { bestRatio = ratio; best = id } })
       if (best) setActiveSection(best)
     }, { root, threshold: [0.15, 0.3, 0.45, 0.6, 0.75] })
     STACK_IDS.forEach((id) => { const el = sectionRefs.current[id]; if (el) io.observe(el) })
     return () => io.disconnect()
-  }, [screen])
+  }, [])
 
-  const isHome = screen === 'home'
+  // Drive the HoldBox's drift/fade directly off scroll position (not React state) so it
+  // animates smoothly on every scroll tick instead of snapping at a visibility threshold.
+  useLayoutEffect(() => {
+    const root = scrollPaneRef.current
+    const el = holdBoxRef.current
+    if (!root || !el) return
+    let raf = 0
+    const update = () => {
+      const p = Math.min(1, root.scrollTop / HOLDBOX_FADE_DISTANCE)
+      el.style.opacity = String(1 - p)
+      el.style.transform = `translate(${-80 * p}px, calc(-50% - ${60 * p}px))`
+      el.style.pointerEvents = p >= 1 ? 'none' : 'auto'
+    }
+    update()
+    const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update) }
+    root.addEventListener('scroll', onScroll, { passive: true })
+    return () => { root.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf) }
+  }, [])
 
   // Footer height: 2px border + 6px rainbow + ~78px copyright row (28px padding each side) = ~86px
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <FallingField />
-      <TopNav current={isHome ? 'home' : activeSection} onNav={go} onPlay={() => setGameOpen(true)} />
-      <aside className="tj-holdbox" style={{ display: isHome ? undefined : 'none' }}>
-        {isHome && <HoldBox onPlay={() => setGameOpen(true)} />}
-      </aside>
+      <TopNav current={activeSection} onNav={go} onPlay={() => setGameOpen(true)} />
+      <HoldBox ref={holdBoxRef} onPlay={() => setGameOpen(true)} />
       <div style={{ position: 'relative', zIndex: 1, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <div
           ref={scrollPaneRef}
           className="tj-scrollpane"
           style={{
             flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column',
-            overflow: isHome ? 'hidden' : 'auto', paddingBottom: 86,
-            WebkitMaskImage: isHome ? undefined : SCROLL_MASK,
-            maskImage: isHome ? undefined : SCROLL_MASK,
+            overflow: 'auto', paddingBottom: 86,
+            WebkitMaskImage: SCROLL_MASK,
+            maskImage: SCROLL_MASK,
           }}
         >
-          <main ref={mainRef} className="tj-main" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', paddingLeft: isHome ? 248 : undefined }}>
-            {isHome ? (
-              <Hero onNav={go} />
-            ) : (
-              STACK_IDS.map((id) => (
-                <div key={id} data-section={id} ref={(el) => { sectionRefs.current[id] = el }}>
-                  <RevealOnScroll>{STACK_SCREENS[id]}</RevealOnScroll>
-                </div>
-              ))
-            )}
+          <main className="tj-main" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+            <div className="tj-hero-wrap" data-section="home" ref={(el) => { sectionRefs.current.home = el }}>
+              <RevealOnScroll><Hero onNav={go} /></RevealOnScroll>
+            </div>
+            {REST_IDS.map((id) => (
+              <div key={id} data-section={id} ref={(el) => { sectionRefs.current[id] = el }}>
+                <RevealOnScroll>{STACK_SCREENS[id]}</RevealOnScroll>
+              </div>
+            ))}
           </main>
         </div>
       </div>

@@ -17,7 +17,7 @@ const SKILLS = [
 ] as const
 
 const TIMELINE = [
-  { piece: 'i' as const, when: 'Sep 2025 – Present', what: 'B.CS Honours + Co-op', where: 'University of Waterloo · President Scholarship' },
+  { piece: 'i' as const, when: 'Sep 2025 – Present', what: 'B.CS Honours + Co-op', where: 'University of Waterloo · Computer Science · President Scholarship' },
   { piece: 'l' as const, when: 'May 2026 – Present',  what: 'Network Engineering Intern', where: 'ORBCOMM / Skywave: satellite system dashboards, SQL, Grafana' },
   { piece: 's' as const, when: 'Jan 2026 – Present',  what: 'Undergraduate Research Mentee', where: 'UW Security & Privacy Research: SOUPS paper on LLM advice' },
   { piece: 't' as const, when: 'May 2024',            what: 'Hackathon: Gender Equality Award', where: 'Project Tech Careers: platform for women in CS (UN SDG track)' },
@@ -59,11 +59,11 @@ const ATTRIBUTES = [
   { key: 'cha', label: 'CHA', name: 'Charisma',     desc: 'User Experience & Human Impact: designing tools that make people happy.', value: 8, piece: 'l' as const },
 ]
 
-function SectionTitle({ kicker, children }: { kicker: string; children: string }) {
+function SectionTitle({ kicker, children, size = 26 }: { kicker: string; children: string; size?: number }) {
   return (
     <div style={{ marginBottom: 28 }}>
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>{kicker}</div>
-      <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>{children}</h2>
+      <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: size, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>{children}</h2>
     </div>
   )
 }
@@ -117,7 +117,7 @@ export function About() {
           <div style={{ display: 'flex', gap: 18, alignItems: 'center', marginBottom: 24 }}>
             <Avatar initials="JZ" piece="t" size="xl" />
             <div>
-              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 16, color: 'var(--text-strong)' }}>JULIANN ZHU</div>
+              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 20, color: 'var(--text-strong)' }}>JULIANN ZHU</div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>CS @ UWaterloo · she/her · 📍 Ottawa, ON</div>
             </div>
           </div>
@@ -144,7 +144,7 @@ export function About() {
 
           <div ref={achievementsRef} style={{ marginTop: 40 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 16 }}>
-              <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, color: 'var(--piece-o)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Achievements Unlocked</h3>
+              <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: 'var(--piece-o)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Achievements Unlocked</h3>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)' }}>6 / 6</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -177,7 +177,7 @@ export function About() {
 
         <div>
           <Card accent="i" accentBar>
-            <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: 'var(--text-strong)', margin: '0 0 20px', textTransform: 'uppercase' }}>Skill Meter</h3>
+            <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 14, color: 'var(--text-strong)', margin: '0 0 20px', textTransform: 'uppercase' }}>Skill Meter</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {SKILLS.map((s) => (
                 <ProgressBar key={s.name} value={s.value} piece={s.piece} label={s.name} cells={12} cellHeight={14} />
@@ -200,9 +200,9 @@ export function About() {
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)' }}>jstris.jezevec10.eu</span>
             </div>
 
-            <div style={{ padding: '14px 16px', display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-hairline)' }}>
+            <div style={{ padding: '10px 16px', display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-hairline)' }}>
               <div>
-                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color: 'var(--text-strong)' }}>JAMBO722</div>
+                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 15, color: 'var(--text-strong)' }}>JAMBO722</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', marginTop: 5 }}>40L PB 45.480 · 103 BLOCKS</div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(14, 6px)', gridTemplateRows: 'repeat(6, 6px)', gap: 1, flexShrink: 0, transform: 'translate(-8px, -8px)' }}>
@@ -250,7 +250,7 @@ export function About() {
       </div>
 
       <div style={{ marginTop: 64 }}>
-        <SectionTitle kicker="// Character sheet">Core Attributes</SectionTitle>
+        <SectionTitle kicker="// Player stats" size={20}>How I Stack</SectionTitle>
         <Card accent="t" accentBar>
           <div className="tj-radar-grid" style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: 24, alignItems: 'center' }}>
             <RadarChart points={ATTRIBUTES.map((a) => ({ key: a.key, label: a.label, value: a.value, piece: a.piece }))} />

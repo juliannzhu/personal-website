@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
+import { Icon } from '@iconify/react'
 import { Card } from '../components/ds/Card'
 import { Tag } from '../components/ds/Tag'
 import { Tetromino } from '../components/ds/Tetromino'
-import { RevealOnScroll } from '../components/ds/RevealOnScroll'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 
@@ -188,10 +188,6 @@ const QUESTS: QuestCard[] = [
 const CSS = `
 .tj-quest-card {
   cursor: pointer;
-  transition: transform 180ms var(--ease-snap), box-shadow 180ms;
-}
-.tj-quest-card:hover {
-  transform: translateY(-4px);
 }
 
 /* image container */
@@ -280,6 +276,18 @@ function PhotoColumn({ items, direction }: { items: string[]; direction: 'up' | 
   )
 }
 
+function BackButton({ c, onBack, style }: { c: string; onBack: () => void; style?: React.CSSProperties }) {
+  return (
+    <button onClick={onBack}
+      onMouseEnter={(e) => { e.currentTarget.style.color = c }}
+      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)' }}
+      style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', padding: 0, transition: 'color 140ms', ...style }}>
+      <Icon icon="pixelarticons:arrow-left" style={{ fontSize: 14 }} />
+      Back to Side Quests
+    </button>
+  )
+}
+
 function PhotographyDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }) {
   const c = `var(--piece-${quest.piece})`
   const col1 = PHOTO_ITEMS.filter((_, i) => i % 3 === 0)
@@ -288,12 +296,7 @@ function PhotographyDetail({ quest, onBack }: { quest: QuestCard; onBack: () => 
 
   return (
     <section className="tj-quest-detail" style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 72px' }}>
-      <button onClick={onBack}
-        onMouseEnter={(e) => { e.currentTarget.style.color = c }}
-        onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)' }}
-        style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 32, padding: 0, transition: 'color 140ms' }}>
-        Back to Side Quests
-      </button>
+      <BackButton c={c} onBack={onBack} style={{ marginBottom: 32 }} />
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 28 }}>
         <Tetromino piece={quest.piece} size={18} />
@@ -319,6 +322,8 @@ function PhotographyDetail({ quest, onBack }: { quest: QuestCard; onBack: () => 
           {'// Add your own photos to public/assets/quests/ and update the image paths in SideQuests.tsx'}
         </span>
       </div>
+
+      <BackButton c={c} onBack={onBack} style={{ marginTop: 40 }} />
     </section>
   )
 }
@@ -356,12 +361,7 @@ function QuestDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
   const c = `var(--piece-${quest.piece})`
   return (
     <section className="tj-quest-detail" style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 72px' }}>
-      <button onClick={onBack}
-        onMouseEnter={(e) => { e.currentTarget.style.color = c }}
-        onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)' }}
-        style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 32, padding: 0, transition: 'color 140ms' }}>
-        Back to Side Quests
-      </button>
+      <BackButton c={c} onBack={onBack} style={{ marginBottom: 32 }} />
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 28 }}>
         <Tetromino piece={quest.piece} size={18} />
@@ -387,29 +387,197 @@ function QuestDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
           {'// Add your own photos to public/assets/quests/ to populate this page'}
         </span>
       </div>
+
+      <BackButton c={c} onBack={onBack} style={{ marginTop: 40 }} />
     </section>
   )
 }
 
-// ---- Grid tile ----
-function QuestTile({ q, onClick }: { q: QuestCard; onClick: () => void }) {
+// ---- Scroll-jacked horizontal carousel ----
+const TILE_W = 280
+const TILE_H = 400
+const GAP = 24
+const TITLE_W = 300
+const TITLE_GUTTER = 40
+const HEADER_H = 58
+const FOOTER_H = 84
+const ENGAGE_OFFSET = 90
+const WHEEL_TO_PROGRESS = 3200
+const TOUCH_TO_PROGRESS = 900
+
+function QuestCarousel({ onOpen }: { onOpen: (id: string) => void }) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const titleRef = useRef<HTMLDivElement>(null)
+  const tileRefs = useRef<(HTMLDivElement | null)[]>([])
+  const progressRef = useRef(0)
+  const rafRef = useRef(0)
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  const applyFrame = () => {
+    const container = containerRef.current
+    const track = trackRef.current
+    if (!container || !track) return
+    const maxScroll = Math.max(0, track.scrollWidth - container.clientWidth)
+    const p = progressRef.current
+    track.style.transform = `translateY(-50%) translateX(${-p * maxScroll}px)`
+
+    const title = titleRef.current
+    if (title) {
+      const titleOpacity = Math.max(0, 1 - p / 0.18)
+      title.style.opacity = String(titleOpacity)
+      title.style.pointerEvents = titleOpacity < 0.05 ? 'none' : 'auto'
+    }
+
+    const viewportCenter = container.getBoundingClientRect().left + container.clientWidth / 2
+    let closestIdx = 0
+    let closestDist = Infinity
+    tileRefs.current.forEach((el, i) => {
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      const center = rect.left + rect.width / 2
+      const dist = Math.abs(center - viewportCenter)
+      const norm = Math.min(1, dist / (container.clientWidth / 2))
+      const scale = 1.08 - norm * 0.22
+      const opacity = 1 - norm * 0.75
+      el.style.transform = `scale(${scale})`
+      el.style.opacity = String(Math.max(0.15, opacity))
+      if (dist < closestDist) { closestDist = dist; closestIdx = i }
+    })
+    setActiveIndex((prev) => (prev === closestIdx ? prev : closestIdx))
+  }
+
+  const scheduleFrame = () => {
+    if (rafRef.current) return
+    rafRef.current = requestAnimationFrame(() => { rafRef.current = 0; applyFrame() })
+  }
+
+  useEffect(() => { scheduleFrame() }, [])
+
+  useEffect(() => {
+    const onResize = () => scheduleFrame()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  // Wheel-jacking: once the section's top has scrolled up near the header, further
+  // scroll (in either axis) drives the track horizontally instead of the page vertically,
+  // until the carousel is exhausted in that direction — then normal scroll resumes.
+  useEffect(() => {
+    const onWheel = (e: WheelEvent) => {
+      const container = containerRef.current
+      if (!container) return
+      const rectTop = container.getBoundingClientRect().top
+      const nearTop = rectTop <= ENGAGE_OFFSET && rectTop >= -container.clientHeight
+      if (!nearTop) return
+
+      const delta = e.deltaY + e.deltaX
+      const atStart = progressRef.current <= 0
+      const atEnd = progressRef.current >= 1
+      if ((atStart && delta < 0) || (atEnd && delta > 0)) return
+
+      e.preventDefault()
+      progressRef.current = Math.min(1, Math.max(0, progressRef.current + delta / WHEEL_TO_PROGRESS))
+      scheduleFrame()
+    }
+    window.addEventListener('wheel', onWheel, { passive: false })
+    return () => window.removeEventListener('wheel', onWheel)
+  }, [])
+
+  // Touch swipe fallback: horizontal drags move the carousel; vertical drags pass through.
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+    let startX = 0, startY = 0, dragging = false, horizontal = false
+    const onStart = (e: TouchEvent) => {
+      const rectTop = container.getBoundingClientRect().top
+      if (rectTop > ENGAGE_OFFSET || rectTop < -container.clientHeight) return
+      startX = e.touches[0].clientX; startY = e.touches[0].clientY
+      dragging = true; horizontal = false
+    }
+    const onMove = (e: TouchEvent) => {
+      if (!dragging) return
+      const dx = e.touches[0].clientX - startX
+      const dy = e.touches[0].clientY - startY
+      if (!horizontal && Math.abs(dx) > Math.abs(dy) + 6) horizontal = true
+      if (!horizontal) return
+      const atStart = progressRef.current <= 0
+      const atEnd = progressRef.current >= 1
+      if ((atStart && dx > 0) || (atEnd && dx < 0)) { dragging = false; return }
+      e.preventDefault()
+      progressRef.current = Math.min(1, Math.max(0, progressRef.current - dx / TOUCH_TO_PROGRESS))
+      startX = e.touches[0].clientX; startY = e.touches[0].clientY
+      scheduleFrame()
+    }
+    const onEnd = () => { dragging = false }
+    container.addEventListener('touchstart', onStart, { passive: true })
+    container.addEventListener('touchmove', onMove, { passive: false })
+    container.addEventListener('touchend', onEnd)
+    return () => {
+      container.removeEventListener('touchstart', onStart)
+      container.removeEventListener('touchmove', onMove)
+      container.removeEventListener('touchend', onEnd)
+    }
+  }, [])
+
+  const jumpTo = (i: number) => {
+    const container = containerRef.current
+    const track = trackRef.current
+    const tile = tileRefs.current[i]
+    if (!container || !track || !tile) return
+    const maxScroll = Math.max(1, track.scrollWidth - container.clientWidth)
+    const tileCenter = tile.offsetLeft + tile.offsetWidth / 2
+    const desiredX = tileCenter - container.clientWidth / 2
+    progressRef.current = Math.min(1, Math.max(0, desiredX / maxScroll))
+    scheduleFrame()
+  }
+
   return (
-    <div className="tj-quest-card" onClick={onClick}>
-      <Card accent={q.piece} accentBar style={{ display: 'flex', flexDirection: 'column', height: '100%', userSelect: 'none' }}>
-        <RevealOnScroll className="tj-quest-media" threshold={0.35}>
-          {q.images[0] && <img src={q.images[0]} alt={q.title} className="tj-quest-img" />}
-          {!q.images[0] && <span style={{ fontSize: 48 }}>{q.placeholder}</span>}
-          <div className="tj-quest-hint">Click to explore</div>
-        </RevealOnScroll>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-          <Tetromino piece={q.piece} size={11} />
-          <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color: 'var(--text-strong)', margin: 0, textTransform: 'uppercase' }}>{q.title}</h3>
-        </div>
-        <p style={{ fontSize: 14, color: 'var(--text-muted)', margin: '0 0 14px', lineHeight: 1.55, flex: 1 }}>{q.sub}</p>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-          {q.tags.map((t) => <Tag key={t} piece={q.piece}>{t}</Tag>)}
-        </div>
-      </Card>
+    <div ref={containerRef} style={{ position: 'relative', height: `calc(100vh - ${HEADER_H + FOOTER_H}px)`, overflow: 'hidden' }}>
+      <div ref={titleRef} style={{ position: 'absolute', left: 24, top: '50%', transform: 'translateY(-50%)', width: TITLE_W, zIndex: 1 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-j)' }}>{'// Beyond the code'}</div>
+        <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Side Quests</h2>
+        <p style={{ fontSize: 16, color: 'var(--text-muted)', lineHeight: 1.6, marginTop: 16 }}>
+          Life outside the terminal. Scroll to explore.
+        </p>
+      </div>
+
+      <div ref={trackRef} style={{ position: 'absolute', top: '50%', left: 0, transform: 'translateY(-50%)', display: 'flex', gap: GAP, paddingLeft: 24 + TITLE_W + TITLE_GUTTER, paddingRight: 60, willChange: 'transform' }}>
+        {QUESTS.map((q, i) => (
+          <div key={q.id} ref={(el) => { tileRefs.current[i] = el }} className="tj-quest-card" onClick={() => onOpen(q.id)}
+            style={{ width: TILE_W, height: TILE_H, flexShrink: 0 }}>
+            <Card accent={q.piece} accentBar style={{ display: 'flex', flexDirection: 'column', height: '100%', userSelect: 'none' }}>
+              <div className="tj-quest-media">
+                {q.images[0] && <img src={q.images[0]} alt={q.title} className="tj-quest-img" />}
+                {!q.images[0] && <span style={{ fontSize: 48 }}>{q.placeholder}</span>}
+                <div className="tj-quest-hint">Click to explore</div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
+                <Tetromino piece={q.piece} size={11} />
+                <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color: 'var(--text-strong)', margin: 0, textTransform: 'uppercase' }}>{q.title}</h3>
+              </div>
+              <p style={{
+                fontSize: 14, color: 'var(--text-muted)', margin: '0 0 14px', lineHeight: 1.55, flex: 1,
+                display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+              }}>{q.sub}</p>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {q.tags.map((t) => <Tag key={t} piece={q.piece}>{t}</Tag>)}
+              </div>
+            </Card>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 8, zIndex: 2 }}>
+        {QUESTS.map((q, i) => (
+          <button key={q.id} onClick={() => jumpTo(i)} aria-label={`Go to ${q.title}`}
+            style={{
+              width: i === activeIndex ? 20 : 7, height: 7, borderRadius: 4, padding: 0, border: 'none', cursor: 'pointer',
+              background: i === activeIndex ? `var(--piece-${q.piece})` : 'var(--border-strong)',
+              transition: 'width 200ms, background 200ms',
+            }} />
+        ))}
+      </div>
     </div>
   )
 }
@@ -424,21 +592,5 @@ export function SideQuests() {
     return <QuestDetail quest={quest} onBack={() => setOpenId(null)} />
   }
 
-  return (
-    <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px' }}>
-      <div style={{ marginBottom: 36 }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-j)' }}>{'// Beyond the code'}</div>
-        <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Side Quests</h2>
-        <p style={{ fontSize: 16, color: 'var(--text-muted)', maxWidth: 520, lineHeight: 1.6, marginTop: 16 }}>
-          Life outside the terminal. Click a tile to explore.
-        </p>
-      </div>
-
-      <div className="tj-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-        {QUESTS.map((q) => (
-          <QuestTile key={q.id} q={q} onClick={() => setOpenId(q.id)} />
-        ))}
-      </div>
-    </section>
-  )
+  return <QuestCarousel onOpen={setOpenId} />
 }
