@@ -468,7 +468,11 @@ function QuestCarousel({ onOpen }: { onOpen: (id: string) => void }) {
       const container = containerRef.current
       if (!container) return
       const rectTop = container.getBoundingClientRect().top
-      const nearTop = rectTop <= ENGAGE_OFFSET && rectTop >= -container.clientHeight
+      // Bounded symmetrically around 0 so re-engaging while scrolling back up only
+      // happens once the carousel is actually back in view, not from a full
+      // container-height away while it's still completely off-screen (that let
+      // scrolling up from the next section silently rewind an invisible carousel).
+      const nearTop = rectTop <= ENGAGE_OFFSET && rectTop >= -ENGAGE_OFFSET
       if (!nearTop) return
 
       const delta = e.deltaY + e.deltaX
@@ -491,7 +495,7 @@ function QuestCarousel({ onOpen }: { onOpen: (id: string) => void }) {
     let startX = 0, startY = 0, dragging = false, horizontal = false
     const onStart = (e: TouchEvent) => {
       const rectTop = container.getBoundingClientRect().top
-      if (rectTop > ENGAGE_OFFSET || rectTop < -container.clientHeight) return
+      if (rectTop > ENGAGE_OFFSET || rectTop < -ENGAGE_OFFSET) return
       startX = e.touches[0].clientX; startY = e.touches[0].clientY
       dragging = true; horizontal = false
     }
