@@ -9,6 +9,10 @@ const CSS = `
   will-change: opacity, transform;
 }
 .tj-reveal--visible { opacity: 1; transform: translateY(0) scale(1); clip-path: inset(0 0 0 0); }
+/* Once the reveal transition finishes, drop the clip-path entirely — otherwise it
+   permanently clips anything inside that visually bleeds past this box (e.g. a
+   tilted/rotated 3D decoration), even though the inset is nominally a no-op. */
+.tj-reveal--settled { clip-path: none; }
 `
 let injected = false
 function ensure() {
@@ -21,6 +25,7 @@ export function RevealOnScroll({ children, className = '', style, threshold = 0.
   ensure()
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
+  const [settled, setSettled] = useState(false)
 
   useEffect(() => {
     const el = ref.current
@@ -34,8 +39,14 @@ export function RevealOnScroll({ children, className = '', style, threshold = 0.
     return () => io.disconnect()
   }, [threshold])
 
+  useEffect(() => {
+    if (!visible) return
+    const t = setTimeout(() => setSettled(true), 720)
+    return () => clearTimeout(t)
+  }, [visible])
+
   return (
-    <div ref={ref} className={['tj-reveal', visible ? 'tj-reveal--visible' : '', className].filter(Boolean).join(' ')} style={style}>
+    <div ref={ref} className={['tj-reveal', visible ? 'tj-reveal--visible' : '', settled ? 'tj-reveal--settled' : '', className].filter(Boolean).join(' ')} style={style}>
       {children}
     </div>
   )

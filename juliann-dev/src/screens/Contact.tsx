@@ -6,6 +6,7 @@ import { Textarea } from '../components/ds/Textarea'
 import { Button } from '../components/ds/Button'
 import { Tetromino } from '../components/ds/Tetromino'
 import { PileFooter } from '../components/PileFooter'
+import { ScrollTetromino3D } from '../components/ScrollTetromino3D'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 
@@ -23,9 +24,22 @@ export function Contact() {
   return (
     <>
       <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px' }}>
-      <div style={{ marginBottom: 28 }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Enter player 2</div>
-        <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Let's Connect</h2>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, marginBottom: 28 }}>
+        <div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Enter player 2</div>
+          <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Let's Connect</h2>
+        </div>
+        <ScrollTetromino3D
+          piece="i"
+          size={60}
+          baseRotateY={180}
+          tiltDeg={18}
+          rotZPerPx={0.14}
+          rotXPerPx={0.08}
+          rotYPerPx={0.18}
+          mouseFollow
+          style={{ opacity: 0.72, marginRight: 60 }}
+        />
       </div>
       <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: 'var(--text-strong)', margin: '0 0 14px', textTransform: 'uppercase', textAlign: 'right' }}>Find me</h3>
       {/* Grid stretches both columns to equal height, so both boxes start and end flush */}

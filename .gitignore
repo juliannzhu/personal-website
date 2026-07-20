@@ -1,6 +1,8 @@
 .claude/
 CLAUDE.md
 Claude*
+DESIGN_SNAPSHOT.md
+TETRIS_design_system/
 .vscode/
 node_modules/
 dist/

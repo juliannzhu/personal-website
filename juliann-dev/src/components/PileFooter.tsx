@@ -105,6 +105,14 @@ function layoutPile(cols: number): { placed: PlacedPiece[]; fillers: Filler[]; c
 
     type Candidate = { variant: typeof ALL_VARIANTS[0]; start: number; topHeight: number; gapSize: number; deficit: number }
     let best: Candidate | null = null
+    // Cramped corners (mainly the rightmost columns, where every shape gets clamped to the
+    // same start position) can run out of fully safe candidates entirely. Without this middle
+    // tier, the code fell straight through to bestUnsafe, which ignores belowConflict too —
+    // and since belowConflict is what stops a piece from stacking directly on its own color,
+    // that let the same color repeat straight up a column into a solid-looking line. This tier
+    // still forbids stacking a color directly on itself; only left/right touches are allowed
+    // to slip, which reads far less like an obvious solid line.
+    let bestBelowSafe: Candidate | null = null
     let bestUnsafe: Candidate | null = null
     for (let attempt = 0; attempt < ALL_VARIANTS.length; attempt++) {
       const variant = ALL_VARIANTS[(vi + attempt) % ALL_VARIANTS.length]
@@ -128,11 +136,13 @@ function layoutPile(cols: number): { placed: PlacedPiece[]; fillers: Filler[]; c
       const candidate: Candidate = { variant, start, topHeight, gapSize, deficit }
       if (safe) {
         if (!best || deficit < best.deficit || (deficit === best.deficit && gapSize < best.gapSize)) best = candidate
+      } else if (!belowConflict) {
+        if (!bestBelowSafe || deficit < bestBelowSafe.deficit || (deficit === bestBelowSafe.deficit && gapSize < bestBelowSafe.gapSize)) bestBelowSafe = candidate
       } else if (!bestUnsafe || gapSize < bestUnsafe.gapSize) {
         bestUnsafe = candidate
       }
     }
-    const chosen = (best ?? bestUnsafe)!
+    const chosen = (best ?? bestBelowSafe ?? bestUnsafe)!
     vi++
     placedCount[chosen.variant.piece]++
 

@@ -409,6 +409,7 @@ function QuestCarousel({ onOpen }: { onOpen: (id: string) => void }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
+  const dotsRef = useRef<HTMLDivElement>(null)
   const tileRefs = useRef<(HTMLDivElement | null)[]>([])
   const progressRef = useRef(0)
   const rafRef = useRef(0)
@@ -475,6 +476,11 @@ function QuestCarousel({ onOpen }: { onOpen: (id: string) => void }) {
       const nearTop = rectTop <= ENGAGE_OFFSET && rectTop >= -ENGAGE_OFFSET
       if (!nearTop) return
 
+      // Cursor below the pagination dots reads as "done browsing, let me scroll on" —
+      // don't hijack that scroll, let the page move to the next section normally.
+      const dots = dotsRef.current
+      if (dots && e.clientY >= dots.getBoundingClientRect().top) return
+
       const delta = e.deltaY + e.deltaX
       const atStart = progressRef.current <= 0
       const atEnd = progressRef.current >= 1
@@ -496,6 +502,8 @@ function QuestCarousel({ onOpen }: { onOpen: (id: string) => void }) {
     const onStart = (e: TouchEvent) => {
       const rectTop = container.getBoundingClientRect().top
       if (rectTop > ENGAGE_OFFSET || rectTop < -ENGAGE_OFFSET) return
+      const dots = dotsRef.current
+      if (dots && e.touches[0].clientY >= dots.getBoundingClientRect().top) return
       startX = e.touches[0].clientX; startY = e.touches[0].clientY
       dragging = true; horizontal = false
     }
@@ -538,11 +546,22 @@ function QuestCarousel({ onOpen }: { onOpen: (id: string) => void }) {
 
   return (
     <div ref={containerRef} style={{ position: 'relative', height: `calc(100vh - ${HEADER_H + FOOTER_H}px)`, overflow: 'hidden' }}>
-      <div ref={titleRef} style={{ position: 'absolute', left: 24, top: '50%', transform: 'translateY(-50%)', width: TITLE_W, zIndex: 1 }}>
+      {/* height matches TILE_H and centers its content with flex, so the title block's
+          vertical center lines up exactly with the tile cards' vertical center regardless
+          of how many lines the copy wraps to. */}
+      <div ref={titleRef} style={{
+        position: 'absolute', left: 24, top: '50%', transform: 'translateY(-50%)', width: TITLE_W, height: TILE_H, zIndex: 1,
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+      }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-j)' }}>{'// Beyond the code'}</div>
         <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Side Quests</h2>
         <p style={{ fontSize: 16, color: 'var(--text-muted)', lineHeight: 1.6, marginTop: 16 }}>
-          Life outside the terminal. Scroll to explore.
+          Every developer needs a break.<br></br>
+          This space is dedicated to the passion <br></br>
+          projects, creative experiments, <br></br>
+          and random pieces that make up <br></br>
+          my life outside the terminal. <br></br>
+          Scroll to explore.
         </p>
       </div>
 
@@ -572,7 +591,7 @@ function QuestCarousel({ onOpen }: { onOpen: (id: string) => void }) {
         ))}
       </div>
 
-      <div style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 8, zIndex: 2 }}>
+      <div ref={dotsRef} style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 8, zIndex: 2 }}>
         {QUESTS.map((q, i) => (
           <button key={q.id} onClick={() => jumpTo(i)} aria-label={`Go to ${q.title}`}
             style={{
