@@ -285,64 +285,6 @@ const POOL_GALLERY: BentoPhoto[] = [
   { src: Q('pool/pool-8.jpg'), size: 'sm' },
 ]
 
-const SHAD_GALLERY: BentoPhoto[] = [
-  { src: Q('shad/shad-1.jpg'), size: 'hero', caption: 'The view from our first hike.' },
-  { src: Q('shad/shad-2.jpg'), size: 'wide', caption: 'Scavenger hunt team bonding' },
-  { src: Q('shad/shad-3.jpg'), size: 'sm', caption: 'Camping trip dock' },
-  { src: Q('shad/shad-4.jpg'), size: 'wide', caption: 'Wonderland trip' },
-  { src: Q('shad/shad-5.jpg'), size: 'sm' },
-  { src: Q('shad/shad-6.jpg'), size: 'sm' },
-  { src: Q('shad/shad-7.jpg'), size: 'wide' },
-  { src: Q('shad/shad-8.jpg'), size: 'wide' },
-  { src: Q('shad/shad-9.jpg'), size: 'tall' },
-  { src: Q('shad/shad-10.jpg'), size: 'sm' },
-  { src: Q('shad/shad-11.jpg'), size: 'sm' },
-  { src: Q('shad/shad-12.jpg'), size: 'wide' },
-  { src: Q('shad/shad-13.jpg'), size: 'wide' },
-  { src: Q('shad/shad-14.jpg'), size: 'sm' },
-  { src: Q('shad/shad-15.jpg'), size: 'sm' },
-  { src: Q('shad/shad-16.jpg'), size: 'hero', caption: 'Rock climbing on the camping trip' },
-  { src: Q('shad/shad-17.jpg'), size: 'sm' },
-  { src: Q('shad/shad-18.jpg'), size: 'sm' },
-  { src: Q('shad/shad-19.jpg'), size: 'sm' },
-  { src: Q('shad/shad-20.jpg'), size: 'wide' },
-  { src: Q('shad/shad-21.jpg'), size: 'tall', caption: 'Final design team presentations' },
-  { src: Q('shad/shad-22.jpg'), size: 'hero', caption: 'The whole cohort, one lawn.' },
-  { src: Q('shad/shad-23.jpg'), size: 'sm' },
-  { src: Q('shad/shad-24.jpg'), size: 'wide' },
-  { src: Q('shad/shad-25.jpg'), size: 'sm' },
-  { src: Q('shad/shad-26.jpg'), size: 'sm' },
-  { src: Q('shad/shad-27.jpg'), size: 'sm' },
-  { src: Q('shad/shad-28.jpg'), size: 'wide' },
-  { src: Q('shad/shad-29.jpg'), size: 'sm' },
-  { src: Q('shad/shad-30.jpg'), size: 'sm' },
-  { src: Q('shad/shad-31.jpg'), size: 'sm' },
-  { src: Q('shad/shad-32.jpg'), size: 'wide', caption: 'Our neighbors' },
-  { src: Q('shad/shad-33.jpg'), size: 'sm', caption: 'Bridge building challenge (we won)' },
-  { src: Q('shad/shad-34.jpg'), size: 'sm' },
-  { src: Q('shad/shad-35.jpg'), size: 'sm' },
-  { src: Q('shad/shad-36.jpg'), size: 'hero', caption: 'Ziplining through the canopy.' },
-  { src: Q('shad/shad-37.jpg'), size: 'sm' },
-  { src: Q('shad/shad-38.jpg'), size: 'tall', caption: 'Instant film, the old-fashioned way.' },
-  { src: Q('shad/shad-39.jpg'), size: 'sm' },
-  { src: Q('shad/shad-40.jpg'), size: 'wide' },
-  { src: Q('shad/shad-41.jpg'), size: 'sm' },
-  { src: Q('shad/shad-42.jpg'), size: 'sm', caption: 'In the lab' },
-  { src: Q('shad/shad-43.jpg'), size: 'sm' },
-  { src: Q('shad/shad-44.jpg'), size: 'wide' },
-  { src: Q('shad/shad-45.jpg'), size: 'sm' },
-  { src: Q('shad/shad-46.jpg'), size: 'sm' },
-  { src: Q('shad/shad-47.jpg'), size: 'sm', caption: 'The bridge of Leth' },
-  { src: Q('shad/shad-48.jpg'), size: 'wide' },
-  { src: Q('shad/shad-49.jpg'), size: 'sm' },
-  { src: Q('shad/shad-50.jpg'), size: 'sm' },
-  { src: Q('shad/shad-51.jpg'), size: 'sm', caption: 'Cricket dissection lab' },
-  { src: Q('shad/shad-52.jpg'), size: 'wide' },
-  { src: Q('shad/shad-53.jpg'), size: 'wide' },
-  { src: Q('shad/shad-54.jpg'), size: 'sm' },
-  { src: Q('shad/shad-55.jpg'), size: 'sm', caption: 'Open Day poster by yours truly' },
-]
-
 const HACKATHONS_GALLERY: BentoPhoto[] = [
   { src: Q('hackathons/hackathons-1.jpg'), size: 'wide' },
   { src: Q('hackathons/hackathons-2.jpg'), size: 'wide', caption: 'Hack the Hill merch' },
@@ -359,68 +301,28 @@ const HACKATHONS_GALLERY: BentoPhoto[] = [
 ]
 const QUESTS: QuestCard[] = [
   {
-    id: 'tetris',
-    piece: 'j',
-    title: 'TETRIS',
-    sub: 'Competitive sprint and ultra player. Jstris handle: Jambo722. Always chasing a new PB.',
-    tags: ['Jstris', '20L Sprint', 'Ultra', 'Competitive'],
-    placeholder: '🎮',
-    images: [Q('tetris-1.jpg'), Q('tetris-2.jpg')],
-  },
-  {
-    id: 'photography',
-    piece: 'o',
-    title: 'PHOTOGRAPHY',
-    sub: 'Candid shots, travel photos, and life through a lens. Instagram: @juliann.zhu',
-    tags: ['Candid', 'Travel', 'Film'],
-    placeholder: '📷',
-    images: Array.from({ length: 40 }, (_, i) => Q(`photography/photography-${i + 1}.jpg`)),
-    layout: 'marquee',
-  },
-  {
-    id: 'art',
+    id: 'volleyball',
     piece: 's',
-    title: 'ART & DESIGN',
-    sub: 'UI sketches, pixel art, and visual experiments that sometimes become websites.',
-    tags: ['Pixel Art', 'UI/UX', 'Sketching'],
-    placeholder: '🎨',
-    images: [Q('art/art-11.jpg')],
+    title: 'VOLLEYBALL',
+    sub: 'Team Captain at Merivale HS (2021-2025). Led the team to NCSSAA Tier 1 finals, won 7 regional tournaments, 4 consecutive Marauders Cups, and MVP in 2021 and 2023.',
+    tags: ['Team Captain', 'NCSSAA', 'MVP x2', 'Marauders Cup'],
+    placeholder: '🏐',
+    images: [VOLLEYBALL_GALLERY[0].src],
     layout: 'bento',
-    gallery: ART_GALLERY,
+    gallery: VOLLEYBALL_GALLERY,
+    videos: videosFor('volleyball', 4),
   },
   {
     id: 'music',
     piece: 'l',
-    title: 'PIANO & MUSIC',
-    sub: 'Studied RCM for 13 years, earning Level 10. Weekly 75-minute lessons, 10 hours of practice per week, and 6 recitals annually.',
+    title: 'PIANO',
+    sub: 'A different kind of keyboard layout than what most developers know. I recently completed my RCM Level 10 Certificate. 13 years of weekly lessons, 10 hours of practice per week, and 6 recitals annually.',
     tags: ['RCM Level 10', 'Classical', 'Technique', 'Ear Training'],
     placeholder: '🎹',
     images: [Q('music/music-5.jpg')],
     layout: 'bento',
     gallery: MUSIC_GALLERY,
     videos: videosFor('music', 7),
-  },
-  {
-    id: 'poker',
-    piece: 'z',
-    title: 'POKER',
-    sub: 'Game theory, probability, and reading patterns under pressure.',
-    tags: ['Strategy', 'Game Theory', "Texas Hold'em"],
-    placeholder: '♠️',
-    images: [POKER_GALLERY[0].src],
-    layout: 'bento',
-    gallery: POKER_GALLERY,
-    videos: videosFor('poker', 4),
-  },
-  {
-    id: 'chess',
-    piece: 'j',
-    title: 'CHESS',
-    sub: 'Opening prep, endgames, and the never-ending quest to stop hanging pieces.',
-    tags: ['Openings', 'Tactics', 'Chess.com'],
-    placeholder: '♟️',
-    images: Array.from({ length: 8 }, (_, i) => STOCK(`chess-${i + 1}`, 900, 675)),
-    layout: 'filmstrip',
   },
   {
     id: 'pool',
@@ -435,27 +337,126 @@ const QUESTS: QuestCard[] = [
     videos: videosFor('pool', 1),
   },
   {
-    id: 'volleyball',
-    piece: 's',
-    title: 'VOLLEYBALL',
-    sub: 'Team Captain at Merivale HS (2021-2025). Led the team to NCSSAA Tier 1 finals, won 7 regional tournaments, 4 consecutive Marauders Cups, and MVP in 2021 and 2023.',
-    tags: ['Team Captain', 'NCSSAA', 'MVP x2', 'Marauders Cup'],
-    placeholder: '🏐',
-    images: [VOLLEYBALL_GALLERY[0].src],
-    layout: 'bento',
-    gallery: VOLLEYBALL_GALLERY,
-    videos: videosFor('volleyball', 4),
-  },
-  {
     id: 'baking',
     piece: 'l',
     title: 'BAKING',
-    sub: 'Stress baking after midterms. Macarons are still the final boss but everything else is going well.',
+    sub: 'Flour, sugar, and oven-baked experiments. A great way to relax and enjoy good food with others.',
     tags: ['Macarons', 'Cookies', 'Stress Relief'],
     placeholder: '🧁',
     images: [Q('baking/baking-2.jpg')],
     layout: 'bento',
     gallery: BAKING_GALLERY,
+  },
+  {
+    id: 'art',
+    piece: 's',
+    title: 'ART',
+    sub: 'CSS is great, but sometimes I need real arts and crafts. Here lies all the sketches, paints, and messy creative outlets.',
+    tags: ['Pixel Art', 'UI/UX', 'Sketching'],
+    placeholder: '🎨',
+    images: [Q('art/art-11.jpg')],
+    layout: 'bento',
+    gallery: ART_GALLERY,
+  },
+  {
+    id: 'poker',
+    piece: 'z',
+    title: 'POKER',
+    sub: 'Game theory, probability, and reading patterns under pressure.',
+    tags: ['Strategy', 'Game Theory', "Texas Hold'em"],
+    placeholder: '♠️',
+    images: [POKER_GALLERY[0].src],
+    layout: 'bento',
+    gallery: POKER_GALLERY,
+    videos: videosFor('poker', 4),
+  },
+  {
+    id: 'hackathons',
+    piece: 'i',
+    title: 'HACKATHONS',
+    sub: 'Late nights, bad coffee, and building something from nothing in 24 hours flat.',
+    tags: ['Devpost', 'Team Projects', 'Late Nights'],
+    placeholder: '💻',
+    images: [Q('hackathons/hackathons-10.jpg')],
+    layout: 'bento',
+    gallery: HACKATHONS_GALLERY,
+  },
+  {
+    id: 'people',
+    piece: 'j',
+    title: 'PEOPLE + MY DOG',
+    sub: 'Quality time is my love language. My dog is a golden retriever mix named Mochi and she is perfect.',
+    tags: ['Friends', 'Golden Retriever', 'Mochi', 'Quality Time'],
+    placeholder: '🐾',
+    images: Array.from({ length: 97 }, (_, i) => Q(`people/people-${i + 1}.jpg`)),
+    layout: 'polaroid',
+  },
+  {
+    id: 'robotics',
+    piece: 'i',
+    title: 'ROBOTICS',
+    sub: 'Mechanical Member of Spark Youth FIRST Robotics Club (2024-2025) in Kanata, ON. Built drive components and autonomous systems for the 2023 FIRST Robotics Competition.',
+    tags: ['FRC', 'Mechanical', 'Autonomous', 'Kanata'],
+    placeholder: '🤖',
+    images: [ROBOTICS_GALLERY[0].src],
+    layout: 'bento',
+    gallery: ROBOTICS_GALLERY,
+    videos: videosFor('robotics', 1),
+  },
+  {
+    id: 'photography',
+    piece: 'o',
+    title: 'PHOTOGRAPHY',
+    sub: 'Candid shots, travel photos, and life through a lens. Instagram: @juliann.zhu',
+    tags: ['Candid', 'Travel', 'Film'],
+    placeholder: '📷',
+    images: Array.from({ length: 40 }, (_, i) => Q(`photography/photography-${i + 1}.jpg`)),
+    layout: 'marquee',
+  },
+  {
+    id: 'shad',
+    piece: 'j',
+    title: 'SHAD',
+    sub: 'A month of hands-on STEM and entrepreneurship, and way too many late-night talks with people who now feel like lifelong friends.',
+    tags: ['STEM', 'Entrepreneurship', 'Summer Program'],
+    placeholder: '🎓',
+    images: Array.from({ length: 55 }, (_, i) => Q(`shad/shad-${i + 1}.jpg`)),
+    layout: 'polaroid',
+    videos: videosFor('shad', 4),
+  },
+  {
+    id: 'relay',
+    piece: 'z',
+    title: 'RELAY FOR LIFE',
+    sub: 'Team Captain for Relay For Life in Nepean, ON (2023-2025). Raised over $700 for cancer research, contributing to a total of $29,000 raised by our community.',
+    tags: ['Team Captain', 'Fundraising', 'Cancer Research', 'Community'],
+    placeholder: '🎗️',
+    images: Array.from({ length: 6 }, (_, i) => Q(`relay/relay-${[2, 3, 5, 6, 7, 9][i]}.jpg`)),
+    layout: 'filmstrip',
+    filmstripHero: { src: Q('relay/relay-1.jpg'), caption: 'Bake sale fundraiser' },
+    filmstripFeatures: [
+      { src: Q('relay/relay-4.jpg'), caption: 'Merivale Relay for Life Event 2024' },
+      { src: Q('relay/relay-8.jpg') },
+    ],
+  },
+  {
+    id: 'tetris',
+    piece: 'j',
+    title: 'TETRIS',
+    sub: 'Competitive sprint and ultra player. Jstris handle: Jambo722. Always chasing a new PB.',
+    tags: ['Jstris', '20L Sprint', 'Ultra', 'Competitive'],
+    placeholder: '🎮',
+    images: [Q('tetris-1.jpg'), Q('tetris-2.jpg')],
+  },
+  {
+    id: 'chess',
+    piece: 'j',
+    title: 'CHESS',
+    sub: 'Opening prep, endgames, and the never-ending quest to stop hanging pieces.',
+    tags: ['Openings', 'Tactics', 'Chess.com'],
+    placeholder: '♟️',
+    images: Array.from({ length: 8 }, (_, i) => STOCK(`chess-${i + 1}`, 900, 675)),
+    layout: 'filmstrip',
   },
   {
     id: 'travel',
@@ -480,43 +481,6 @@ const QUESTS: QuestCard[] = [
     gallery: MODELLING_GALLERY,
   },
   {
-    id: 'people',
-    piece: 'j',
-    title: 'PEOPLE + MY DOG',
-    sub: 'Quality time is my love language. My dog is a golden retriever mix named Mochi and she is perfect.',
-    tags: ['Friends', 'Golden Retriever', 'Mochi', 'Quality Time'],
-    placeholder: '🐾',
-    images: Array.from({ length: 97 }, (_, i) => Q(`people/people-${i + 1}.jpg`)),
-    layout: 'polaroid',
-  },
-  {
-    id: 'relay',
-    piece: 'z',
-    title: 'RELAY FOR LIFE',
-    sub: 'Team Captain for Relay For Life in Nepean, ON (2023-2025). Raised over $700 for cancer research, contributing to a total of $29,000 raised by our community.',
-    tags: ['Team Captain', 'Fundraising', 'Cancer Research', 'Community'],
-    placeholder: '🎗️',
-    images: Array.from({ length: 6 }, (_, i) => Q(`relay/relay-${[2, 3, 5, 6, 7, 9][i]}.jpg`)),
-    layout: 'filmstrip',
-    filmstripHero: { src: Q('relay/relay-1.jpg'), caption: 'Bake sale fundraiser' },
-    filmstripFeatures: [
-      { src: Q('relay/relay-4.jpg'), caption: 'Merivale Relay for Life Event 2024' },
-      { src: Q('relay/relay-8.jpg') },
-    ],
-  },
-  {
-    id: 'robotics',
-    piece: 'i',
-    title: 'FIRST ROBOTICS',
-    sub: 'Mechanical Member of Spark Youth FIRST Robotics Club (2024-2025) in Kanata, ON. Built drive components and autonomous systems for the 2023 FIRST Robotics Competition.',
-    tags: ['FRC', 'Mechanical', 'Autonomous', 'Kanata'],
-    placeholder: '🤖',
-    images: [ROBOTICS_GALLERY[0].src],
-    layout: 'bento',
-    gallery: ROBOTICS_GALLERY,
-    videos: videosFor('robotics', 1),
-  },
-  {
     id: 'lego',
     piece: 'o',
     title: 'FIRST LEGO LEAGUE',
@@ -526,29 +490,6 @@ const QUESTS: QuestCard[] = [
     images: [Q('lego/lego-4.jpg')],
     layout: 'bento',
     gallery: LEGO_GALLERY,
-  },
-  {
-    id: 'hackathons',
-    piece: 'i',
-    title: 'HACKATHONS',
-    sub: 'Late nights, bad coffee, and building something from nothing in 24 hours flat.',
-    tags: ['Devpost', 'Team Projects', 'Late Nights'],
-    placeholder: '💻',
-    images: [Q('hackathons/hackathons-10.jpg')],
-    layout: 'bento',
-    gallery: HACKATHONS_GALLERY,
-  },
-  {
-    id: 'shad',
-    piece: 'j',
-    title: 'SHAD',
-    sub: 'A month of hands-on STEM and entrepreneurship, and way too many late-night talks with people who now feel like lifelong friends.',
-    tags: ['STEM', 'Entrepreneurship', 'Summer Program'],
-    placeholder: '🎓',
-    images: [Q('shad/shad-7.jpg')],
-    layout: 'bento',
-    gallery: SHAD_GALLERY,
-    videos: videosFor('shad', 4),
   },
 ]
 
@@ -846,7 +787,7 @@ function PolaroidCard({ src, spot, scrollRef, i, containerRef, onDragEnd }: {
     const tick = () => {
       if (ref.current) {
         const { dx, dy } = dragRef.current
-        ref.current.style.transform = `translate(${dx}px, ${dy}px) rotate(${spot.rot}deg) translateY(${dragRef.current.dragging ? 0 : scrollRef.current * spot.speed}px)`
+        ref.current.style.transform = `translate(${dx}px, ${dy}px) rotate(${spot.rot}deg) translateY(${scrollRef.current * spot.speed}px)`
       }
       raf = requestAnimationFrame(tick)
     }
@@ -1112,13 +1053,12 @@ const ENGAGE_OFFSET = 90
 const WHEEL_TO_PROGRESS = 3200
 const TOUCH_TO_PROGRESS = 900
 
-function QuestCarousel({ onOpen }: { onOpen: (id: string) => void }) {
+function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; progressRef: React.RefObject<number> }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
   const dotsRef = useRef<HTMLDivElement>(null)
   const tileRefs = useRef<(HTMLDivElement | null)[]>([])
-  const progressRef = useRef(0)
   const rafRef = useRef(0)
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -1316,11 +1256,15 @@ function QuestCarousel({ onOpen }: { onOpen: (id: string) => void }) {
 export function SideQuests() {
   ensureCSS()
   const [openId, setOpenId] = useState<string | null>(null)
+  // Lives in the parent (not inside QuestCarousel) so it survives the carousel
+  // unmounting while a quest detail page is open, letting scroll position pick
+  // back up where it left off instead of resetting to the first tile.
+  const progressRef = useRef(0)
 
   if (openId) {
     const quest = QUESTS.find(q => q.id === openId)!
     return <QuestDetail quest={quest} onBack={() => setOpenId(null)} />
   }
 
-  return <QuestCarousel onOpen={setOpenId} />
+  return <QuestCarousel onOpen={setOpenId} progressRef={progressRef} />
 }
