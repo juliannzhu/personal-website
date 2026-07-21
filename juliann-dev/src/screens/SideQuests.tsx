@@ -39,10 +39,6 @@ interface QuestCard {
 // images live in /public/assets/quests/ — replace with your own photos any time
 const Q = (id: string) => `/assets/quests/${id}`
 
-// Sample stock photos (picsum.photos, free to use) standing in for layouts that don't
-// have real photos yet — swap these out for your own in the `images` array below.
-const STOCK = (seed: string, w: number, h: number) => `https://picsum.photos/seed/${seed}/${w}/${h}`
-
 // Video clips live alongside their folder's photos as <prefix>-video-N.m4v with a
 // matching <prefix>-video-N-poster.jpg thumbnail (generated from the video's first frame).
 const videosFor = (prefix: string, count: number): QuestVideo[] =>
@@ -359,6 +355,28 @@ const QUESTS: QuestCard[] = [
     gallery: ART_GALLERY,
   },
   {
+    id: 'travel',
+    piece: 'i',
+    title: 'TRAVELLING',
+    sub: 'New cities, new food, new perspectives. Every trip comes back with way too many photos.',
+    tags: ['Explore', 'Food', 'Photography'],
+    placeholder: '✈️',
+    images: Array.from({ length: 124 }, (_, i) => Q(`travel/travel-${i + 1}.jpg`)),
+    layout: 'marquee',
+    marqueeHeight: 'calc(100vh - 260px)',
+  },
+  {
+    id: 'modelling',
+    piece: 'z',
+    title: 'MODELLING',
+    sub: 'Posing, lighting, angles, mixed in with photos of myself that I just genuinely like. Most end up in my camera roll but some make it to Instagram.',
+    tags: ['Photography', 'Portraits', 'Creative'],
+    placeholder: '📸',
+    images: [MODELLING_GALLERY[0].src],
+    layout: 'bento',
+    gallery: MODELLING_GALLERY,
+  },
+  {
     id: 'poker',
     piece: 'z',
     title: 'POKER',
@@ -438,47 +456,6 @@ const QUESTS: QuestCard[] = [
       { src: Q('relay/relay-4.jpg'), caption: 'Merivale Relay for Life Event 2024' },
       { src: Q('relay/relay-8.jpg') },
     ],
-  },
-  {
-    id: 'tetris',
-    piece: 'j',
-    title: 'TETRIS',
-    sub: 'Competitive sprint and ultra player. Jstris handle: Jambo722. Always chasing a new PB.',
-    tags: ['Jstris', '20L Sprint', 'Ultra', 'Competitive'],
-    placeholder: '🎮',
-    images: [Q('tetris-1.jpg'), Q('tetris-2.jpg')],
-  },
-  {
-    id: 'chess',
-    piece: 'j',
-    title: 'CHESS',
-    sub: 'Opening prep, endgames, and the never-ending quest to stop hanging pieces.',
-    tags: ['Openings', 'Tactics', 'Chess.com'],
-    placeholder: '♟️',
-    images: Array.from({ length: 8 }, (_, i) => STOCK(`chess-${i + 1}`, 900, 675)),
-    layout: 'filmstrip',
-  },
-  {
-    id: 'travel',
-    piece: 'i',
-    title: 'TRAVELLING',
-    sub: 'New cities, new food, new perspectives. Every trip comes back with way too many photos.',
-    tags: ['Explore', 'Food', 'Photography'],
-    placeholder: '✈️',
-    images: Array.from({ length: 124 }, (_, i) => Q(`travel/travel-${i + 1}.jpg`)),
-    layout: 'marquee',
-    marqueeHeight: 'calc(100vh - 260px)',
-  },
-  {
-    id: 'modelling',
-    piece: 'z',
-    title: 'MODELLING',
-    sub: 'Posing, lighting, angles, mixed in with photos of myself that I just genuinely like. Most end up in my camera roll but some make it to Instagram.',
-    tags: ['Photography', 'Portraits', 'Creative'],
-    placeholder: '📸',
-    images: [MODELLING_GALLERY[0].src],
-    layout: 'bento',
-    gallery: MODELLING_GALLERY,
   },
   {
     id: 'lego',
@@ -877,7 +854,7 @@ function FilmstripCaption({ text }: { text?: string }) {
   if (!text) return null
   return (
     <div style={{ padding: '6px 10px', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)', background: 'var(--bg-well)', border: '2px solid var(--border-hairline)', borderTop: 'none', borderBottomLeftRadius: 'var(--radius-1)', borderBottomRightRadius: 'var(--radius-1)' }}>
-      {text}
+      {'// '}{text}
     </div>
   )
 }
@@ -957,7 +934,7 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
               <img src={p.src} alt="" loading="lazy" className="tj-bento-img" />
               {p.caption !== undefined && (
                 <div className="tj-bento-caption">
-                  {p.caption ? p.caption : <span className="tj-bento-caption-placeholder">Add a caption…</span>}
+                  {p.caption ? <>{'// '}{p.caption}</> : <span className="tj-bento-caption-placeholder">Add a caption…</span>}
                 </div>
               )}
             </div>
