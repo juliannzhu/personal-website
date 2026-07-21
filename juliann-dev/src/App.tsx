@@ -69,10 +69,9 @@ function ensureCSS() {
 
 type StackScreenId = Exclude<Screen, 'home'>
 const REST_IDS: StackScreenId[] = ['about', 'projects', 'sidequests', 'now', 'contact']
-const STACK_SCREENS: Record<StackScreenId, React.ReactNode> = {
+const STACK_SCREENS: Partial<Record<StackScreenId, React.ReactNode>> = {
   about: <About />,
   projects: <Projects />,
-  sidequests: <SideQuests />,
   now: <Now />,
   contact: <Contact />,
 }
@@ -82,6 +81,9 @@ export default function App() {
   const [activeSection, setActiveSection] = useState<Screen>('home')
   const [loading, setLoading] = useState(true)
   const [gameOpen, setGameOpen] = useState(false)
+  // Bumped whenever "Quests" is clicked while already on the side quests section, so a
+  // quest detail page that's open can be told to close back to the grid of tiles.
+  const [questsResetTick, setQuestsResetTick] = useState(0)
   const scrollPaneRef = useRef<HTMLDivElement>(null)
   const sectionRefs = useRef<Partial<Record<Screen, HTMLDivElement | null>>>({})
   const holdBoxRef = useRef<HTMLElement>(null)
@@ -89,7 +91,10 @@ export default function App() {
   // Every screen (including home) lives in one continuous scroll stack — navigating
   // anywhere, including to/from the hero, is always just a smooth scroll to that section.
   const go = useCallback((id: Screen) => {
-    if (id === activeSection) return
+    if (id === activeSection) {
+      if (id === 'sidequests') setQuestsResetTick((t) => t + 1)
+      return
+    }
     sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     setActiveSection(id)
   }, [activeSection])
@@ -155,7 +160,7 @@ export default function App() {
             </div>
             {REST_IDS.map((id) => (
               <div key={id} data-section={id} ref={(el) => { sectionRefs.current[id] = el }}>
-                <RevealOnScroll>{STACK_SCREENS[id]}</RevealOnScroll>
+                <RevealOnScroll>{id === 'sidequests' ? <SideQuests resetSignal={questsResetTick} /> : STACK_SCREENS[id]}</RevealOnScroll>
               </div>
             ))}
           </main>

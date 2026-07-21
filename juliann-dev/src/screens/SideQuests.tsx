@@ -7,11 +7,13 @@ import { Tetromino } from '../components/ds/Tetromino'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 type DetailLayout = 'bento' | 'marquee' | 'polaroid' | 'filmstrip'
-type MediaSize = 'hero' | 'wide' | 'tall' | 'sm'
+type MediaSize = 'xl' | 'hero' | 'wide' | 'tall' | 'sm'
 // `number` is the badge shown on the tile — defaults to array position, but can be
 // pinned explicitly so photos can be reordered (grouped, moved to the front/back to
 // square off the bottom edge, etc.) without relabeling every caption reference to it.
-interface BentoPhoto { src: string; size?: MediaSize; caption?: string; number?: number }
+// `fit: 'contain'` shows the whole photo uncropped (letterboxed inside its tile) —
+// default is 'cover', which fills the tile and crops to match its aspect ratio.
+interface BentoPhoto { src: string; size?: MediaSize; caption?: string; number?: number; fit?: 'cover' | 'contain' }
 interface QuestVideo { src: string; poster: string }
 
 interface QuestCard {
@@ -22,18 +24,31 @@ interface QuestCard {
   tags: string[]
   placeholder: string
   images: string[]
+  // overrides images[0] as the tile thumbnail — lets the cover differ from whatever
+  // photo happens to be first in the gallery/reel without reordering it (which would
+  // shift polaroid #N badges away from matching filenames)
+  cover?: string
   layout?: DetailLayout
   // only used when layout === 'bento' — numbered, size-tagged photos for the collage
   gallery?: BentoPhoto[]
   // clickable video clips shown below the main gallery, opened in a lightbox
   videos?: QuestVideo[]
   // filmstrip only — overrides images[0] as the big hero frame, with its own caption
-  filmstripHero?: { src: string; caption?: string }
+  filmstripHero?: { src: string; caption?: string; fit?: 'cover' | 'contain' }
   // filmstrip only — extra large photos shown in a row between the hero and the reel,
   // excluded from the reel itself
   filmstripFeatures?: { src: string; caption?: string }[]
+  // filmstrip only — captions for individual reel frames, keyed by image src
+  filmstripReelCaptions?: Record<string, string>
   // marquee only — overrides the default column height (any valid CSS height value)
   marqueeHeight?: string
+  // polaroid only — 'square' (default) crops every photo to a square print; 'native'
+  // sizes each print to its own photo's aspect ratio so nothing gets cropped
+  polaroidFit?: 'square' | 'native'
+  // polaroid only — per-photo overrides (keyed by src) for the scattered layout:
+  // `width` sizes an individual print bigger/smaller than the default, `col` pins it
+  // to a specific column (0-indexed) instead of the automatic loose-grid placement
+  polaroidOverrides?: Record<string, { width?: number; col?: number }>
 }
 
 // images live in /public/assets/quests/ — replace with your own photos any time
@@ -97,79 +112,85 @@ const VOLLEYBALL_GALLERY: BentoPhoto[] = [
   { src: Q('volleyball/volleyball-45.jpg'), size: 'wide', caption: 'Waterloo SERVE 3Peas Tournament 2026' },
 ]
 
+// Photos 8, 10, 12, 16, 19 are the only ones allowed to crop — they're what keeps the
+// bottom of the collage flat. Everything else uses `fit: 'contain'` so it's resized to
+// fit its tile without cropping.
 const ART_GALLERY: BentoPhoto[] = [
-  { src: Q('art/art-1.jpg'), size: 'wide', number: 1, caption: 'IB English Poster' },
-  { src: Q('art/art-2.jpg'), size: 'sm', number: 2 },
-  { src: Q('art/art-3.jpg'), size: 'wide', number: 3, caption: 'Clay crafts' },
-  { src: Q('art/art-4.jpg'), size: 'tall', number: 4 },
-  { src: Q('art/art-9.jpg'), size: 'wide', number: 9, caption: 'Clay crafts after the oven' },
-  { src: Q('art/art-5.jpg'), size: 'wide', number: 5, caption: 'Chinese New Year whiteboard art' },
-  { src: Q('art/art-6.jpg'), size: 'sm', number: 6 },
-  { src: Q('art/art-7.jpg'), size: 'tall', number: 7 },
+  { src: Q('art/art-1.jpg'), size: 'wide', number: 1, caption: 'IB English Poster', fit: 'contain' },
+  { src: Q('art/art-2.jpg'), size: 'sm', number: 2, fit: 'contain' },
+  { src: Q('art/art-3.jpg'), size: 'wide', number: 3, caption: 'Clay crafts', fit: 'contain' },
+  { src: Q('art/art-4.jpg'), size: 'tall', number: 4, fit: 'contain' },
+  { src: Q('art/art-9.jpg'), size: 'wide', number: 9, caption: 'Clay crafts after the oven', fit: 'contain' },
+  { src: Q('art/art-5.jpg'), size: 'wide', number: 5, caption: 'Chinese New Year whiteboard art', fit: 'contain' },
+  { src: Q('art/art-6.jpg'), size: 'sm', number: 6, fit: 'contain' },
+  { src: Q('art/art-7.jpg'), size: 'tall', number: 7, fit: 'contain' },
   { src: Q('art/art-8.jpg'), size: 'sm', number: 8 },
   { src: Q('art/art-10.jpg'), size: 'tall', number: 10 },
-  { src: Q('art/art-11.jpg'), size: 'hero', number: 11 },
+  { src: Q('art/art-11.jpg'), size: 'hero', number: 11, fit: 'contain' },
   { src: Q('art/art-12.jpg'), size: 'tall', number: 12 },
-  { src: Q('art/art-13.jpg'), size: 'tall', number: 13 },
-  { src: Q('art/art-14.jpg'), size: 'wide', number: 14 },
-  { src: Q('art/art-15.jpg'), size: 'wide', number: 15, caption: "Valentine's Day paper bouquet" },
+  { src: Q('art/art-13.jpg'), size: 'tall', number: 13, fit: 'contain' },
+  { src: Q('art/art-14.jpg'), size: 'wide', number: 14, fit: 'contain' },
+  { src: Q('art/art-15.jpg'), size: 'wide', number: 15, caption: "Valentine's Day paper bouquet", fit: 'contain' },
   { src: Q('art/art-16.jpg'), size: 'tall', number: 16 },
-  { src: Q('art/art-17.jpg'), size: 'wide', number: 17 },
-  { src: Q('art/art-18.jpg'), size: 'sm', number: 18 },
+  { src: Q('art/art-17.jpg'), size: 'wide', number: 17, fit: 'contain' },
+  { src: Q('art/art-18.jpg'), size: 'sm', number: 18, fit: 'contain' },
   { src: Q('art/art-19.jpg'), size: 'wide', number: 19 },
 ]
 
+// Sized so the 6-column grid fills exactly 3 rows with no leftover gaps:
+// row 1-2 = hero(2x2) + tall(1x2) + tall(1x2) + wide(2x1) top / wide(2x1) bottom,
+// row 3 = wide(2x1) + wide(2x1) + sm(1x1) + sm(1x1).
 const BAKING_GALLERY: BentoPhoto[] = [
-  { src: Q('baking/baking-1.jpg'), size: 'sm' },
-  { src: Q('baking/baking-2.jpg'), size: 'hero' },
-  { src: Q('baking/baking-3.jpg'), size: 'tall', caption: 'Canada Day Brunch' },
-  { src: Q('baking/baking-4.jpg'), size: 'tall', caption: 'Post strawberry picking meal' },
-  { src: Q('baking/baking-5.jpg'), size: 'hero' },
-  { src: Q('baking/baking-6.jpg'), size: 'sm' },
-  { src: Q('baking/baking-7.jpg'), size: 'hero' },
-  { src: Q('baking/baking-8.jpg'), size: 'hero', caption: 'Baking cookies at Waterloo' },
-  { src: Q('baking/baking-9.jpg'), size: 'wide', caption: 'Embroidery crafts and cookies' },
+  { src: Q('baking/baking-2.jpg'), size: 'hero', number: 2 },
+  { src: Q('baking/baking-3.jpg'), size: 'tall', number: 3, caption: 'Canada Day Brunch' },
+  { src: Q('baking/baking-4.jpg'), size: 'tall', number: 4, caption: 'Post strawberry picking meal' },
+  { src: Q('baking/baking-8.jpg'), size: 'wide', number: 8, caption: 'Baking cookies at Waterloo' },
+  { src: Q('baking/baking-9.jpg'), size: 'wide', number: 9, caption: 'Embroidery crafts and cookies' },
+  { src: Q('baking/baking-5.jpg'), size: 'wide', number: 5 },
+  { src: Q('baking/baking-7.jpg'), size: 'wide', number: 7 },
+  { src: Q('baking/baking-1.jpg'), size: 'sm', number: 1 },
+  { src: Q('baking/baking-6.jpg'), size: 'sm', number: 6 },
 ]
 
 const MODELLING_GALLERY: BentoPhoto[] = [
   { src: Q('modelling/modelling-1.jpg'), size: 'hero', number: 1, caption: "Birthday photoshoot in China 2025" },
   { src: Q('modelling/modelling-69.jpg'), size: 'hero', number: 69 },
   { src: Q('modelling/modelling-70.jpg'), size: 'tall', number: 70 },
-  { src: Q('modelling/modelling-72.jpg'), size: 'hero', number: 72 },
+  { src: Q('modelling/modelling-72.jpg'), size: 'hero', number: 72, fit: 'contain' },
   { src: Q('modelling/modelling-73.jpg'), size: 'tall', number: 73 },
   { src: Q('modelling/modelling-74.jpg'), size: 'hero', number: 74 },
-  { src: Q('modelling/modelling-71.jpg'), size: 'tall', number: 71 },
-  { src: Q('modelling/modelling-75.jpg'), size: 'tall', number: 75, caption: "Japan House in Illinois" },
+  { src: Q('modelling/modelling-71.jpg'), size: 'tall', number: 71, fit: 'contain' },
   { src: Q('modelling/modelling-2.jpg'), size: 'hero', number: 2 },
   { src: Q('modelling/modelling-3.jpg'), size: 'tall', number: 3 },
   { src: Q('modelling/modelling-4.jpg'), size: 'hero', number: 4 },
   { src: Q('modelling/modelling-5.jpg'), size: 'tall', number: 5 },
   { src: Q('modelling/modelling-6.jpg'), size: 'hero', number: 6 },
-  { src: Q('modelling/modelling-7.jpg'), size: 'tall', number: 7 },
+  { src: Q('modelling/modelling-7.jpg'), size: 'tall', number: 7, fit: 'contain' },
   { src: Q('modelling/modelling-8.jpg'), size: 'tall', number: 8 },
   { src: Q('modelling/modelling-9.jpg'), size: 'tall', number: 9 },
-  { src: Q('modelling/modelling-10.jpg'), size: 'tall', number: 10 },
+  { src: Q('modelling/modelling-10.jpg'), size: 'tall', number: 10, fit: 'contain' },
   { src: Q('modelling/modelling-11.jpg'), size: 'hero', number: 11 },
   { src: Q('modelling/modelling-12.jpg'), size: 'hero', number: 12 },
-  { src: Q('modelling/modelling-13.jpg'), size: 'tall', number: 13 },
+  { src: Q('modelling/modelling-13.jpg'), size: 'tall', number: 13, fit: 'contain' },
   { src: Q('modelling/modelling-14.jpg'), size: 'tall', number: 14 },
-  { src: Q('modelling/modelling-15.jpg'), size: 'hero', number: 15 },
+  { src: Q('modelling/modelling-15.jpg'), size: 'hero', number: 15, fit: 'contain' },
   { src: Q('modelling/modelling-16.jpg'), size: 'tall', number: 16 },
-  { src: Q('modelling/modelling-17.jpg'), size: 'wide', number: 17 },
+  { src: Q('modelling/modelling-17.jpg'), size: 'wide', number: 17, fit: 'contain' },
   { src: Q('modelling/modelling-18.jpg'), size: 'wide', number: 18 },
   { src: Q('modelling/modelling-19.jpg'), size: 'wide', number: 19 },
   { src: Q('modelling/modelling-20.jpg'), size: 'hero', number: 20, caption: "Fashion for Change Photoshoot 2025" },
   { src: Q('modelling/modelling-21.jpg'), size: 'wide', number: 21 },
   { src: Q('modelling/modelling-22.jpg'), size: 'wide', number: 22 },
   { src: Q('modelling/modelling-23.jpg'), size: 'wide', number: 23 },
-  { src: Q('modelling/modelling-24.jpg'), size: 'wide', number: 24 },
-  { src: Q('modelling/modelling-25.jpg'), size: 'hero', number: 25 },
-  { src: Q('modelling/modelling-26.jpg'), size: 'wide', number: 26 },
-  { src: Q('modelling/modelling-27.jpg'), size: 'wide', number: 27 },
-  { src: Q('modelling/modelling-28.jpg'), size: 'wide', number: 28 },
-  { src: Q('modelling/modelling-29.jpg'), size: 'tall', number: 29 },
+  { src: Q('modelling/modelling-24.jpg'), size: 'wide', number: 24, fit: 'contain' },
+  { src: Q('modelling/modelling-25.jpg'), size: 'hero', number: 25, fit: 'contain' },
+  { src: Q('modelling/modelling-26.jpg'), size: 'wide', number: 26, fit: 'contain' },
+  { src: Q('modelling/modelling-27.jpg'), size: 'wide', number: 27, fit: 'contain' },
+  { src: Q('modelling/modelling-28.jpg'), size: 'wide', number: 28, fit: 'contain' },
+  { src: Q('modelling/modelling-29.jpg'), size: 'tall', number: 29, fit: 'contain' },
   { src: Q('modelling/modelling-30.jpg'), size: 'wide', number: 30 },
   { src: Q('modelling/modelling-31.jpg'), size: 'tall', number: 31 },
+  { src: Q('modelling/modelling-75.jpg'), size: 'tall', number: 75, caption: "Japan House in Illinois" },
   { src: Q('modelling/modelling-32.jpg'), size: 'wide', number: 32 },
   { src: Q('modelling/modelling-33.jpg'), size: 'tall', number: 33 },
   { src: Q('modelling/modelling-34.jpg'), size: 'tall', number: 34 },
@@ -181,7 +202,7 @@ const MODELLING_GALLERY: BentoPhoto[] = [
   { src: Q('modelling/modelling-41.jpg'), size: 'tall', number: 41 },
   { src: Q('modelling/modelling-42.jpg'), size: 'wide', number: 42 },
   { src: Q('modelling/modelling-43.jpg'), size: 'tall', number: 43 },
-  { src: Q('modelling/modelling-44.jpg'), size: 'wide', number: 44 },
+  { src: Q('modelling/modelling-44.jpg'), size: 'wide', number: 44, fit: 'contain' },
   { src: Q('modelling/modelling-45.jpg'), size: 'wide', number: 45 },
   { src: Q('modelling/modelling-47.jpg'), size: 'tall', number: 47 },
   { src: Q('modelling/modelling-48.jpg'), size: 'wide', number: 48 },
@@ -191,10 +212,10 @@ const MODELLING_GALLERY: BentoPhoto[] = [
   { src: Q('modelling/modelling-52.jpg'), size: 'tall', number: 52 },
   { src: Q('modelling/modelling-53.jpg'), size: 'tall', number: 53 },
   { src: Q('modelling/modelling-54.jpg'), size: 'tall', number: 54 },
-  { src: Q('modelling/modelling-55.jpg'), size: 'wide', number: 55 },
-  { src: Q('modelling/modelling-56.jpg'), size: 'wide', number: 56 },
+  { src: Q('modelling/modelling-55.jpg'), size: 'wide', number: 55, fit: 'contain' },
+  { src: Q('modelling/modelling-56.jpg'), size: 'wide', number: 56, fit: 'contain' },
   { src: Q('modelling/modelling-57.jpg'), size: 'tall', number: 57 },
-  { src: Q('modelling/modelling-59.jpg'), size: 'wide', number: 59 },
+  { src: Q('modelling/modelling-59.jpg'), size: 'wide', number: 59, fit: 'contain' },
   { src: Q('modelling/modelling-60.jpg'), size: 'hero', number: 60, caption: "China photoshoot makeup" },
   { src: Q('modelling/modelling-61.jpg'), size: 'tall', number: 61 },
   { src: Q('modelling/modelling-62.jpg'), size: 'tall', number: 62 },
@@ -252,49 +273,27 @@ const LEGO_GALLERY: BentoPhoto[] = [
 ]
 
 const MUSIC_GALLERY: BentoPhoto[] = [
-  { src: Q('music/music-1.jpg'), size: 'wide' },
-  { src: Q('music/music-2.jpg'), size: 'sm' },
-  { src: Q('music/music-3.jpg'), size: 'sm' },
-  { src: Q('music/music-4.jpg'), size: 'wide', caption: 'Oscar Peterson statue in Ottawa' },
-  { src: Q('music/music-5.jpg'), size: 'wide', caption: 'Piano before prom' },
+  { src: Q('music/music-2.jpg'), size: 'hero', number: 2 },
+  { src: Q('music/music-1.jpg'), size: 'wide', number: 1 },
+  { src: Q('music/music-3.jpg'), size: 'sm', number: 3 },
+  { src: Q('music/music-4.jpg'), size: 'wide', number: 4, caption: 'Oscar Peterson statue in Ottawa' },
+  { src: Q('music/music-5.jpg'), size: 'wide', number: 5, caption: 'Piano before prom' },
 ]
 
-const POKER_GALLERY: BentoPhoto[] = [
-  { src: Q('poker/poker-1.jpg'), size: 'hero' },
-  { src: Q('poker/poker-2.jpg'), size: 'tall' },
-  { src: Q('poker/poker-3.jpg'), size: 'tall' },
-  { src: Q('poker/poker-4.jpg'), size: 'sm' },
-  { src: Q('poker/poker-5.jpg'), size: 'wide' },
-  { src: Q('poker/poker-6.jpg'), size: 'sm' },
-  { src: Q('poker/poker-7.jpg'), size: 'sm' },
-  { src: Q('poker/poker-8.jpg'), size: 'wide' },
-]
-
+// Only photos 3, 4, 5 are allowed to crop — everything else is `fit: 'contain'`.
+// Sizes fill the 6-column grid exactly flat over 3 rows: xl(3x2) + three tall(1x2)
+// fill rows 1-2, two wide(2x1) + two sm(1x1) fill row 3.
 const POOL_GALLERY: BentoPhoto[] = [
-  { src: Q('pool/pool-1.jpg'), size: 'hero' },
-  { src: Q('pool/pool-2.jpg'), size: 'wide' },
-  { src: Q('pool/pool-3.jpg'), size: 'sm' },
-  { src: Q('pool/pool-4.jpg'), size: 'wide' },
-  { src: Q('pool/pool-5.jpg'), size: 'sm' },
-  { src: Q('pool/pool-6.jpg'), size: 'sm' },
-  { src: Q('pool/pool-7.jpg'), size: 'wide' },
-  { src: Q('pool/pool-8.jpg'), size: 'sm' },
+  { src: Q('pool/pool-6.jpg'), size: 'xl', number: 6, fit: 'contain' },
+  { src: Q('pool/pool-1.jpg'), size: 'tall', number: 1, fit: 'contain' },
+  { src: Q('pool/pool-2.jpg'), size: 'tall', number: 2, fit: 'contain' },
+  { src: Q('pool/pool-7.jpg'), size: 'tall', number: 7, fit: 'contain' },
+  { src: Q('pool/pool-3.jpg'), size: 'wide', number: 3 },
+  { src: Q('pool/pool-4.jpg'), size: 'wide', number: 4 },
+  { src: Q('pool/pool-5.jpg'), size: 'sm', number: 5 },
+  { src: Q('pool/pool-8.jpg'), size: 'sm', number: 8, fit: 'contain' },
 ]
 
-const HACKATHONS_GALLERY: BentoPhoto[] = [
-  { src: Q('hackathons/hackathons-1.jpg'), size: 'wide' },
-  { src: Q('hackathons/hackathons-2.jpg'), size: 'wide', caption: 'Hack the Hill merch' },
-  { src: Q('hackathons/hackathons-3.jpg'), size: 'wide', caption: 'Trying hardware for the first time' },
-  { src: Q('hackathons/hackathons-4.jpg'), size: 'hero', caption: "Hack the Hill II lineup." },
-  { src: Q('hackathons/hackathons-5.jpg'), size: 'wide', caption: 'Hack the 6ix merch' },
-  { src: Q('hackathons/hackathons-6.jpg'), size: 'sm', caption: 'QNX Workshop' },
-  { src: Q('hackathons/hackathons-7.jpg'), size: 'tall', caption: "Toronto's Largest Hackathon." },
-  { src: Q('hackathons/hackathons-8.jpg'), size: 'hero', caption: "Late-night build with the team." },
-  { src: Q('hackathons/hackathons-9.jpg'), size: 'sm', caption: 'Sensors for CaneOS' },
-  { src: Q('hackathons/hackathons-10.jpg'), size: 'hero' },
-  { src: Q('hackathons/hackathons-11.jpg'), size: 'hero', caption: 'TechNova photo booth' },
-  { src: Q('hackathons/hackathons-12.jpg'), size: 'wide', caption: 'TechNova merch' },
-]
 const QUESTS: QuestCard[] = [
   {
     id: 'volleyball',
@@ -327,7 +326,7 @@ const QUESTS: QuestCard[] = [
     sub: 'Games of 8-ball whenever there is a table free. Still working on my bank shots.',
     tags: ['8-Ball', 'Cue Sports', 'Casual'],
     placeholder: '🎱',
-    images: [POOL_GALLERY[0].src],
+    images: [Q('pool/pool-2.jpg')],
     layout: 'bento',
     gallery: POOL_GALLERY,
     videos: videosFor('pool', 1),
@@ -339,7 +338,7 @@ const QUESTS: QuestCard[] = [
     sub: 'Flour, sugar, and oven-baked experiments. A great way to relax and enjoy good food with others.',
     tags: ['Macarons', 'Cookies', 'Stress Relief'],
     placeholder: '🧁',
-    images: [Q('baking/baking-2.jpg')],
+    images: [Q('baking/baking-3.jpg')],
     layout: 'bento',
     gallery: BAKING_GALLERY,
   },
@@ -383,9 +382,15 @@ const QUESTS: QuestCard[] = [
     sub: 'Game theory, probability, and reading patterns under pressure.',
     tags: ['Strategy', 'Game Theory', "Texas Hold'em"],
     placeholder: '♠️',
-    images: [POKER_GALLERY[0].src],
-    layout: 'bento',
-    gallery: POKER_GALLERY,
+    images: [Q('poker/poker-1.jpg'), Q('poker/poker-3.jpg'), Q('poker/poker-4.jpg'), Q('poker/poker-5.jpg'), Q('poker/poker-7.jpg')],
+    cover: Q('poker/poker-6.jpg'),
+    layout: 'filmstrip',
+    filmstripHero: { src: Q('poker/poker-6.jpg'), caption: 'I was the pocket 10s' },
+    filmstripFeatures: [
+      { src: Q('poker/poker-8.jpg'), caption: 'University of Waterloo Poker Studies Club tournament' },
+      { src: Q('poker/poker-2.jpg') },
+    ],
+    filmstripReelCaptions: { [Q('poker/poker-7.jpg')]: 'a huge run at Waterloo' },
     videos: videosFor('poker', 4),
   },
   {
@@ -395,18 +400,31 @@ const QUESTS: QuestCard[] = [
     sub: 'Late nights, bad coffee, and building something from nothing in 24 hours flat.',
     tags: ['Devpost', 'Team Projects', 'Late Nights'],
     placeholder: '💻',
-    images: [Q('hackathons/hackathons-10.jpg')],
-    layout: 'bento',
-    gallery: HACKATHONS_GALLERY,
+    images: Array.from({ length: 12 }, (_, i) => Q(`hackathons/hackathons-${i + 1}.jpg`)),
+    cover: Q('hackathons/hackathons-10.jpg'),
+    layout: 'polaroid',
+    polaroidFit: 'native',
+    // 11 pinned to the leftmost column so its height (it's an extreme 1:3 portrait
+    // crop) reads as an edge accent instead of colliding with the rest of the scatter.
+    polaroidOverrides: {
+      [Q('hackathons/hackathons-1.jpg')]: { width: 257 },
+      [Q('hackathons/hackathons-2.jpg')]: { width: 285 },
+      [Q('hackathons/hackathons-4.jpg')]: { width: 216 },
+      [Q('hackathons/hackathons-8.jpg')]: { width: 210 },
+      [Q('hackathons/hackathons-9.jpg')]: { width: 248 },
+      [Q('hackathons/hackathons-10.jpg')]: { width: 270 },
+      [Q('hackathons/hackathons-11.jpg')]: { col: 0 },
+    },
   },
   {
     id: 'people',
     piece: 'j',
-    title: 'PEOPLE + MY DOG',
-    sub: 'Quality time is my love language. My dog is a golden retriever mix named Mochi and she is perfect.',
-    tags: ['Friends', 'Golden Retriever', 'Mochi', 'Quality Time'],
+    title: 'FRIENDS',
+    sub: 'Quality time is my love language. My dog is a Shiba Inu named Pompom and he is a menace.',
+    tags: ['Friends', 'Shiba Inu', 'Pompom', 'Quality Time'],
     placeholder: '🐾',
-    images: Array.from({ length: 97 }, (_, i) => Q(`people/people-${i + 1}.jpg`)),
+    images: Array.from({ length: 97 }, (_, i) => i + 1).filter((n) => n !== 40).map((n) => Q(`people/people-${n}.jpg`)),
+    cover: Q('people/people-38.jpg'),
     layout: 'polaroid',
   },
   {
@@ -430,6 +448,7 @@ const QUESTS: QuestCard[] = [
     placeholder: '📷',
     images: Array.from({ length: 40 }, (_, i) => Q(`photography/photography-${i + 1}.jpg`)),
     layout: 'marquee',
+    marqueeHeight: 'calc(100vh - 260px)',
   },
   {
     id: 'shad',
@@ -439,6 +458,7 @@ const QUESTS: QuestCard[] = [
     tags: ['STEM', 'Entrepreneurship', 'Summer Program'],
     placeholder: '🎓',
     images: Array.from({ length: 55 }, (_, i) => Q(`shad/shad-${i + 1}.jpg`)),
+    cover: Q('shad/shad-7.jpg'),
     layout: 'polaroid',
     videos: videosFor('shad', 4),
   },
@@ -450,6 +470,7 @@ const QUESTS: QuestCard[] = [
     tags: ['Team Captain', 'Fundraising', 'Cancer Research', 'Community'],
     placeholder: '🎗️',
     images: Array.from({ length: 6 }, (_, i) => Q(`relay/relay-${[2, 3, 5, 6, 7, 9][i]}.jpg`)),
+    cover: Q('relay/relay-4.jpg'),
     layout: 'filmstrip',
     filmstripHero: { src: Q('relay/relay-1.jpg'), caption: 'Bake sale fundraiser' },
     filmstripFeatures: [
@@ -538,7 +559,7 @@ const CSS = `
   font-family: var(--font-mono); font-size: 11px; font-weight: 600;
 }
 .tj-bento-caption {
-  flex-shrink: 0; padding: 6px 10px; min-height: 20px;
+  flex-shrink: 0; padding: 6px 10px 6px 0; min-height: 20px;
   font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
   background: var(--bg-well); border-top: 2px dashed var(--border-hairline);
 }
@@ -729,9 +750,9 @@ type ScatterSpot = { x: number; y: number; rot: number; w: number; speed: number
 // Cards are laid out in a loose grid, then knocked around with per-card jitter on
 // position, rotation and size — that's what makes rows overlap and lets neighbours
 // bleed into each other instead of sitting in tidy, evenly-spaced cells.
-function polaroidSpot(i: number, total: number): ScatterSpot {
+function polaroidSpot(i: number, total: number, override?: { width?: number; col?: number }): ScatterSpot {
   const cols = Math.min(POLA_COLS, Math.max(1, total))
-  const col = i % cols
+  const col = override?.col ?? (i % cols)
   const row = Math.floor(i / cols)
   const colWidth = 100 / cols
   const baseX = col * colWidth + colWidth / 2
@@ -741,20 +762,23 @@ function polaroidSpot(i: number, total: number): ScatterSpot {
   const xJitter = (seeded(i, 1) - 0.5) * colWidth * 0.5
   const yJitter = (seeded(i, 2) - 0.5) * POLA_ROW_H * 0.35
   const rot = (seeded(i, 3) - 0.5) * 24
-  const w = POLA_CARD_W + (seeded(i, 4) - 0.5) * 30
+  const w = override?.width ?? (POLA_CARD_W + (seeded(i, 4) - 0.5) * 30)
   const speed = 0.02 + seeded(i, 5) * 0.045
   return { x: Math.max(2, Math.min(96, baseX + xJitter - w / 200 * 5)), y: Math.max(0, row * POLA_ROW_H + yJitter), rot, w, speed }
 }
 
-function polaroidHeight(total: number) {
+function polaroidHeight(total: number, fit: 'square' | 'native' = 'square') {
   const cols = Math.min(POLA_COLS, Math.max(1, total))
   const rows = Math.ceil(total / cols)
-  return rows * POLA_ROW_H + POLA_CARD_W * 1.3 + 60
+  // Native-fit prints vary in height (some portrait shots run much taller than a
+  // square print), so pad extra room to keep the reel below from overlapping them.
+  return rows * POLA_ROW_H + POLA_CARD_W * 1.3 + 60 + (fit === 'native' ? 240 : 0)
 }
 
-function PolaroidCard({ src, spot, scrollRef, i, containerRef, onDragEnd }: {
+function PolaroidCard({ src, spot, scrollRef, i, containerRef, onDragEnd, fit = 'square' }: {
   src: string; spot: ScatterSpot; scrollRef: React.RefObject<number>; i: number
   containerRef: React.RefObject<HTMLDivElement | null>; onDragEnd: (xPct: number, yPx: number) => void
+  fit?: 'square' | 'native'
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const dragRef = useRef<{ startX: number; startY: number; dx: number; dy: number; dragging: boolean }>({ startX: 0, startY: 0, dx: 0, dy: 0, dragging: false })
@@ -799,9 +823,13 @@ function PolaroidCard({ src, spot, scrollRef, i, containerRef, onDragEnd }: {
       background: '#f3ede0', padding: '10px 10px 26px', borderRadius: 2, cursor: 'grab', touchAction: 'none',
       boxShadow: '0 10px 24px rgba(0,0,0,0.45)', willChange: 'transform',
     }}>
-      <div style={{ aspectRatio: '1/1', overflow: 'hidden', background: 'var(--bg-well)' }}>
-        <img src={src} alt="" loading="lazy" draggable={false} style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
-      </div>
+      {fit === 'native' ? (
+        <img src={src} alt="" loading="lazy" draggable={false} style={{ width: '100%', height: 'auto', display: 'block', pointerEvents: 'none' }} />
+      ) : (
+        <div style={{ aspectRatio: '1/1', overflow: 'hidden', background: 'var(--bg-well)' }}>
+          <img src={src} alt="" loading="lazy" draggable={false} style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
+        </div>
+      )}
       <span style={{ position: 'absolute', bottom: 6, right: 10, fontFamily: 'var(--font-mono)', fontSize: 10, color: '#8a8270' }}>#{i + 1}</span>
     </div>
   )
@@ -831,13 +859,13 @@ function PolaroidDetail({ quest, onBack }: { quest: QuestCard; onBack: () => voi
       <BackButton c={c} onBack={onBack} style={{ marginBottom: 32 }} />
       <QuestDetailHeader quest={quest} c={c} />
 
-      <div ref={containerRef} style={{ position: 'relative', height: polaroidHeight(quest.images.length), marginTop: 12 }}>
+      <div ref={containerRef} style={{ position: 'relative', height: polaroidHeight(quest.images.length, quest.polaroidFit), marginTop: 12 }}>
         {quest.images.map((src, i) => {
-          const baseSpot = polaroidSpot(i, quest.images.length)
-          const override = dragOverrides[i]
-          const spot = override ? { ...baseSpot, x: override.x, y: override.y } : baseSpot
+          const baseSpot = polaroidSpot(i, quest.images.length, quest.polaroidOverrides?.[src])
+          const drag = dragOverrides[i]
+          const spot = drag ? { ...baseSpot, x: drag.x, y: drag.y } : baseSpot
           return (
-            <PolaroidCard key={i} src={src} spot={spot} scrollRef={scrollValue} i={i} containerRef={containerRef}
+            <PolaroidCard key={i} src={src} spot={spot} scrollRef={scrollValue} i={i} containerRef={containerRef} fit={quest.polaroidFit}
               onDragEnd={(x, y) => setDragOverrides((prev) => ({ ...prev, [i]: { x, y } }))} />
           )
         })}
@@ -863,7 +891,10 @@ function FilmstripDetail({ quest, onBack }: { quest: QuestCard; onBack: () => vo
   const c = `var(--piece-${quest.piece})`
   const heroSrc = quest.filmstripHero?.src ?? quest.images[0]
   const features = quest.filmstripFeatures ?? []
-  const reel = quest.filmstripHero ? quest.images : quest.images.slice(1)
+  // images[0] can double as the tile cover even when it's really the hero/a feature —
+  // filter those back out here so the reel never shows the same photo twice.
+  const excluded = new Set([quest.filmstripHero?.src, ...features.map((f) => f.src)])
+  const reel = (quest.filmstripHero ? quest.images : quest.images.slice(1)).filter((src) => !excluded.has(src))
 
   return (
     <section className="tj-quest-detail" style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 72px' }}>
@@ -872,8 +903,8 @@ function FilmstripDetail({ quest, onBack }: { quest: QuestCard; onBack: () => vo
 
       {heroSrc && (
         <div style={{ marginBottom: features.length ? 12 : 4 }}>
-          <div style={{ aspectRatio: '16/9', borderRadius: quest.filmstripHero?.caption ? '2px 2px 0 0' : 'var(--radius-1)', overflow: 'hidden', border: '2px solid var(--border-strong)' }}>
-            <img src={heroSrc} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <div style={{ aspectRatio: '16/9', borderRadius: quest.filmstripHero?.caption ? '2px 2px 0 0' : 'var(--radius-1)', overflow: 'hidden', border: '2px solid var(--border-strong)', background: 'var(--bg-well)' }}>
+            <img src={heroSrc} alt="" style={{ width: '100%', height: '100%', objectFit: quest.filmstripHero?.fit ?? 'cover' }} />
           </div>
           <FilmstripCaption text={quest.filmstripHero?.caption} />
         </div>
@@ -894,11 +925,17 @@ function FilmstripDetail({ quest, onBack }: { quest: QuestCard; onBack: () => vo
 
       <div className="tj-filmstrip-sprockets" />
       <div className="tj-filmstrip-reel">
-        {reel.map((src, i) => (
-          <div key={i} className="tj-filmstrip-frame">
-            <img src={src} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </div>
-        ))}
+        {reel.map((src, i) => {
+          const caption = quest.filmstripReelCaptions?.[src]
+          return (
+            <div key={i} style={{ flex: '0 0 220px' }}>
+              <div className="tj-filmstrip-frame" style={caption ? { borderRadius: '2px 2px 0 0' } : undefined}>
+                <img src={src} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+              <FilmstripCaption text={caption} />
+            </div>
+          )
+        })}
       </div>
       <div className="tj-filmstrip-sprockets" />
 
@@ -910,6 +947,7 @@ function FilmstripDetail({ quest, onBack }: { quest: QuestCard; onBack: () => vo
 
 // ---- Bento: numbered collage tiles, sized hero/wide/tall/sm, captions on select tiles ----
 const BENTO_SPAN: Record<MediaSize, { col: number; row: number }> = {
+  xl: { col: 3, row: 2 },
   hero: { col: 2, row: 2 },
   wide: { col: 2, row: 1 },
   tall: { col: 1, row: 2 },
@@ -931,7 +969,7 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
           return (
             <div key={i} className="tj-bento-tile" style={{ gridColumn: `span ${span.col}`, gridRow: `span ${span.row}` }}>
               <span className="tj-bento-number" style={{ borderColor: c, color: c }}>{p.number ?? i + 1}</span>
-              <img src={p.src} alt="" loading="lazy" className="tj-bento-img" />
+              <img src={p.src} alt="" loading="lazy" className="tj-bento-img" style={{ objectFit: p.fit ?? 'cover' }} />
               {p.caption !== undefined && (
                 <div className="tj-bento-caption">
                   {p.caption ? <>{'// '}{p.caption}</> : <span className="tj-bento-caption-placeholder">Add a caption…</span>}
@@ -1190,13 +1228,15 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
       </div>
 
       <div ref={trackRef} style={{ position: 'absolute', top: '50%', left: 0, transform: 'translateY(-50%)', display: 'flex', gap: GAP, paddingLeft: 24 + TITLE_W + TITLE_GUTTER, paddingRight: 60, willChange: 'transform' }}>
-        {QUESTS.map((q, i) => (
+        {QUESTS.map((q, i) => {
+          const coverSrc = q.cover ?? q.images[0]
+          return (
           <div key={q.id} ref={(el) => { tileRefs.current[i] = el }} className="tj-quest-card" onClick={() => onOpen(q.id)}
             style={{ width: TILE_W, height: TILE_H, flexShrink: 0 }}>
             <Card accent={q.piece} accentBar style={{ display: 'flex', flexDirection: 'column', height: '100%', userSelect: 'none' }}>
               <div className="tj-quest-media">
-                {q.images[0] && <img src={q.images[0]} alt={q.title} className="tj-quest-img" />}
-                {!q.images[0] && <span style={{ fontSize: 48 }}>{q.placeholder}</span>}
+                {coverSrc && <img src={coverSrc} alt={q.title} className="tj-quest-img" />}
+                {!coverSrc && <span style={{ fontSize: 48 }}>{q.placeholder}</span>}
                 <div className="tj-quest-hint">Click to explore</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
@@ -1212,7 +1252,8 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
               </div>
             </Card>
           </div>
-        ))}
+          )
+        })}
       </div>
 
       <div ref={dotsRef} style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 8, zIndex: 2 }}>
@@ -1230,13 +1271,17 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
 }
 
 // ---- Grid view ----
-export function SideQuests() {
+export function SideQuests({ resetSignal }: { resetSignal?: number } = {}) {
   ensureCSS()
   const [openId, setOpenId] = useState<string | null>(null)
   // Lives in the parent (not inside QuestCarousel) so it survives the carousel
   // unmounting while a quest detail page is open, letting scroll position pick
   // back up where it left off instead of resetting to the first tile.
   const progressRef = useRef(0)
+
+  // Bumped by App.tsx when "Quests" is clicked again while already on this section —
+  // closes whatever quest detail is open so the full tile grid is visible again.
+  useEffect(() => { setOpenId(null) }, [resetSignal])
 
   if (openId) {
     const quest = QUESTS.find(q => q.id === openId)!
