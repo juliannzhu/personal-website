@@ -149,12 +149,12 @@ export function About() {
             chasing a new side quest.
           </p>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 24 }}>
-            <Tag piece="i">Open source</Tag>
-            <Tag piece="o">Puzzle games</Tag>
-            <Tag piece="s">Coffee</Tag>
-            <Tag piece="t">Pixel art</Tag>
-            <Tag piece="j">Competitive Tetris</Tag>
-            <Tag piece="l">UI/UX</Tag>
+            <Tag piece="i">React</Tag>
+            <Tag piece="o">Python</Tag>
+            <Tag piece="s">SQL & Grafana</Tag>
+            <Tag piece="t">UI/UX Design</Tag>
+            <Tag piece="j">Security Research</Tag>
+            <Tag piece="l">Full Stack Development</Tag>
           </div>
 
           <div ref={achievementsRef} style={{ marginTop: 40 }}>
