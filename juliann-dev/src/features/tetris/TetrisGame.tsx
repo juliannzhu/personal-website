@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, useCallback, forwardRef } from 'react'
+import { Icon } from '@iconify/react'
 import { Button } from '../../components/ds/Button'
 import { Tetromino } from '../../components/ds/Tetromino'
 import { SFX } from '../../audio/soundEngine'
@@ -138,6 +139,213 @@ async function postLiveScore(name: string, ms: number): Promise<number | null> {
     const data = await res.json()
     return data.rank ?? null
   } catch { return null }
+}
+
+// ---- achievements -------------------------------------------------------
+const ACH_KEY = 'tj-tetris-achievements'
+const RANK_DEPTH = 20 // matches the leaderboard's persisted depth, used as the denominator for rank-based progress
+
+interface AchStats {
+  gamesPlayed: number
+  sprintsCompleted: number
+  bestRank: number | null
+  bestMs: number | null
+  tetrisClears: number
+  perfectClears: number
+  tSpins: number
+  totalLines: number
+  backToBackTetris: boolean
+  noHoldClear: boolean
+  sub60Clear: boolean
+  noHardDropClear: boolean
+  nightOwlClear: boolean
+  unlocked: string[]
+}
+
+const DEFAULT_ACH_STATS: AchStats = {
+  gamesPlayed: 0, sprintsCompleted: 0, bestRank: null, bestMs: null,
+  tetrisClears: 0, perfectClears: 0, tSpins: 0, totalLines: 0,
+  backToBackTetris: false, noHoldClear: false, sub60Clear: false,
+  noHardDropClear: false, nightOwlClear: false,
+  unlocked: [],
+}
+
+function loadAchStats(): AchStats {
+  try { const s = JSON.parse(localStorage.getItem(ACH_KEY) ?? 'null'); if (s) return { ...DEFAULT_ACH_STATS, ...s } } catch {}
+  return { ...DEFAULT_ACH_STATS }
+}
+function saveAchStats(s: AchStats) { try { localStorage.setItem(ACH_KEY, JSON.stringify(s)) } catch {} }
+
+interface Achievement {
+  id: string; title: string; desc: string; piece: ColorKey; icon: string
+  progress?: (s: AchStats) => number // 0..1, only present for count/rank-style achievements
+  unlocked: (s: AchStats) => boolean
+}
+
+// Rough heuristic for "how close" a rank-based achievement is: rank 1 -> 1, rank RANK_DEPTH+1 (off the
+// list entirely) -> 0, scaled so the target rank itself already reads as fully complete.
+const rankProgress = (bestRank: number | null, target: number): number => {
+  if (bestRank == null) return 0
+  if (bestRank <= target) return 1
+  return Math.max(0, Math.min(1, (RANK_DEPTH + 1 - bestRank) / (RANK_DEPTH + 1 - target)))
+}
+
+const ACHIEVEMENTS: Achievement[] = [
+  { id: 'first-clear', title: 'First Clear', desc: 'Complete your first 20-line sprint.', piece: 's', icon: 'pixelarticons:flag',
+    unlocked: (s) => s.sprintsCompleted >= 1 },
+  { id: 'regular', title: 'Regular', desc: 'Play 3 games.', piece: 'i', icon: 'pixelarticons:repeat',
+    progress: (s) => Math.min(1, s.gamesPlayed / 3), unlocked: (s) => s.gamesPlayed >= 3 },
+  { id: 'dedicated', title: 'Dedicated', desc: 'Play 10 games.', piece: 'i', icon: 'pixelarticons:gamepad',
+    progress: (s) => Math.min(1, s.gamesPlayed / 10), unlocked: (s) => s.gamesPlayed >= 10 },
+  { id: 'on-the-board', title: 'On the Board', desc: 'Make the leaderboard.', piece: 'j', icon: 'pixelarticons:list',
+    progress: (s) => rankProgress(s.bestRank, RANK_DEPTH), unlocked: (s) => s.bestRank != null && s.bestRank <= RANK_DEPTH },
+  { id: 'top-10', title: 'Top 10', desc: 'Reach a top 10 sprint time.', piece: 'j', icon: 'pixelarticons:target',
+    progress: (s) => rankProgress(s.bestRank, 10), unlocked: (s) => s.bestRank != null && s.bestRank <= 10 },
+  { id: 'podium', title: 'Podium', desc: 'Finish in the top 3.', piece: 'o', icon: 'pixelarticons:crown',
+    progress: (s) => rankProgress(s.bestRank, 3), unlocked: (s) => s.bestRank != null && s.bestRank <= 3 },
+  { id: 'champion', title: 'Champion', desc: 'Take the #1 spot on the leaderboard.', piece: 'o', icon: 'pixelarticons:trophy',
+    progress: (s) => rankProgress(s.bestRank, 1), unlocked: (s) => s.bestRank === 1 },
+  { id: 'tetris', title: 'Tetris!', desc: 'Clear 4 lines at once.', piece: 'i', icon: 'pixelarticons:zap',
+    unlocked: (s) => s.tetrisClears >= 1 },
+  { id: 'back-to-back', title: 'Back-to-Back', desc: 'Clear two Tetrises in a row.', piece: 'i', icon: 'pixelarticons:check-double',
+    unlocked: (s) => s.backToBackTetris },
+  { id: 'perfect-clear', title: 'Perfect Clear', desc: 'Clear every block off the board in one line clear.', piece: 't', icon: 'pixelarticons:sparkles',
+    unlocked: (s) => s.perfectClears >= 1 },
+  { id: 't-spin', title: 'T-Spin', desc: 'Clear a line with a T-spin.', piece: 't', icon: 'pixelarticons:reload',
+    unlocked: (s) => s.tSpins >= 1 },
+  { id: 'speed-demon', title: 'Speed Demon', desc: 'Finish a sprint in under 60 seconds.', piece: 'z', icon: 'pixelarticons:fire',
+    unlocked: (s) => s.sub60Clear },
+  { id: 'no-hold', title: 'No Hold', desc: 'Finish a sprint without using Hold once.', piece: 'l', icon: 'pixelarticons:hand',
+    unlocked: (s) => s.noHoldClear },
+  { id: 'century-club', title: 'Century Club', desc: 'Clear 100 lines lifetime.', piece: 's', icon: 'pixelarticons:card-stack',
+    progress: (s) => Math.min(1, s.totalLines / 100), unlocked: (s) => s.totalLines >= 100 },
+  { id: 'featherweight', title: 'Featherweight', desc: 'Finish a sprint without ever hard dropping.', piece: 'z', icon: 'pixelarticons:feather',
+    unlocked: (s) => s.noHardDropClear },
+  { id: 'night-owl', title: 'Night Owl', desc: 'Complete a sprint between midnight and 4am.', piece: 'j', icon: 'pixelarticons:moon',
+    unlocked: (s) => s.nightOwlClear },
+]
+
+// ---- Achievement tile + modal (MODULE LEVEL — same reconciliation-safety reasoning as the settings sub-components) ----
+function AchTile({ a, stats, hovered, onHover }: { a: Achievement; stats: AchStats; hovered: boolean; onHover: () => void }) {
+  const unlocked = a.unlocked(stats)
+  const progress = a.progress?.(stats) ?? (unlocked ? 1 : 0)
+  const c = `var(--piece-${a.piece})`
+  return (
+    <button
+      type="button"
+      onMouseEnter={onHover}
+      onFocus={onHover}
+      style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '12px 6px',
+        background: unlocked ? `color-mix(in srgb, ${c} 16%, var(--bg-well))` : 'var(--bg-well)',
+        border: `2px ${unlocked ? 'solid' : 'dashed'} ${hovered ? c : (unlocked ? c : 'var(--border-strong)')}`,
+        borderRadius: 'var(--radius-1)', cursor: 'default',
+      }}>
+      <div style={{
+        width: 32, height: 32, borderRadius: 'var(--radius-1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        background: unlocked ? c : 'transparent',
+        boxShadow: unlocked ? 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3)' : `inset 0 0 0 2px ${c}`,
+        opacity: unlocked ? 1 : 0.55,
+      }}>
+        <Icon icon={a.icon} style={{ fontSize: 16, color: unlocked ? 'var(--text-on-piece)' : c }} />
+      </div>
+      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 8, textAlign: 'center', lineHeight: 1.4, color: unlocked ? 'var(--text-strong)' : 'var(--text-faint)', textTransform: 'uppercase' }}>{a.title}</span>
+      {progress < 1 && a.progress && (
+        <div style={{ width: '100%', height: 4, background: 'var(--border-hairline)', borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{ height: '100%', width: `${progress * 100}%`, background: c, transition: 'width 200ms' }} />
+        </div>
+      )}
+    </button>
+  )
+}
+
+function AchievementsModal({ stats, onClose }: { stats: AchStats; onClose: () => void }) {
+  const [hoveredId, setHoveredId] = useState<string>(ACHIEVEMENTS[0].id)
+  const hovered = ACHIEVEMENTS.find((a) => a.id === hoveredId) ?? ACHIEVEMENTS[0]
+  const unlockedCount = ACHIEVEMENTS.filter((a) => a.unlocked(stats)).length
+  const c = `var(--piece-${hovered.piece})`
+  const progress = hovered.progress?.(stats) ?? (hovered.unlocked(stats) ? 1 : 0)
+
+  return (
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      style={{ position: 'fixed', inset: 0, zIndex: 9600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,5,9,0.82)', backdropFilter: 'blur(6px)' }}>
+      <div style={{ background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', width: 440, maxHeight: '88vh', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-1)', overflow: 'hidden', boxShadow: '0 0 40px rgba(0,0,0,0.6)' }}>
+
+        {/* Title bar */}
+        <div style={{ display: 'flex', alignItems: 'center', padding: '12px 18px', borderBottom: '2px solid var(--border-strong)', background: 'var(--ink-900)', flexShrink: 0 }}>
+          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--text-strong)', textTransform: 'uppercase', flex: 1, letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Icon icon="pixelarticons:trophy" style={{ fontSize: 18, color: 'var(--piece-o)' }} /> Achievements
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', textTransform: 'none', letterSpacing: 0 }}>{unlockedCount}/{ACHIEVEMENTS.length}</span>
+          </span>
+          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 4px' }}>✕</button>
+        </div>
+
+        {/* Grid */}
+        <div style={{ padding: '16px 18px 0', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, overflowY: 'auto' }}>
+          {ACHIEVEMENTS.map((a) => (
+            <AchTile key={a.id} a={a} stats={stats} hovered={hoveredId === a.id} onHover={() => setHoveredId(a.id)} />
+          ))}
+        </div>
+
+        {/* Detail panel for the hovered/selected achievement */}
+        <div style={{ margin: '16px 18px 18px', padding: '14px 16px', background: 'var(--bg-well)', border: `2px solid ${c}`, borderRadius: 'var(--radius-1)', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 6 }}>
+            <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: c, textTransform: 'uppercase' }}>{hovered.title}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em', color: hovered.unlocked(stats) ? 'var(--piece-s)' : 'var(--text-faint)' }}>
+              {hovered.unlocked(stats) ? '✓ Unlocked' : 'Locked'}
+            </span>
+          </div>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', margin: 0, lineHeight: 1.6 }}>{hovered.desc}</p>
+          {hovered.progress && progress < 1 && (
+            <div style={{ marginTop: 10 }}>
+              <div style={{ height: 6, background: 'var(--border-hairline)', borderRadius: 3, overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${progress * 100}%`, background: c, transition: 'width 200ms' }} />
+              </div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', marginTop: 5, textAlign: 'right' }}>{Math.round(progress * 100)}%</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const ACH_CSS = `
+@keyframes tj-ach-toast-in { from { transform: translateX(24px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.tj-ach-toast { animation: tj-ach-toast-in 220ms var(--ease-snap) both; }
+`
+let achCssInjected = false
+function ensureAchCSS() {
+  if (!achCssInjected && typeof document !== 'undefined') {
+    const s = document.createElement('style'); s.textContent = ACH_CSS; document.head.appendChild(s); achCssInjected = true
+  }
+}
+
+function AchievementToasts({ toasts }: { toasts: Achievement[] }) {
+  if (!toasts.length) return null
+  return (
+    <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 9750, display: 'flex', flexDirection: 'column', gap: 10, pointerEvents: 'none' }}>
+      {toasts.map((a) => (
+        <div key={a.id} className="tj-ach-toast" style={{
+          display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', minWidth: 220,
+          background: 'var(--ink-1000)', border: `2px solid var(--piece-${a.piece})`, borderRadius: 'var(--radius-1)',
+          boxShadow: `0 0 24px color-mix(in srgb, var(--piece-${a.piece}) 45%, transparent)`,
+        }}>
+          <div style={{
+            width: 30, height: 30, flexShrink: 0, borderRadius: 'var(--radius-1)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: `var(--piece-${a.piece})`, boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3)',
+          }}>
+            <Icon icon={a.icon} style={{ fontSize: 15, color: 'var(--text-on-piece)' }} />
+          </div>
+          <div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Achievement Unlocked</div>
+            <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: `var(--piece-${a.piece})`, marginTop: 3, textTransform: 'uppercase' }}>{a.title}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 }
 
 // ---- settings -------------------------------------------------------
@@ -437,16 +645,54 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
   const restartInterval = useRef<ReturnType<typeof setInterval> | null>(null)
   const restartStart = useRef<number | null>(null)
 
+  // Achievements
+  ensureAchCSS()
+  const achRef = useRef<AchStats>(loadAchStats())
+  const usedHoldRef = useRef(false)
+  const usedHardDropRef = useRef(false)
+  const lastActionWasRotateRef = useRef(false)
+  const lastClearWasTetrisRef = useRef(false)
+  const [, setAchTick] = useState(0)
+  const [showAchievements, setShowAchievements] = useState(false)
+  const [toasts, setToasts] = useState<Achievement[]>([])
+
+  const checkAchievements = useCallback(() => {
+    const s = achRef.current
+    const newly = ACHIEVEMENTS.filter((a) => !s.unlocked.includes(a.id) && a.unlocked(s))
+    if (newly.length) {
+      s.unlocked = [...s.unlocked, ...newly.map((a) => a.id)]
+      setToasts((t) => [...t, ...newly])
+      newly.forEach((a) => { setTimeout(() => setToasts((t) => t.filter((x) => x.id !== a.id)), 4200) })
+    }
+    saveAchStats(s)
+    setAchTick((v) => v + 1)
+  }, [])
+
   const startGame = useCallback(() => {
     const s = freshState('playing')
     const t = s.queue.shift()!; ensureQueue(s)
     s.cur = spawn(t); s.startTime = Date.now()
-    g.current = s; setEnteringInitials(false); setInitials(''); setRestartProgress(0); setClock(Date.now()); rerender()
-  }, [rerender])
+    g.current = s; setEnteringInitials(false); setInitials(''); setRestartProgress(0); setClock(Date.now())
+    usedHoldRef.current = false; usedHardDropRef.current = false; lastActionWasRotateRef.current = false; lastClearWasTetrisRef.current = false
+    achRef.current.gamesPlayed++
+    checkAchievements()
+    rerender()
+  }, [rerender, checkAchievements])
 
   const lockAndNext = useCallback(() => {
     const s = g.current
     SFX.lock()
+    // T-spin check happens against the board as it stood before this piece merges in — a T piece
+    // whose last successful action was a rotation, snugly wedged into a slot with 3+ blocked corners.
+    const isTSpin = s.cur!.type === 'T' && lastActionWasRotateRef.current && (() => {
+      const corners: [number, number][] = [[0, 0], [2, 0], [0, 2], [2, 2]]
+      let blocked = 0
+      for (const [cx, cy] of corners) {
+        const bx = s.cur!.x + cx, by = s.cur!.y + cy
+        if (bx < 0 || bx >= COLS || by >= ROWS || (by >= 0 && s.board[by][bx])) blocked++
+      }
+      return blocked >= 3
+    })()
     s.cur!.cells.forEach(([cx,cy]) => {
       const by = s.cur!.y + cy, bx = s.cur!.x + cx
       if (by >= 0) (s.board[by][bx] as ColorKey) = s.cur!.color
@@ -456,17 +702,38 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     while (s.board.length < ROWS) s.board.unshift(Array(COLS).fill(null))
     s.lines += cleared
     if (cleared === 4) SFX.tetris(); else if (cleared > 0) SFX.clear()
-    if (s.lines >= SPRINT_LINES) {
-      s.status = 'won'; s.finishMs = Date.now() - s.startTime; SFX.win(); setEnteringInitials(true); return
+
+    const as = achRef.current
+    as.totalLines += cleared
+    if (cleared > 0) {
+      if (cleared === 4) { as.tetrisClears++; if (lastClearWasTetrisRef.current) as.backToBackTetris = true; lastClearWasTetrisRef.current = true }
+      else { lastClearWasTetrisRef.current = false }
+      if (isTSpin) as.tSpins++
+      if (s.board.every(row => row.every(c => !c))) as.perfectClears++
     }
+
+    if (s.lines >= SPRINT_LINES) {
+      s.status = 'won'; s.finishMs = Date.now() - s.startTime; SFX.win(); setEnteringInitials(true)
+      as.sprintsCompleted++
+      if (!usedHoldRef.current) as.noHoldClear = true
+      if (s.finishMs < 60000) as.sub60Clear = true
+      if (!usedHardDropRef.current) as.noHardDropClear = true
+      const hour = new Date().getHours()
+      if (hour >= 0 && hour < 4) as.nightOwlClear = true
+      checkAchievements()
+      return
+    }
+    checkAchievements()
     const t = s.queue.shift()!; ensureQueue(s); s.cur = spawn(t); s.canHold = true
     if (collides(s.board, s.cur.cells, s.cur.x, s.cur.y)) { s.status = 'topout'; SFX.gameOver() }
-  }, [])
+  }, [checkAchievements])
 
   const move = useCallback((dx: number, dy: number): boolean => {
     const s = g.current; if (s.status !== 'playing') return false
     if (!collides(s.board, s.cur!.cells, s.cur!.x + dx, s.cur!.y + dy)) {
-      s.cur!.x += dx; s.cur!.y += dy; rerender(); return true
+      s.cur!.x += dx; s.cur!.y += dy
+      if (dx !== 0) lastActionWasRotateRef.current = false
+      rerender(); return true
     }
     if (dy > 0) { lockAndNext(); rerender(); return false }
     return false
@@ -476,12 +743,13 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     const s = g.current; if (s.status !== 'playing') return
     const nc = rotateCells(s.cur!.cells, s.cur!.size)
     for (const k of [0, -1, 1, -2, 2]) {
-      if (!collides(s.board, nc, s.cur!.x + k, s.cur!.y)) { s.cur!.cells = nc; s.cur!.x += k; SFX.rotate(); rerender(); return }
+      if (!collides(s.board, nc, s.cur!.x + k, s.cur!.y)) { s.cur!.cells = nc; s.cur!.x += k; lastActionWasRotateRef.current = true; SFX.rotate(); rerender(); return }
     }
   }, [rerender])
 
   const hardDrop = useCallback(() => {
     const s = g.current; if (s.status !== 'playing') return
+    usedHardDropRef.current = true
     let d = 0; while (!collides(s.board, s.cur!.cells, s.cur!.x, s.cur!.y + d + 1)) d++
     s.cur!.y += d; SFX.hardDrop(); lockAndNext(); rerender()
   }, [rerender, lockAndNext])
@@ -489,6 +757,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
   const holdPiece = useCallback(() => {
     const s = g.current; if (s.status !== 'playing' || !s.canHold) return
     const curType = s.cur!.type
+    usedHoldRef.current = true
     if (s.hold == null) { s.hold = curType; const t = s.queue.shift()!; ensureQueue(s); s.cur = spawn(t) }
     else { const h = s.hold; s.hold = curType; s.cur = spawn(h) }
     s.canHold = false; SFX.hold()
@@ -596,6 +865,13 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); localStorage.setItem(KEYBINDS_KEY, JSON.stringify(k)) } catch {}
   }
 
+  const recordRank = (rank: number, ms: number) => {
+    const as = achRef.current
+    if (as.bestRank == null || rank < as.bestRank) as.bestRank = rank
+    if (as.bestMs == null || ms < as.bestMs) as.bestMs = ms
+    checkAchievements()
+  }
+
   const handleSubmitInitials = async () => {
     const name = initials.trim() || 'AAA'
     const s = g.current
@@ -603,10 +879,12 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     const trimmed = name.trim().toUpperCase().slice(0, 3) || 'AAA'
     setScores(list)
     setMyResult({ name: trimmed, ms: s.finishMs, rank })
+    recordRank(rank, s.finishMs)
     // If live API configured, post and refresh
     const liveRank = await postLiveScore(trimmed, s.finishMs)
     if (liveRank !== null) {
       setMyResult(prev => prev ? { ...prev, rank: liveRank } : prev)
+      recordRank(liveRank, s.finishMs)
       fetchLiveScores().then(live => { if (live?.length) setScores(live) })
     }
     s.saved = true; setEnteringInitials(false); rerender()
@@ -654,6 +932,15 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     <>
       <div onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
         style={{ position: 'fixed', inset: 0, zIndex: 9500, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,5,9,0.86)', backdropFilter: 'blur(6px)', padding: 20 }}>
+
+        <button onClick={() => setShowAchievements(true)} title="Achievements"
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--piece-o)'; e.currentTarget.style.color = 'var(--piece-o)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-faint)' }}
+          style={{ position: 'absolute', top: 20, right: 20, display: 'flex', alignItems: 'center', gap: 8, padding: '9px 14px', cursor: 'pointer', background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', color: 'var(--text-faint)', fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.04em', transition: 'color 140ms, border-color 140ms' }}>
+          <Icon icon="pixelarticons:trophy" style={{ fontSize: 15 }} />
+          Achievements
+        </button>
+
         <div style={{ display: 'flex', gap: 18, alignItems: 'stretch', flexWrap: 'wrap', justifyContent: 'center' }}>
 
           {/* HOLD */}
@@ -806,6 +1093,12 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
       {showSettings && (
         <SettingsModal settings={settings} keybinds={keybinds} onSave={handleSaveSettings} onClose={() => setShowSettings(false)} />
       )}
+
+      {showAchievements && (
+        <AchievementsModal stats={achRef.current} onClose={() => setShowAchievements(false)} />
+      )}
+
+      <AchievementToasts toasts={toasts} />
     </>
   )
 }
