@@ -153,20 +153,19 @@ interface AchStats {
   tetrisClears: number
   perfectClears: number
   tSpins: number
-  totalLines: number
   backToBackTetris: boolean
   noHoldClear: boolean
   sub60Clear: boolean
-  noHardDropClear: boolean
-  nightOwlClear: boolean
+  closeCallClear: boolean
+  quickTetrisClear: boolean
   unlocked: string[]
 }
 
 const DEFAULT_ACH_STATS: AchStats = {
   gamesPlayed: 0, sprintsCompleted: 0, bestRank: null, bestMs: null,
-  tetrisClears: 0, perfectClears: 0, tSpins: 0, totalLines: 0,
+  tetrisClears: 0, perfectClears: 0, tSpins: 0,
   backToBackTetris: false, noHoldClear: false, sub60Clear: false,
-  noHardDropClear: false, nightOwlClear: false,
+  closeCallClear: false, quickTetrisClear: false,
   unlocked: [],
 }
 
@@ -217,12 +216,12 @@ const ACHIEVEMENTS: Achievement[] = [
     unlocked: (s) => s.sub60Clear },
   { id: 'no-hold', title: 'No Hold', desc: 'Finish a sprint without using Hold once.', piece: 'l', icon: 'pixelarticons:hand',
     unlocked: (s) => s.noHoldClear },
-  { id: 'century-club', title: 'Century Club', desc: 'Clear 100 lines lifetime.', piece: 's', icon: 'pixelarticons:card-stack',
-    progress: (s) => Math.min(1, s.totalLines / 100), unlocked: (s) => s.totalLines >= 100 },
-  { id: 'featherweight', title: 'Featherweight', desc: 'Finish a sprint without ever hard dropping.', piece: 'z', icon: 'pixelarticons:feather',
-    unlocked: (s) => s.noHardDropClear },
-  { id: 'night-owl', title: 'Night Owl', desc: 'Complete a sprint between midnight and 4am.', piece: 'j', icon: 'pixelarticons:moon',
-    unlocked: (s) => s.nightOwlClear },
+  { id: 'close-call', title: 'Close Call', desc: 'Clear a line while your stack is touching the top row.', piece: 'z', icon: 'pixelarticons:skull',
+    unlocked: (s) => s.closeCallClear },
+  { id: 'quick-draw', title: 'Quick Draw', desc: 'Score a Tetris within the first 10 seconds.', piece: 'i', icon: 'pixelarticons:speed-fast',
+    unlocked: (s) => s.quickTetrisClear },
+  { id: 'completionist', title: 'Completionist', desc: 'Unlock every other achievement.', piece: 'o', icon: 'pixelarticons:diamond-gem',
+    unlocked: (s) => ACHIEVEMENTS.filter((a) => a.id !== 'completionist').every((a) => a.unlocked(s)) },
 ]
 
 // ---- Achievement tile + modal (MODULE LEVEL — same reconciliation-safety reasoning as the settings sub-components) ----
@@ -649,7 +648,6 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
   ensureAchCSS()
   const achRef = useRef<AchStats>(loadAchStats())
   const usedHoldRef = useRef(false)
-  const usedHardDropRef = useRef(false)
   const lastActionWasRotateRef = useRef(false)
   const lastClearWasTetrisRef = useRef(false)
   const [, setAchTick] = useState(0)
@@ -658,9 +656,16 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
 
   const checkAchievements = useCallback(() => {
     const s = achRef.current
-    const newly = ACHIEVEMENTS.filter((a) => !s.unlocked.includes(a.id) && a.unlocked(s))
+    // Loop until stable so a meta-achievement (e.g. "unlock everything else") can cascade in
+    // the same pass as the last regular achievement it depends on.
+    let newly: Achievement[] = []
+    for (;;) {
+      const found = ACHIEVEMENTS.filter((a) => !s.unlocked.includes(a.id) && a.unlocked(s))
+      if (!found.length) break
+      s.unlocked = [...s.unlocked, ...found.map((a) => a.id)]
+      newly = newly.concat(found)
+    }
     if (newly.length) {
-      s.unlocked = [...s.unlocked, ...newly.map((a) => a.id)]
       setToasts((t) => [...t, ...newly])
       newly.forEach((a) => { setTimeout(() => setToasts((t) => t.filter((x) => x.id !== a.id)), 4200) })
     }
@@ -673,7 +678,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     const t = s.queue.shift()!; ensureQueue(s)
     s.cur = spawn(t); s.startTime = Date.now()
     g.current = s; setEnteringInitials(false); setInitials(''); setRestartProgress(0); setClock(Date.now())
-    usedHoldRef.current = false; usedHardDropRef.current = false; lastActionWasRotateRef.current = false; lastClearWasTetrisRef.current = false
+    usedHoldRef.current = false; lastActionWasRotateRef.current = false; lastClearWasTetrisRef.current = false
     achRef.current.gamesPlayed++
     checkAchievements()
     rerender()
@@ -697,6 +702,8 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
       const by = s.cur!.y + cy, bx = s.cur!.x + cx
       if (by >= 0) (s.board[by][bx] as ColorKey) = s.cur!.color
     })
+    // Stack height right at lock time, before the clear removes any rows — used for "Close Call".
+    const toppedOut = s.board[0].some((c) => c)
     let cleared = 0
     s.board = s.board.filter(row => { const full = row.every(c => c); if (full) cleared++; return !full })
     while (s.board.length < ROWS) s.board.unshift(Array(COLS).fill(null))
@@ -704,12 +711,18 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     if (cleared === 4) SFX.tetris(); else if (cleared > 0) SFX.clear()
 
     const as = achRef.current
-    as.totalLines += cleared
     if (cleared > 0) {
-      if (cleared === 4) { as.tetrisClears++; if (lastClearWasTetrisRef.current) as.backToBackTetris = true; lastClearWasTetrisRef.current = true }
-      else { lastClearWasTetrisRef.current = false }
+      if (cleared === 4) {
+        as.tetrisClears++
+        if (lastClearWasTetrisRef.current) as.backToBackTetris = true
+        lastClearWasTetrisRef.current = true
+        if (Date.now() - s.startTime < 10000) as.quickTetrisClear = true
+      } else {
+        lastClearWasTetrisRef.current = false
+      }
       if (isTSpin) as.tSpins++
       if (s.board.every(row => row.every(c => !c))) as.perfectClears++
+      if (toppedOut) as.closeCallClear = true
     }
 
     if (s.lines >= SPRINT_LINES) {
@@ -717,9 +730,6 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
       as.sprintsCompleted++
       if (!usedHoldRef.current) as.noHoldClear = true
       if (s.finishMs < 60000) as.sub60Clear = true
-      if (!usedHardDropRef.current) as.noHardDropClear = true
-      const hour = new Date().getHours()
-      if (hour >= 0 && hour < 4) as.nightOwlClear = true
       checkAchievements()
       return
     }
@@ -749,7 +759,6 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
 
   const hardDrop = useCallback(() => {
     const s = g.current; if (s.status !== 'playing') return
-    usedHardDropRef.current = true
     let d = 0; while (!collides(s.board, s.cur!.cells, s.cur!.x, s.cur!.y + d + 1)) d++
     s.cur!.y += d; SFX.hardDrop(); lockAndNext(); rerender()
   }, [rerender, lockAndNext])
