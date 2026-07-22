@@ -209,10 +209,13 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
         {/* skills */}
         <section style={{ marginBottom: 44 }}>
           <Kicker piece="i">Technical Skills</Kicker>
-          <Card style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-            {SKILLS.map((s) => (
-              <div key={s.label} style={{ display: 'flex', gap: 18, alignItems: 'baseline', flexWrap: 'wrap' }}>
-                <span style={{ width: 150, flexShrink: 0, fontFamily: 'var(--font-mono)', fontSize: 12, color: `var(--piece-${s.piece})`, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{s.label}</span>
+          <Card style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            {SKILLS.map((s, i) => (
+              <div key={s.label} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: i < SKILLS.length - 1 ? 20 : 0, borderBottom: i < SKILLS.length - 1 ? '1px solid var(--border-hairline)' : 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ width: 8, height: 8, flexShrink: 0, background: `var(--piece-${s.piece})`, boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.4), inset -1px -1px 0 rgba(0,0,0,0.3)' }} />
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: `var(--piece-${s.piece})`, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{s.label}</span>
+                </div>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                   {s.items.map((it) => <Tag key={it} piece={s.piece}>{it}</Tag>)}
                 </div>
