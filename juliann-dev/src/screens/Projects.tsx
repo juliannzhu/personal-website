@@ -246,8 +246,8 @@ export function Projects() {
           <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Build Log</h2>
         </div>
         <ScrollTetromino3D
-          piece="t"
-          size={70}
+          piece="s"
+          size={60}
           baseRotateY={180}
           tiltDeg={18}
           rotZPerPx={0.14}
