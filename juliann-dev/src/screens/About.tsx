@@ -5,6 +5,7 @@ import { Tag } from '../components/ds/Tag'
 import { Tetromino } from '../components/ds/Tetromino'
 import { Avatar } from '../components/ds/Avatar'
 import { RadarChart } from '../components/ds/RadarChart'
+import { ScrollTetromino3D } from '../components/ScrollTetromino3D'
 
 const SKILLS = [
   { name: 'Python',              value: 92, piece: 'o' },
@@ -110,8 +111,22 @@ export function About() {
   }, [])
 
   return (
-    <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px' }}>
+    <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px', position: 'relative' }}>
       <SectionTitle kicker="// Player 1">About</SectionTitle>
+      {/* Floated in the gutter between the two grid columns, level with the "About"
+          heading above the Juliann Zhu / Skill Meter row. */}
+      <ScrollTetromino3D
+        piece="o"
+        size={54}
+        baseRotateX={-75}
+        baseRotateY={-170}
+        tiltDeg={-114}
+        rotZPerPx={0.14}
+        rotXPerPx={0.08}
+        rotYPerPx={0.18}
+        mouseFollow
+        style={{ position: 'absolute', top: 85, left: 425, opacity: 0.72, zIndex: 1 }}
+      />
       <div className="tj-about-grid" style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 40, alignItems: 'start' }}>
         <div>
           <div style={{ display: 'flex', gap: 18, alignItems: 'center', marginBottom: 24 }}>

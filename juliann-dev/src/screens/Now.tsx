@@ -4,6 +4,7 @@ import { Card } from '../components/ds/Card'
 import { Badge } from '../components/ds/Badge'
 import { ProgressBar } from '../components/ds/ProgressBar'
 import { Tetromino } from '../components/ds/Tetromino'
+import { ScrollTetromino3D } from '../components/ScrollTetromino3D'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 
@@ -128,9 +129,22 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
 export function Now() {
   return (
     <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px' }}>
-      <div style={{ marginBottom: 12 }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Current directory</div>
-        <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Now Loading...</h2>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, marginBottom: 12 }}>
+        <div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Current directory</div>
+          <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Now Loading...</h2>
+        </div>
+        <ScrollTetromino3D
+          piece="l"
+          size={60}
+          baseRotateY={180}
+          tiltDeg={18}
+          rotZPerPx={0.14}
+          rotXPerPx={0.08}
+          rotYPerPx={0.18}
+          mouseFollow
+          style={{ opacity: 0.72, marginRight: 60 }}
+        />
       </div>
 
       {/* Single-line header with badge inline */}

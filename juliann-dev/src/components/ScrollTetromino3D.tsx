@@ -69,7 +69,7 @@ export interface ScrollTetromino3DProps {
   /** Turn the piece slightly to face the cursor when it's nearby. Default: false. */
   mouseFollow?: boolean
   /** Max extra degrees of tilt from mouse-follow, reached only right at the
-   * piece's center. Default: 16. */
+   * piece's center. Default: 24. */
   mouseMaxDeg?: number
   /** How quickly the eased tilt catches up to the cursor each frame (0-1, lower
    * is slower/laggier). Default: 0.05. */
@@ -96,7 +96,7 @@ export function ScrollTetromino3D({
   tiltDeg = 0,
   rotZPerPx = 0,
   mouseFollow = false,
-  mouseMaxDeg = 16,
+  mouseMaxDeg = 24,
   mouseEase = 0.05,
   mouseRadius = 480,
   float = true,
