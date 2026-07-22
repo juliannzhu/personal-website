@@ -256,9 +256,8 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 56 }}>
           <button
             onClick={() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
-            onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-strong)' }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-faint)' }}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em', transition: 'color 140ms' }}>
+            className="tj-resume-close"
+            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-well)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', padding: '9px 16px', cursor: 'pointer', color: 'var(--text-muted)', fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.04em', transition: 'color 140ms, border-color 140ms' }}>
             <Icon icon="pixelarticons:arrow-up" style={{ fontSize: 14 }} />
             Back to top
           </button>
