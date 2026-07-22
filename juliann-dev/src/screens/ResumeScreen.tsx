@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Icon } from '@iconify/react'
 import { Card } from '../components/ds/Card'
 import { Tag } from '../components/ds/Tag'
@@ -146,6 +146,7 @@ const CONTACT = [
 
 export function ResumeScreen({ onClose }: { onClose: () => void }) {
   ensureCSS()
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -154,7 +155,7 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
   }, [onClose])
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9800, background: 'var(--bg-page)', backgroundImage: 'var(--grid-bg)', overflowY: 'auto' }}>
+    <div ref={scrollRef} style={{ position: 'fixed', inset: 0, zIndex: 9800, background: 'var(--bg-page)', backgroundImage: 'var(--grid-bg)', overflowY: 'auto' }}>
       <div className="tj-resume-page" style={{ maxWidth: 860, margin: '0 auto', padding: '40px 24px 96px' }}>
 
         {/* top bar */}
@@ -248,6 +249,17 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
             ))}
           </div>
         </section>
+
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 56 }}>
+          <button
+            onClick={() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
+            onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-strong)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-faint)' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em', transition: 'color 140ms' }}>
+            <Icon icon="pixelarticons:arrow-up" style={{ fontSize: 14 }} />
+            Back to top
+          </button>
+        </div>
 
       </div>
     </div>
