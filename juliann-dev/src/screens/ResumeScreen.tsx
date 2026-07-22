@@ -96,7 +96,7 @@ const RESUME_PROJECTS = [
     role: 'Full Stack & Embedded Developer',
     location: 'Toronto, ON',
     date: 'Jul 2026',
-    piece: 'z' as Piece,
+    piece: 'l' as Piece,
     tools: ['Swift', 'Python', 'C++', 'SwiftUI', 'MongoDB Atlas', 'Auth0', 'Gemini API', 'Vercel', 'Websockets'],
     bullets: [
       'Built a clip-on white cane module that detects overhead hazards within a 4m range for visually impaired users, pairing ToF sensors and 30 FPS YOLOv6 camera detection on an Arduino UNO Q feed into a Python/FastAPI pipeline to classify hazards via Gemini vision and narrate within 3 seconds via ElevenLabs.',
@@ -121,7 +121,7 @@ const RESUME_PROJECTS = [
     role: 'Platform Designer and UI/UX Developer',
     location: 'Ottawa, ON',
     date: 'May - Jun 2024',
-    piece: 'l' as Piece,
+    piece: 'z' as Piece,
     tools: ['JavaScript', 'HTML', 'CSS', 'VS Code'],
     bullets: [
       'Designed a 4-stage platform, curating 100+ resources, to help women in computer science industries at different stages of their education find mentorship, scholarships, programs, and community resources.',
@@ -209,9 +209,9 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
         {/* skills */}
         <section style={{ marginBottom: 44 }}>
           <Kicker piece="i">Technical Skills</Kicker>
-          <Card style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <Card style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {SKILLS.map((s, i) => (
-              <div key={s.label} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: i < SKILLS.length - 1 ? 20 : 0, borderBottom: i < SKILLS.length - 1 ? '1px solid var(--border-hairline)' : 'none' }}>
+              <div key={s.label} style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingBottom: i < SKILLS.length - 1 ? 12 : 0, borderBottom: i < SKILLS.length - 1 ? '1px solid var(--border-hairline)' : 'none' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ width: 8, height: 8, flexShrink: 0, background: `var(--piece-${s.piece})`, boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.4), inset -1px -1px 0 rgba(0,0,0,0.3)' }} />
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: `var(--piece-${s.piece})`, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{s.label}</span>
