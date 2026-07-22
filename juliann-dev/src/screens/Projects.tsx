@@ -14,6 +14,15 @@ type Project = { id: string; title: string; piece: Piece; tagline: string; tags:
 
 const PROJECTS: Project[] = [
   {
+    id: 'caneos',
+    title: 'CANEOS',
+    piece: 'z',
+    tagline: 'Clip-on white cane module that detects overhead hazards for visually impaired users, pairing ToF sensors and YOLOv6 camera detection with companion iPhone and Apple Watch apps.',
+    tags: ['Swift', 'SwiftUI', 'Python', 'C++', 'Gemini API', 'Auth0'],
+    cat: 'ai',
+    year: 'Jul 2026',
+  },
+  {
     id: 'trulyher',
     title: 'TRULYHER',
     piece: 't',
