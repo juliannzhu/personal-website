@@ -11,7 +11,7 @@ const drops = Array.from({ length: 18 }, (_, i) => ({
 
 const CSS = `
 @keyframes tj-fallfield { 0%{ transform:translateY(-160px) rotate(0deg); } 100%{ transform:translateY(110vh) rotate(var(--rot,90deg)); } }
-.tj-fallfield-piece{ position:absolute; top:0; opacity:0.15; animation:tj-fallfield linear infinite; will-change:transform; }
+.tj-fallfield-piece{ position:absolute; top:0; opacity:0.22; animation:tj-fallfield linear infinite; will-change:transform; }
 `
 let injected = false
 function ensureCSS() {
