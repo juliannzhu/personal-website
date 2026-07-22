@@ -156,7 +156,7 @@ export default function App() {
         >
           <main className="tj-main" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
             <div className="tj-hero-wrap" data-section="home" ref={(el) => { sectionRefs.current.home = el }}>
-              <RevealOnScroll><Hero onNav={go} /></RevealOnScroll>
+              <RevealOnScroll><Hero onNav={go} play={!loading} /></RevealOnScroll>
             </div>
             {REST_IDS.map((id) => (
               <div key={id} data-section={id} ref={(el) => { sectionRefs.current[id] = el }}>
