@@ -10,6 +10,7 @@ import { Contact } from './screens/Contact'
 import { SideQuests } from './screens/SideQuests'
 import { TetrisGame, HoldBox } from './features/tetris/TetrisGame'
 import { Loader } from './components/Loader'
+import { ResumeScreen } from './screens/ResumeScreen'
 
 const STACK_IDS: Screen[] = ['home', 'about', 'projects', 'sidequests', 'now', 'contact']
 const SCROLL_MASK = 'linear-gradient(to bottom, transparent 0, black 56px, black calc(100% - 56px), transparent 100%)'
@@ -81,6 +82,7 @@ export default function App() {
   const [activeSection, setActiveSection] = useState<Screen>('home')
   const [loading, setLoading] = useState(true)
   const [gameOpen, setGameOpen] = useState(false)
+  const [resumeOpen, setResumeOpen] = useState(false)
   // Bumped whenever "Quests" is clicked while already on the side quests section, so a
   // quest detail page that's open can be told to close back to the grid of tiles.
   const [questsResetTick, setQuestsResetTick] = useState(0)
@@ -141,7 +143,7 @@ export default function App() {
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <FallingField />
-      <TopNav current={activeSection} onNav={go} onPlay={() => setGameOpen(true)} />
+      <TopNav current={activeSection} onNav={go} onPlay={() => setGameOpen(true)} onResume={() => setResumeOpen(true)} />
       <HoldBox ref={holdBoxRef} onPlay={() => setGameOpen(true)} />
       <div style={{ position: 'relative', zIndex: 1, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <div
@@ -168,6 +170,7 @@ export default function App() {
       </div>
       <FixedFooter onNav={go} />
       {gameOpen && <TetrisGame onClose={() => setGameOpen(false)} />}
+      {resumeOpen && <ResumeScreen onClose={() => setResumeOpen(false)} />}
       {loading && <Loader onDone={() => setLoading(false)} />}
     </div>
   )

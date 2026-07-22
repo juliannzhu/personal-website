@@ -77,14 +77,14 @@ function SoundToggle() {
   )
 }
 
-function ResumeButton() {
+function ResumeButton({ onOpen }: { onOpen: () => void }) {
   return (
-    <a href="/assets/JuliannZhu-resume.pdf" download
-      onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = 'var(--text-muted)'; el.style.color = 'var(--text-strong)' }}
-      onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = 'var(--border-strong)'; el.style.color = 'var(--text-muted)' }}
+    <button onClick={onOpen}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-muted)'; e.currentTarget.style.color = 'var(--text-strong)' }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-muted)' }}
       style={{
         display: 'flex', alignItems: 'center', gap: 6,
-        padding: '5px 12px', textDecoration: 'none',
+        padding: '5px 12px', cursor: 'pointer',
         fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.04em',
         color: 'var(--text-muted)',
         background: 'var(--bg-well)',
@@ -94,7 +94,7 @@ function ResumeButton() {
       }}>
       <Icon icon="pixelarticons:file" style={{ fontSize: 14 }} />
       RESUME
-    </a>
+    </button>
   )
 }
 
@@ -215,7 +215,7 @@ function PlayButton({ onPlay }: { onPlay: () => void }) {
   )
 }
 
-export function TopNav({ current, onNav, onPlay }: { current: Screen; onNav: (id: Screen) => void; onPlay?: () => void }) {
+export function TopNav({ current, onNav, onPlay, onResume }: { current: Screen; onNav: (id: Screen) => void; onPlay?: () => void; onResume: () => void }) {
   return (
     <>
       <header style={{ position: 'sticky', top: 0, zIndex: 100, background: 'color-mix(in srgb, var(--bg-page) 90%, transparent)', backdropFilter: 'blur(8px)', borderBottom: '2px solid var(--border-strong)' }}>
@@ -227,7 +227,7 @@ export function TopNav({ current, onNav, onPlay }: { current: Screen; onNav: (id
           </div>
           <div style={{ flex: 1 }} />
           {onPlay && <PlayButton onPlay={onPlay} />}
-          <ResumeButton />
+          <ResumeButton onOpen={onResume} />
           <SoundToggle />
           <SocialIcons />
         </div>
