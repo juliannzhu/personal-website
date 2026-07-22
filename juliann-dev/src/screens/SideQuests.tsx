@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react'
 import { Card } from '../components/ds/Card'
 import { Tag } from '../components/ds/Tag'
 import { Tetromino } from '../components/ds/Tetromino'
+import { IconButton } from '../components/ds/IconButton'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 type DetailLayout = 'bento' | 'marquee' | 'polaroid' | 'filmstrip'
@@ -1065,8 +1066,10 @@ const TITLE_GUTTER = 40
 const HEADER_H = 58
 const FOOTER_H = 84
 const ENGAGE_OFFSET = 90
-const WHEEL_TO_PROGRESS = 3200
 const TOUCH_TO_PROGRESS = 900
+const AUTO_ROTATE_MS = 4000
+const JUMP_TRANSITION_MS = 600
+const JUMP_EASING = 'cubic-bezier(0.65, 0, 0.35, 1)'
 
 function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; progressRef: React.RefObject<number> }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -1076,6 +1079,11 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
   const tileRefs = useRef<(HTMLDivElement | null)[]>([])
   const rafRef = useRef(0)
   const [activeIndex, setActiveIndex] = useState(0)
+  const activeIndexRef = useRef(0)
+  // Auto-rotate stays on until the user actually drives the carousel themselves
+  // (arrow, dot, or swipe) — once that happens it's off for good, not just paused.
+  const autoRotateOnRef = useRef(true)
+  const autoIntervalRef = useRef<number | undefined>(undefined)
 
   const applyFrame = () => {
     const container = containerRef.current
@@ -1085,21 +1093,18 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
     const p = progressRef.current
     track.style.transform = `translateY(-50%) translateX(${-p * maxScroll}px)`
 
-    const title = titleRef.current
-    if (title) {
-      const titleOpacity = Math.max(0, 1 - p / 0.18)
-      title.style.opacity = String(titleOpacity)
-      title.style.pointerEvents = titleOpacity < 0.05 ? 'none' : 'auto'
-    }
-
-    const viewportCenter = container.getBoundingClientRect().left + container.clientWidth / 2
+    // Target center in the track's own local layout coordinates (offsetLeft is a
+    // static layout value untouched by the track's in-flight CSS transition) rather
+    // than getBoundingClientRect (the live mid-slide paint position) — so a jump's
+    // new center tile gets full scale/opacity immediately instead of lagging behind
+    // until the slide animation finishes painting.
+    const targetCenter = p * maxScroll + container.clientWidth / 2
     let closestIdx = 0
     let closestDist = Infinity
     tileRefs.current.forEach((el, i) => {
       if (!el) return
-      const rect = el.getBoundingClientRect()
-      const center = rect.left + rect.width / 2
-      const dist = Math.abs(center - viewportCenter)
+      const center = el.offsetLeft + el.offsetWidth / 2
+      const dist = Math.abs(center - targetCenter)
       const norm = Math.min(1, dist / (container.clientWidth / 2))
       const scale = 1.08 - norm * 0.22
       const opacity = 1 - norm * 0.75
@@ -1107,12 +1112,32 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
       el.style.opacity = String(Math.max(0.15, opacity))
       if (dist < closestDist) { closestDist = dist; closestIdx = i }
     })
+    activeIndexRef.current = closestIdx
     setActiveIndex((prev) => (prev === closestIdx ? prev : closestIdx))
+
+    // Title is only readable while the first tile is active — past that it'd sit
+    // underneath the tiles that have scrolled into its space, so it just hides.
+    const title = titleRef.current
+    if (title) {
+      const titleOpacity = closestIdx === 0 ? Math.max(0, 1 - p / 0.18) : 0
+      title.style.opacity = String(titleOpacity)
+      title.style.pointerEvents = titleOpacity < 0.05 ? 'none' : 'auto'
+    }
   }
 
   const scheduleFrame = () => {
     if (rafRef.current) return
     rafRef.current = requestAnimationFrame(() => { rafRef.current = 0; applyFrame() })
+  }
+
+  // Called from every manual navigation path (arrows, dots, touch swipe) — once the
+  // user has driven the carousel themselves, auto-rotate stops for good.
+  const stopAutoRotate = () => {
+    autoRotateOnRef.current = false
+    if (autoIntervalRef.current !== undefined) {
+      window.clearInterval(autoIntervalRef.current)
+      autoIntervalRef.current = undefined
+    }
   }
 
   useEffect(() => { scheduleFrame() }, [])
@@ -1123,38 +1148,6 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // Wheel-jacking: once the section's top has scrolled up near the header, further
-  // scroll (in either axis) drives the track horizontally instead of the page vertically,
-  // until the carousel is exhausted in that direction — then normal scroll resumes.
-  useEffect(() => {
-    const onWheel = (e: WheelEvent) => {
-      const container = containerRef.current
-      if (!container) return
-      const rectTop = container.getBoundingClientRect().top
-      // Bounded symmetrically around 0 so re-engaging while scrolling back up only
-      // happens once the carousel is actually back in view, not from a full
-      // container-height away while it's still completely off-screen (that let
-      // scrolling up from the next section silently rewind an invisible carousel).
-      const nearTop = rectTop <= ENGAGE_OFFSET && rectTop >= -ENGAGE_OFFSET
-      if (!nearTop) return
-
-      // Cursor below the pagination dots reads as "done browsing, let me scroll on" —
-      // don't hijack that scroll, let the page move to the next section normally.
-      const dots = dotsRef.current
-      if (dots && e.clientY >= dots.getBoundingClientRect().top) return
-
-      const delta = e.deltaY + e.deltaX
-      const atStart = progressRef.current <= 0
-      const atEnd = progressRef.current >= 1
-      if ((atStart && delta < 0) || (atEnd && delta > 0)) return
-
-      e.preventDefault()
-      progressRef.current = Math.min(1, Math.max(0, progressRef.current + delta / WHEEL_TO_PROGRESS))
-      scheduleFrame()
-    }
-    window.addEventListener('wheel', onWheel, { passive: false })
-    return () => window.removeEventListener('wheel', onWheel)
-  }, [])
 
   // Touch swipe fallback: horizontal drags move the carousel; vertical drags pass through.
   useEffect(() => {
@@ -1168,12 +1161,17 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
       if (dots && e.touches[0].clientY >= dots.getBoundingClientRect().top) return
       startX = e.touches[0].clientX; startY = e.touches[0].clientY
       dragging = true; horizontal = false
+      // A dragging finger should track 1:1 with zero lag — only jumpTo (arrows,
+      // dots, auto-rotate) gets the eased slide.
+      const track = trackRef.current
+      if (track) track.style.transition = 'none'
+      tileRefs.current.forEach((el) => { if (el) el.style.transition = 'none' })
     }
     const onMove = (e: TouchEvent) => {
       if (!dragging) return
       const dx = e.touches[0].clientX - startX
       const dy = e.touches[0].clientY - startY
-      if (!horizontal && Math.abs(dx) > Math.abs(dy) + 6) horizontal = true
+      if (!horizontal && Math.abs(dx) > Math.abs(dy) + 6) { horizontal = true; stopAutoRotate() }
       if (!horizontal) return
       const atStart = progressRef.current <= 0
       const atEnd = progressRef.current >= 1
@@ -1199,12 +1197,50 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
     const track = trackRef.current
     const tile = tileRefs.current[i]
     if (!container || !track || !tile) return
+    // Arrows, dots, and auto-rotate all land here — ease the slide over instead of
+    // snapping straight to the new position, like the old scroll-driven motion did.
+    // Tiles get the same duration/easing on their scale+opacity so the "grow into
+    // center / shrink away" happens in lockstep with the slide, not as a separate snap.
+    track.style.transition = `transform ${JUMP_TRANSITION_MS}ms ${JUMP_EASING}`
+    tileRefs.current.forEach((el) => {
+      if (el) el.style.transition = `transform ${JUMP_TRANSITION_MS}ms ${JUMP_EASING}, opacity ${JUMP_TRANSITION_MS}ms ${JUMP_EASING}`
+    })
     const maxScroll = Math.max(1, track.scrollWidth - container.clientWidth)
     const tileCenter = tile.offsetLeft + tile.offsetWidth / 2
     const desiredX = tileCenter - container.clientWidth / 2
     progressRef.current = Math.min(1, Math.max(0, desiredX / maxScroll))
     scheduleFrame()
   }
+
+  const goPrev = () => { stopAutoRotate(); jumpTo(Math.max(0, activeIndexRef.current - 1)) }
+  const goNext = () => { stopAutoRotate(); jumpTo(Math.min(QUESTS.length - 1, activeIndexRef.current + 1)) }
+
+  // Auto-rotate: once the carousel scrolls into view, advance one tile every 4s —
+  // wrapping back to the start at the end — until the user takes the wheel themselves.
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && autoRotateOnRef.current) {
+        if (autoIntervalRef.current === undefined) {
+          autoIntervalRef.current = window.setInterval(() => {
+            jumpTo((activeIndexRef.current + 1) % QUESTS.length)
+          }, AUTO_ROTATE_MS)
+        }
+      } else if (autoIntervalRef.current !== undefined) {
+        window.clearInterval(autoIntervalRef.current)
+        autoIntervalRef.current = undefined
+      }
+    }, { threshold: 0.4 })
+    io.observe(container)
+    return () => {
+      io.disconnect()
+      if (autoIntervalRef.current !== undefined) {
+        window.clearInterval(autoIntervalRef.current)
+        autoIntervalRef.current = undefined
+      }
+    }
+  }, [])
 
   return (
     <div ref={containerRef} style={{ position: 'relative', height: `calc(100vh - ${HEADER_H + FOOTER_H}px)`, overflow: 'hidden' }}>
@@ -1213,7 +1249,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
           of how many lines the copy wraps to. */}
       <div ref={titleRef} style={{
         position: 'absolute', left: 24, top: '50%', transform: 'translateY(-50%)', width: TITLE_W, height: TILE_H, zIndex: 1,
-        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center', transition: 'opacity 240ms',
       }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-j)' }}>{'// Beyond the code'}</div>
         <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Side Quests</h2>
@@ -1223,7 +1259,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
           projects, creative experiments, <br></br>
           and random pieces that make up <br></br>
           my life outside the terminal. <br></br>
-          Scroll to explore.
+          Use the arrows to explore.
         </p>
       </div>
 
@@ -1258,7 +1294,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
 
       <div ref={dotsRef} style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 8, zIndex: 2 }}>
         {QUESTS.map((q, i) => (
-          <button key={q.id} onClick={() => jumpTo(i)} aria-label={`Go to ${q.title}`}
+          <button key={q.id} onClick={() => { stopAutoRotate(); jumpTo(i) }} aria-label={`Go to ${q.title}`}
             style={{
               width: i === activeIndex ? 20 : 7, height: 7, borderRadius: 4, padding: 0, border: 'none', cursor: 'pointer',
               background: i === activeIndex ? `var(--piece-${q.piece})` : 'var(--border-strong)',
@@ -1266,6 +1302,19 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
             }} />
         ))}
       </div>
+
+      {activeIndex > 0 && (
+        <IconButton size="md" variant="ghost" label="Previous quest" onClick={goPrev}
+          style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 3 }}>
+          <Icon icon="pixelarticons:chevron-left" />
+        </IconButton>
+      )}
+      {activeIndex < QUESTS.length - 1 && (
+        <IconButton size="md" variant="ghost" label="Next quest" onClick={goNext}
+          style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 3 }}>
+          <Icon icon="pixelarticons:chevron-right" />
+        </IconButton>
+      )}
     </div>
   )
 }
