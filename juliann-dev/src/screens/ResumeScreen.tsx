@@ -209,7 +209,7 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
         {/* skills */}
         <section style={{ marginBottom: 44 }}>
           <Kicker piece="i">Technical Skills</Kicker>
-          <Card style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <Card accent="i" accentBar style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {SKILLS.map((s, i) => (
               <div key={s.label} style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingBottom: i < SKILLS.length - 1 ? 12 : 0, borderBottom: i < SKILLS.length - 1 ? '1px solid var(--border-hairline)' : 'none' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
