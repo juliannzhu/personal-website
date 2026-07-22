@@ -17,14 +17,52 @@ const SKILLS = [
   { name: 'Git / GitHub',        value: 87, piece: 'j' },
 ] as const
 
-const TIMELINE = [
-  { piece: 'i' as const, when: 'Sep 2025 – Present', what: 'B.CS Honours + Co-op', where: 'University of Waterloo · Computer Science · President Scholarship' },
-  { piece: 'l' as const, when: 'May 2026 – Present',  what: 'Network Engineering Intern', where: 'ORBCOMM / Skywave: satellite system dashboards, SQL, Grafana' },
-  { piece: 's' as const, when: 'Jan 2026 – Present',  what: 'Undergraduate Research Mentee', where: 'UW Security & Privacy Research: SOUPS paper on LLM advice' },
-  { piece: 't' as const, when: 'May 2024',            what: 'Hackathon: Gender Equality Award', where: 'Project Tech Careers: platform for women in CS (UN SDG track)' },
-  { piece: 'j' as const, when: 'Sep 2021 – Jun 2025', what: 'Volleyball Team Captain, NCSSAA Tier 1 Finalist', where: "Merivale HS Volleyball Club: 2x MVP, 4 straight Marauder's Cups" },
-  { piece: 'o' as const, when: 'Sep 2012 – Jun 2025', what: 'RCM Level 10 Piano Certificate', where: 'Royal Conservatory of Music: 13 years of lessons, 10 hours / week' },
+// Substrings within `where` that should render as links to the org's official site —
+// matched and swapped for <a> tags at render time instead of hand-splitting each string.
+type TimelineLink = { text: string; href: string }
+
+const TIMELINE: { piece: PK; when: string; what: string; where: string; links?: TimelineLink[] }[] = [
+  {
+    piece: 'i', when: 'Sep 2025 – Present', what: 'B.CS Honours + Co-op',
+    where: 'University of Waterloo · Computer Science · President Scholarship',
+    links: [{ text: 'University of Waterloo', href: 'https://uwaterloo.ca/future-students/programs/computer-science' }],
+  },
+  {
+    piece: 'l', when: 'May 2026 – Present', what: 'Network Engineering Intern',
+    where: 'ORBCOMM / Skywave: satellite system dashboards, SQL, Grafana',
+    links: [{ text: 'ORBCOMM', href: 'https://www.orbcomm.com' }],
+  },
+  {
+    piece: 's', when: 'Jan 2026 – Present', what: 'Undergraduate Research Mentee',
+    where: 'UW Security & Privacy Research: SOUPS paper on LLM advice',
+    links: [{ text: 'SOUPS', href: 'https://www.usenix.org/conferences/byname/108' }],
+  },
+  { piece: 't', when: 'May 2024',            what: 'Hackathon: Gender Equality Award', where: 'Project Tech Careers: platform for women in CS (UN SDG track)' },
+  { piece: 'j', when: 'Sep 2021 – Jun 2025', what: 'Volleyball Team Captain, NCSSAA Tier 1 Finalist', where: "Merivale HS Volleyball Club: 2x MVP, 4 straight Marauder's Cups" },
+  {
+    piece: 'o', when: 'Sep 2012 – Jun 2025', what: 'RCM Level 10 Piano Certificate',
+    where: 'Royal Conservatory of Music: 13 years of lessons, 10 hours / week',
+    links: [{ text: 'Royal Conservatory of Music', href: 'https://www.rcmusic.com' }],
+  },
 ]
+
+// Splits `where` on each link's text and swaps those spans for <a> tags, leaving
+// everything else as plain text — avoids hand-writing JSX fragments per timeline entry.
+function linkifyWhere(text: string, links: TimelineLink[] | undefined, color: string) {
+  if (!links || links.length === 0) return text
+  const pattern = new RegExp(`(${links.map((l) => l.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`)
+  return text.split(pattern).map((part, i) => {
+    const link = links.find((l) => l.text === part)
+    if (!link) return part
+    return (
+      <a key={i} href={link.href} target="_blank" rel="noopener noreferrer"
+        style={{ color, textDecoration: 'underline', textUnderlineOffset: 2 }}
+        onClick={(e) => e.stopPropagation()}>
+        {part}
+      </a>
+    )
+  })
+}
 
 type PK = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 const MINI_BOARD: (PK | 0)[][] = [
@@ -181,7 +219,7 @@ export function About() {
                         <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 7, background: c, color: 'var(--ink-900)', padding: '3px 5px', flexShrink: 0, letterSpacing: '0.04em', alignSelf: 'flex-start' }}>UNLOCKED</span>
                       </div>
                       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 3 }}>{t.when}</div>
-                      <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5, marginTop: 3 }}>{t.where}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5, marginTop: 3 }}>{linkifyWhere(t.where, t.links, c)}</div>
                     </div>
                   </div>
                 )
