@@ -190,37 +190,39 @@ const rankProgress = (bestRank: number | null, target: number): number => {
 }
 
 const ACHIEVEMENTS: Achievement[] = [
-  { id: 'first-clear', title: 'First Clear', desc: 'Complete your first 20-line sprint.', piece: 's', icon: 'pixelarticons:flag',
+  // Piece colors below are chosen so that no two tiles sharing an edge in the 4-column grid
+  // (horizontally or vertically) end up the same color.
+  { id: 'first-clear', title: 'First Clear', desc: 'Complete your first 20-line sprint.', piece: 'o', icon: 'pixelarticons:flag',
     unlocked: (s) => s.sprintsCompleted >= 1 },
-  { id: 'regular', title: 'Regular', desc: 'Play 3 games.', piece: 'i', icon: 'pixelarticons:repeat',
+  { id: 'regular', title: 'Regular', desc: 'Play 3 games.', piece: 't', icon: 'pixelarticons:repeat',
     progress: (s) => Math.min(1, s.gamesPlayed / 3), unlocked: (s) => s.gamesPlayed >= 3 },
-  { id: 'dedicated', title: 'Dedicated', desc: 'Play 10 games.', piece: 'i', icon: 'pixelarticons:gamepad',
+  { id: 'dedicated', title: 'Dedicated', desc: 'Play 10 games.', piece: 's', icon: 'pixelarticons:gamepad',
     progress: (s) => Math.min(1, s.gamesPlayed / 10), unlocked: (s) => s.gamesPlayed >= 10 },
-  { id: 'on-the-board', title: 'On the Board', desc: 'Make the leaderboard.', piece: 'j', icon: 'pixelarticons:list',
+  { id: 'on-the-board', title: 'On the Board', desc: 'Make the leaderboard.', piece: 'z', icon: 'pixelarticons:list',
     progress: (s) => rankProgress(s.bestRank, RANK_DEPTH), unlocked: (s) => s.bestRank != null && s.bestRank <= RANK_DEPTH },
-  { id: 'top-10', title: 'Top 10', desc: 'Reach a top 10 sprint time.', piece: 'j', icon: 'pixelarticons:target',
+  { id: 'top-10', title: 'Top 10', desc: 'Reach a top 10 sprint time.', piece: 'z', icon: 'pixelarticons:target',
     progress: (s) => rankProgress(s.bestRank, 10), unlocked: (s) => s.bestRank != null && s.bestRank <= 10 },
-  { id: 'podium', title: 'Podium', desc: 'Finish in the top 3.', piece: 'o', icon: 'pixelarticons:crown',
+  { id: 'podium', title: 'Podium', desc: 'Finish in the top 3.', piece: 'j', icon: 'pixelarticons:crown',
     progress: (s) => rankProgress(s.bestRank, 3), unlocked: (s) => s.bestRank != null && s.bestRank <= 3 },
-  { id: 'champion', title: 'Champion', desc: 'Take the #1 spot on the leaderboard.', piece: 'o', icon: 'pixelarticons:trophy',
+  { id: 'champion', title: 'Champion', desc: 'Take the #1 spot on the leaderboard.', piece: 'l', icon: 'pixelarticons:trophy',
     progress: (s) => rankProgress(s.bestRank, 1), unlocked: (s) => s.bestRank === 1 },
   { id: 'tetris', title: 'Tetris!', desc: 'Clear 4 lines at once.', piece: 'i', icon: 'pixelarticons:zap',
     unlocked: (s) => s.tetrisClears >= 1 },
   { id: 'back-to-back', title: 'Back-to-Back', desc: 'Clear two Tetrises in a row.', piece: 'i', icon: 'pixelarticons:check-double',
     unlocked: (s) => s.backToBackTetris },
-  { id: 'perfect-clear', title: 'Perfect Clear', desc: 'Clear every block off the board in one line clear.', piece: 't', icon: 'pixelarticons:sparkles',
+  { id: 'perfect-clear', title: 'Perfect Clear', desc: 'Clear every block off the board in one line clear.', piece: 'o', icon: 'pixelarticons:sparkles',
     unlocked: (s) => s.perfectClears >= 1 },
   { id: 't-spin', title: 'T-Spin', desc: 'Clear a line with a T-spin.', piece: 't', icon: 'pixelarticons:reload',
     unlocked: (s) => s.tSpins >= 1 },
-  { id: 'speed-demon', title: 'Speed Demon', desc: 'Finish a sprint in under 60 seconds.', piece: 'z', icon: 'pixelarticons:fire',
+  { id: 'speed-demon', title: 'Speed Demon', desc: 'Finish a sprint in under 60 seconds.', piece: 's', icon: 'pixelarticons:fire',
     unlocked: (s) => s.sub60Clear },
-  { id: 'no-hold', title: 'No Hold', desc: 'Finish a sprint without using Hold once.', piece: 'l', icon: 'pixelarticons:hand',
+  { id: 'no-hold', title: 'No Hold', desc: 'Finish a sprint without using Hold once.', piece: 's', icon: 'pixelarticons:hand',
     unlocked: (s) => s.noHoldClear },
   { id: 'close-call', title: 'Close Call', desc: 'Clear a line while your stack is touching the top row.', piece: 'z', icon: 'pixelarticons:skull',
     unlocked: (s) => s.closeCallClear },
-  { id: 'quick-draw', title: 'Quick Draw', desc: 'Score a Tetris within the first 10 seconds.', piece: 'i', icon: 'pixelarticons:speed-fast',
+  { id: 'quick-draw', title: 'Quick Draw', desc: 'Score a Tetris within the first 10 seconds.', piece: 'j', icon: 'pixelarticons:speed-fast',
     unlocked: (s) => s.quickTetrisClear },
-  { id: 'completionist', title: 'Completionist', desc: 'Unlock every other achievement.', piece: 'o', icon: 'pixelarticons:diamond-gem',
+  { id: 'completionist', title: 'Completionist', desc: 'Unlock every other achievement.', piece: 'l', icon: 'pixelarticons:diamond-gem',
     unlocked: (s) => ACHIEVEMENTS.filter((a) => a.id !== 'completionist').every((a) => a.unlocked(s)) },
 ]
 
@@ -235,7 +237,7 @@ function AchTile({ a, stats, hovered, onHover }: { a: Achievement; stats: AchSta
       onMouseEnter={onHover}
       onFocus={onHover}
       style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '12px 6px',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '12px 8px', width: '100%', minWidth: 0, height: 118, boxSizing: 'border-box',
         background: unlocked ? `color-mix(in srgb, ${c} 16%, var(--bg-well))` : 'var(--bg-well)',
         border: `2px ${unlocked ? 'solid' : 'dashed'} ${hovered ? c : (unlocked ? c : 'var(--border-strong)')}`,
         borderRadius: 'var(--radius-1)', cursor: 'default',
@@ -248,12 +250,10 @@ function AchTile({ a, stats, hovered, onHover }: { a: Achievement; stats: AchSta
       }}>
         <Icon icon={a.icon} style={{ fontSize: 16, color: unlocked ? 'var(--text-on-piece)' : c }} />
       </div>
-      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 8, textAlign: 'center', lineHeight: 1.4, color: unlocked ? 'var(--text-strong)' : 'var(--text-faint)', textTransform: 'uppercase' }}>{a.title}</span>
-      {progress < 1 && a.progress && (
-        <div style={{ width: '100%', height: 4, background: 'var(--border-hairline)', borderRadius: 2, overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: `${progress * 100}%`, background: c, transition: 'width 200ms' }} />
-        </div>
-      )}
+      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 9, letterSpacing: '-0.01em', textAlign: 'center', lineHeight: 1.5, height: 28, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: unlocked ? 'var(--text-strong)' : 'var(--text-faint)', textTransform: 'uppercase', overflowWrap: 'break-word' }}>{a.title}</span>
+      <div style={{ width: '100%', height: 4, background: 'var(--border-hairline)', borderRadius: 2, overflow: 'hidden', visibility: (a.progress && progress < 1) ? 'visible' : 'hidden' }}>
+        <div style={{ height: '100%', width: `${progress * 100}%`, background: c, transition: 'width 200ms' }} />
+      </div>
     </button>
   )
 }
@@ -269,19 +269,19 @@ function AchievementsModal({ stats, onClose }: { stats: AchStats; onClose: () =>
     <div
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
       style={{ position: 'fixed', inset: 0, zIndex: 9600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,5,9,0.82)', backdropFilter: 'blur(6px)' }}>
-      <div style={{ background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', width: 440, maxHeight: '88vh', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-1)', overflow: 'hidden', boxShadow: '0 0 40px rgba(0,0,0,0.6)' }}>
+      <div style={{ background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', width: 620, maxHeight: '88vh', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-1)', overflow: 'hidden', boxShadow: '0 0 40px rgba(0,0,0,0.6)' }}>
 
         {/* Title bar */}
-        <div style={{ display: 'flex', alignItems: 'center', padding: '12px 18px', borderBottom: '2px solid var(--border-strong)', background: 'var(--ink-900)', flexShrink: 0 }}>
-          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--text-strong)', textTransform: 'uppercase', flex: 1, letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Icon icon="pixelarticons:trophy" style={{ fontSize: 18, color: 'var(--piece-o)' }} /> Achievements
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', textTransform: 'none', letterSpacing: 0 }}>{unlockedCount}/{ACHIEVEMENTS.length}</span>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '14px 18px', borderBottom: '2px solid var(--border-strong)', background: 'var(--ink-900)', flexShrink: 0 }}>
+          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 14, color: 'var(--text-strong)', textTransform: 'uppercase', flex: 1, letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Icon icon="pixelarticons:trophy" style={{ fontSize: 20, color: 'var(--piece-o)' }} /> Achievements
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-faint)', textTransform: 'none', letterSpacing: 0 }}>{unlockedCount}/{ACHIEVEMENTS.length}</span>
           </span>
-          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 4px' }}>✕</button>
+          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', fontSize: 20, lineHeight: 1, padding: '0 4px' }}>✕</button>
         </div>
 
         {/* Grid */}
-        <div style={{ padding: '16px 18px 0', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, overflowY: 'auto' }}>
+        <div style={{ padding: '16px 18px 0', display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 10, overflowY: 'auto' }}>
           {ACHIEVEMENTS.map((a) => (
             <AchTile key={a.id} a={a} stats={stats} hovered={hoveredId === a.id} onHover={() => setHoveredId(a.id)} />
           ))}
