@@ -121,7 +121,7 @@ const RESUME_PROJECTS = [
     role: 'Platform Designer and UI/UX Developer',
     location: 'Ottawa, ON',
     date: 'May - Jun 2024',
-    piece: 'o' as Piece,
+    piece: 'l' as Piece,
     tools: ['JavaScript', 'HTML', 'CSS', 'VS Code'],
     bullets: [
       'Designed a 4-stage platform, curating 100+ resources, to help women in computer science industries at different stages of their education find mentorship, scholarships, programs, and community resources.',
@@ -239,7 +239,7 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
 
         {/* projects */}
         <section>
-          <Kicker piece="t">Projects</Kicker>
+          <Kicker piece="l">Projects</Kicker>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             {RESUME_PROJECTS.map((p) => (
               <Card key={p.title} accent={p.piece} accentBar>
