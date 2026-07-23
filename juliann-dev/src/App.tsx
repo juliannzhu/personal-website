@@ -58,7 +58,7 @@ body::before {
   section { padding-left: 16px !important; padding-right: 16px !important; }
 
   /* footer: shorten copyright text on tiny screens */
-  .tj-footer-copy { font-size: 9px !important; }
+  .tj-footer-copy { font-size:0.5625rem !important; }
 }
 `
 let cssInjected = false

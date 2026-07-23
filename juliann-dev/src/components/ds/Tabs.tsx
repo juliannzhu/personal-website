@@ -3,7 +3,7 @@ import { HTMLAttributes } from 'react'
 const CSS = `
 .tj-tabs{ display:flex;gap:4px;border-bottom:2px solid var(--border-strong); }
 .tj-tab{
-  font-family:var(--font-pixel);font-size:11px;text-transform:uppercase;letter-spacing:0.02em;
+  font-family:var(--font-pixel);font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.02em;
   color:var(--text-muted);background:transparent;border:none;cursor:pointer;
   padding:12px 16px;position:relative;transition:color var(--dur);
   border-top-left-radius:var(--radius-1);border-top-right-radius:var(--radius-1);

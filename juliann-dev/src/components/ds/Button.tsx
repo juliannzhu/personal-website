@@ -14,9 +14,9 @@ const CSS = `
 .tj-btn:hover{ filter:brightness(1.12); }
 .tj-btn:active{ transform:translateY(4px); box-shadow: inset 2px 2px 0 var(--b-lit), inset -2px -2px 0 var(--b-dim), 0 0 0 rgba(0,0,0,0.45); }
 .tj-btn:focus-visible{ outline:3px solid var(--text-strong); outline-offset:3px; }
-.tj-btn--sm{ font-size:10px; padding:9px 14px; }
-.tj-btn--md{ font-size:13px; padding:13px 20px; }
-.tj-btn--lg{ font-size:16px; padding:17px 28px; }
+.tj-btn--sm{ font-size:0.625rem; padding:9px 14px; }
+.tj-btn--md{ font-size:0.8125rem; padding:13px 20px; }
+.tj-btn--lg{ font-size:1rem; padding:17px 28px; }
 .tj-btn--secondary{ --b: var(--ink-600); --b-lit: var(--ink-500); --b-dim: var(--ink-1000); color:var(--text-strong); }
 .tj-btn--danger{ --b: var(--piece-z); --b-lit: var(--piece-z-lit); --b-dim: var(--piece-z-dim); }
 .tj-btn--success{ --b: var(--piece-s); --b-lit: var(--piece-s-lit); --b-dim: var(--piece-s-dim); }

@@ -1,7 +1,7 @@
 import { TextareaHTMLAttributes } from 'react'
 
 const CSS = `
-.tj-textarea{ font-family:var(--font-body);font-size:14px;color:var(--text-strong);
+.tj-textarea{ font-family:var(--font-body);font-size:0.875rem;color:var(--text-strong);
   background:var(--bg-well);border:2px solid var(--border-strong);border-radius:var(--radius-2);
   padding:12px 13px;width:100%;outline:none;resize:vertical;min-height:96px;line-height:1.6;
   transition:border-color var(--dur),box-shadow var(--dur); }

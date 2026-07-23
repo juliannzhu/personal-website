@@ -1,7 +1,7 @@
 import { InputHTMLAttributes } from 'react'
 
 const CSS = `
-.tj-switch{ display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-family:var(--font-mono);font-size:12px;color:var(--text-body); user-select:none; }
+.tj-switch{ display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;color:var(--text-body); user-select:none; }
 .tj-switch__track{ position:relative;width:48px;height:24px;background:var(--bg-well);
   border:2px solid var(--border-strong);border-radius:var(--radius-1);transition:background var(--dur); }
 .tj-switch__knob{ position:absolute;top:1px;left:1px;width:18px;height:18px;background:var(--ink-400);

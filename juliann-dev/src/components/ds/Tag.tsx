@@ -3,7 +3,7 @@ import { HTMLAttributes, ReactNode } from 'react'
 const CSS = `
 .tj-tag{
   display:inline-flex;align-items:center;gap:6px;
-  font-family:var(--font-mono);font-size:12px;font-weight:500;
+  font-family:var(--font-mono);font-size:0.75rem;font-weight:500;
   padding:5px 10px;color:var(--text-body);
   background:var(--surface-elevated);
   border:1px solid var(--border-hairline);border-radius:var(--radius-2);

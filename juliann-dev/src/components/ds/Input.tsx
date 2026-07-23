@@ -2,10 +2,10 @@ import { InputHTMLAttributes } from 'react'
 
 const CSS = `
 .tj-field{ display:flex;flex-direction:column;gap:6px;font-family:var(--font-body); }
-.tj-field__label{ font-family:var(--font-mono);font-size:11px;letter-spacing:0.12em;
+.tj-field__label{ font-family:var(--font-mono);font-size:0.6875rem;letter-spacing:0.12em;
   text-transform:uppercase;color:var(--text-muted); }
 .tj-input{
-  font-family:var(--font-mono);font-size:14px;color:var(--text-strong);
+  font-family:var(--font-mono);font-size:0.875rem;color:var(--text-strong);
   background:var(--bg-well);border:2px solid var(--border-strong);
   border-radius:var(--radius-2);padding:11px 13px;width:100%;outline:none;
   transition:border-color var(--dur),box-shadow var(--dur);
@@ -15,7 +15,7 @@ const CSS = `
 .tj-input:focus{ border-color:var(--piece-i); box-shadow:0 0 0 3px color-mix(in srgb,var(--piece-i) 25%,transparent); }
 .tj-input--invalid{ border-color:var(--piece-z); }
 .tj-input--invalid:focus{ box-shadow:0 0 0 3px color-mix(in srgb,var(--piece-z) 25%,transparent); }
-.tj-field__hint{ font-size:12px;color:var(--text-faint); }
+.tj-field__hint{ font-size:0.75rem;color:var(--text-faint); }
 .tj-field__hint--err{ color:var(--piece-z);font-family:var(--font-mono); }
 .tj-input[disabled]{ opacity:0.5;cursor:not-allowed; }
 `

@@ -71,8 +71,8 @@ function NowPlaying() {
   return (
     <Card accent={song.piece} accentBar style={{ marginTop: 18 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-        <Icon icon="pixelarticons:volume-2" style={{ fontSize: 13, color: c }} />
-        <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--text-strong)', textTransform: 'uppercase' }}>Now playing on Spotify</span>
+        <Icon icon="pixelarticons:volume-2" style={{ fontSize: '0.8125rem', color: c }} />
+        <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>Now playing on Spotify</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <div style={{
@@ -81,14 +81,14 @@ function NowPlaying() {
           boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.25), inset -2px -2px 0 rgba(0,0,0,0.35)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <Icon icon="pixelarticons:music" style={{ fontSize: 22, color: 'var(--ink-900)' }} />
+          <Icon icon="pixelarticons:music" style={{ fontSize: '1.375rem', color: 'var(--ink-900)' }} />
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
-            <div style={{ fontSize: 15, color: 'var(--text-strong)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.title}</div>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', flexShrink: 0 }}>{formatTime(elapsed)} / {formatTime(song.duration)}</span>
+            <div style={{ fontSize: '0.9375rem', color: 'var(--text-strong)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.title}</div>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', flexShrink: 0 }}>{formatTime(elapsed)} / {formatTime(song.duration)}</span>
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', marginTop: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.artist} · {song.album}</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.artist} · {song.album}</div>
           <div style={{ marginTop: 9, height: 3, background: 'var(--bg-well)', borderRadius: 2, overflow: 'hidden' }}>
             <div className="tj-np-progress" style={{ height: '100%', width: `${pct}%`, background: c }} />
           </div>
@@ -131,8 +131,8 @@ export function Now() {
     <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, marginBottom: 12 }}>
         <div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Current directory</div>
-          <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Now Loading...</h2>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Current directory</div>
+          <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Now Loading...</h2>
         </div>
         <ScrollTetromino3D
           piece="l"
@@ -149,7 +149,7 @@ export function Now() {
 
       {/* Single-line header with badge inline */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32, flexWrap: 'wrap' }}>
-        <p style={{ fontSize: 16, color: 'var(--text-muted)', margin: 0, lineHeight: 1.4 }}>
+        <p style={{ fontSize: '1rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.4 }}>
           A sneak peak of what's on my board right now. Last updated July 2026.
         </p>
         <Badge piece="s" dot>live</Badge>
@@ -161,8 +161,8 @@ export function Now() {
             <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
               <Tetromino piece={n.piece} size={12} />
               <div>
-                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: `var(--piece-${n.piece})`, textTransform: 'uppercase', marginBottom: 10 }}>{n.label}</div>
-                <p style={{ margin: 0, fontSize: 15, color: 'var(--text-body)', lineHeight: 1.6 }}>{n.text}</p>
+                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: `var(--piece-${n.piece})`, textTransform: 'uppercase', marginBottom: 10 }}>{n.label}</div>
+                <p style={{ margin: 0, fontSize: '0.9375rem', color: 'var(--text-body)', lineHeight: 1.6 }}>{n.text}</p>
               </div>
             </div>
           </Card>
@@ -172,7 +172,7 @@ export function Now() {
       <NowPlaying />
 
       <Card accent="o" accentBar style={{ marginTop: 18 }}>
-        <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--text-strong)', textTransform: 'uppercase', marginBottom: 16 }}>This week's stats</div>
+        <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase', marginBottom: 16 }}>This week's stats</div>
         <div className="tj-stats-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
           <ProgressBar value={62} piece="l" label="Piano piece" cells={10} cellHeight={12} />
           <ProgressBar value={35} piece="o" label="IG post"     cells={10} cellHeight={12} />

@@ -22,8 +22,8 @@ function Logo({ onClick }: { onClick: () => void }) {
     <button onClick={onClick} style={{ display: 'flex', alignItems: 'flex-end', gap: 12, background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }}>
       <Tetromino piece="t" size={9} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-start' }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, visibility: 'hidden' }}>&nbsp;</span>
-        <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 14, color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>JULIANN</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', visibility: 'hidden' }}>&nbsp;</span>
+        <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.875rem', color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>JULIANN</span>
       </div>
     </button>
   )
@@ -32,8 +32,8 @@ function Logo({ onClick }: { onClick: () => void }) {
 function HudStat({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '0 10px', borderLeft: '2px solid var(--border-hairline)' }}>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{label}</span>
-      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color, letterSpacing: '0.06em' }}>{value}</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{label}</span>
+      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', color, letterSpacing: '0.06em' }}>{value}</span>
     </div>
   )
 }
@@ -63,14 +63,14 @@ function SoundToggle() {
         transition: 'border-color 140ms, color 140ms',
       }}>
       <div style={{ position: 'relative', width: 14, height: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-        <Icon icon="pixelarticons:volume" style={{ fontSize: 14, color: 'inherit' }} />
+        <Icon icon="pixelarticons:volume" style={{ fontSize: '0.875rem', color: 'inherit' }} />
         {!on && (
           <svg viewBox="0 0 14 14" style={{ position: 'absolute', inset: 0, width: 14, height: 14, pointerEvents: 'none' }}>
             <line x1="2" y1="2" x2="12" y2="12" stroke="var(--piece-z)" strokeWidth="2.2" strokeLinecap="round" />
           </svg>
         )}
       </div>
-      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
         {on ? 'SFX' : 'MUTE'}
       </span>
     </button>
@@ -85,14 +85,14 @@ function ResumeButton({ onOpen }: { onOpen: () => void }) {
       style={{
         display: 'flex', alignItems: 'center', gap: 6,
         padding: '5px 12px', cursor: 'pointer',
-        fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.04em',
+        fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.04em',
         color: 'var(--text-muted)',
         background: 'var(--bg-well)',
         border: '2px solid var(--border-strong)',
         borderRadius: 'var(--radius-1)',
         transition: 'border-color 140ms, color 140ms',
       }}>
-      <Icon icon="pixelarticons:file" style={{ fontSize: 14 }} />
+      <Icon icon="pixelarticons:file" style={{ fontSize: '0.875rem' }} />
       RESUME
     </button>
   )
@@ -118,7 +118,7 @@ function SocialIcons() {
           title={s.label}
           onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.color = s.color; el.style.borderColor = s.color }}
           onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.color = 'var(--text-faint)'; el.style.borderColor = 'transparent' }}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 30, height: 30, fontSize: 18, color: 'var(--text-faint)', textDecoration: 'none', border: '2px solid transparent', borderRadius: 'var(--radius-1)', transition: 'color 140ms, border-color 140ms' }}>
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 30, height: 30, fontSize: '1.125rem', color: 'var(--text-faint)', textDecoration: 'none', border: '2px solid transparent', borderRadius: 'var(--radius-1)', transition: 'color 140ms, border-color 140ms' }}>
           <Icon icon={s.icon} />
         </a>
       ))}
@@ -160,7 +160,7 @@ function NextSlot({ item, active, onNav }: { item: typeof NAV_ITEMS[0]; active: 
       <span style={{ width: 40, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, filter: active ? 'none' : 'saturate(0.45) brightness(0.85)', opacity: active ? 1 : 0.7, transition: 'filter 140ms, opacity 140ms' }}>
         <Tetromino piece={item.piece} size={8} />
       </span>
-      <span className="tj-slot-lbl" style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, letterSpacing: '0.02em', textTransform: 'uppercase', color: active ? 'var(--text-strong)' : 'var(--text-muted)', transition: 'color 140ms' }}>
+      <span className="tj-slot-lbl" style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', letterSpacing: '0.02em', textTransform: 'uppercase', color: active ? 'var(--text-strong)' : 'var(--text-muted)', transition: 'color 140ms' }}>
         {item.label}
       </span>
     </button>
@@ -179,7 +179,7 @@ function MobileNav({ current, onNav }: { current: Screen; onNav: (id: Screen) =>
               flex: '0 0 auto', padding: '10px 14px', border: 'none', cursor: 'pointer',
               background: 'transparent',
               borderBottom: `3px solid ${active ? c : 'transparent'}`,
-              fontFamily: 'var(--font-pixel)', fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.04em',
+              fontFamily: 'var(--font-pixel)', fontSize: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.04em',
               color: active ? c : 'var(--text-faint)',
               whiteSpace: 'nowrap',
               transition: 'color 140ms',
@@ -206,10 +206,10 @@ function PlayButton({ onPlay }: { onPlay: () => void }) {
         borderRadius: 'var(--radius-1)',
         cursor: 'pointer',
         color: 'var(--text-muted)',
-        fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.04em',
+        fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.04em',
         transition: 'border-color 140ms, color 140ms',
       }}>
-      <Icon icon="pixelarticons:gamepad" style={{ fontSize: 14, color: 'inherit' }} />
+      <Icon icon="pixelarticons:gamepad" style={{ fontSize: '0.875rem', color: 'inherit' }} />
       PLAY
     </button>
   )
@@ -234,7 +234,7 @@ export function TopNav({ current, onNav, onPlay, onResume }: { current: Screen; 
       </header>
       <MobileNav current={current} onNav={onNav} />
       <nav style={{ position: 'fixed', top: '50%', right: 22, transform: 'translateY(-50%)', zIndex: 100, display: 'flex', flexDirection: 'column', gap: 8, padding: 14, width: 252, background: 'color-mix(in srgb, var(--ink-1000) 90%, transparent)', backdropFilter: 'blur(8px)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', boxShadow: 'var(--shadow-soft)' }}>
-        <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center', padding: '2px 0 10px', borderBottom: '2px solid var(--border-hairline)' }}>NEXT</div>
+        <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center', padding: '2px 0 10px', borderBottom: '2px solid var(--border-hairline)' }}>NEXT</div>
         {NAV_ITEMS.map((it) => (
           <NextSlot key={it.id} item={it} active={current === it.id} onNav={onNav} />
         ))}
@@ -252,14 +252,14 @@ export function FixedFooter({ onNav }: { onNav: (id: Screen) => void }) {
         {PIECES.map((p) => <div key={p} style={{ flex: 1, background: `var(--piece-${p})` }} />)}
       </div>
       <div style={{ maxWidth: 1080, margin: '0 auto', padding: '28px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-faint)' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)' }}>
           © 2026 JULIANN · BUILT ONE BLOCK AT A TIME
         </span>
         <button
           onClick={() => onNav('home')}
           onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-strong)' }}
           onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-faint)' }}
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', background: 'none', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.08em', transition: 'color 140ms' }}>
+          style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', background: 'none', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.08em', transition: 'color 140ms' }}>
           Back to top
         </button>
       </div>

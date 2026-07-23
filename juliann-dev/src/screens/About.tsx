@@ -101,8 +101,8 @@ const ATTRIBUTES = [
 function SectionTitle({ kicker, children, size = 26 }: { kicker: string; children: string; size?: number }) {
   return (
     <div style={{ marginBottom: 28 }}>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>{kicker}</div>
-      <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: size, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>{children}</h2>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>{kicker}</div>
+      <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: `${size / 16}rem`, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>{children}</h2>
     </div>
   )
 }
@@ -170,17 +170,17 @@ export function About() {
           <div style={{ display: 'flex', gap: 18, alignItems: 'center', marginBottom: 24 }}>
             <Avatar initials="JZ" piece="t" size="xl" />
             <div>
-              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 20, color: 'var(--text-strong)' }}>JULIANN ZHU</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>CS @ UWaterloo · she/her · 📍 Ottawa, ON</div>
+              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.25rem', color: 'var(--text-strong)' }}>JULIANN ZHU</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 8 }}>CS @ UWaterloo · she/her · 📍 Ottawa, ON</div>
             </div>
           </div>
-          <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--text-body)' }}>
+          <p style={{ fontSize: '1.0625rem', lineHeight: 1.7, color: 'var(--text-body)' }}>
             I'm Juliann, a computer science student who loves breaking down problems until the pieces
             fall into place. Right now, I'm focused on the intersection of AI and user experience,
             whether it's through my research on cultural alignment and privacy in LLMs, or bringing
             new, creative ideas to life.
           </p>
-          <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--text-body)', marginTop: 16 }}>
+          <p style={{ fontSize: '1.0625rem', lineHeight: 1.7, color: 'var(--text-body)', marginTop: 16 }}>
             I love building tools that feel fast and look fun, from low-level systems puzzles to
             playful web apps with a tangible human impact. When I'm away from my keyboard, you'll
             usually find me learning a new song on the piano, taking cute photos of my friends, or
@@ -197,8 +197,8 @@ export function About() {
 
           <div ref={achievementsRef} style={{ marginTop: 40 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 16 }}>
-              <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: 'var(--piece-o)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Achievements Unlocked</h3>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)' }}>6 / 6</span>
+              <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', color: 'var(--piece-o)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Achievements Unlocked</h3>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)' }}>6 / 6</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {TIMELINE.map((t, i) => {
@@ -215,11 +215,11 @@ export function About() {
                     <div style={{ paddingTop: 3, flexShrink: 0 }}><Tetromino piece={t.piece} size={9} /></div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                        <div style={{ fontSize: 15, color: 'var(--text-strong)', fontWeight: 600, lineHeight: 1.3 }}>{t.what}</div>
-                        <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 7, background: c, color: 'var(--ink-900)', padding: '3px 5px', flexShrink: 0, letterSpacing: '0.04em', alignSelf: 'flex-start' }}>UNLOCKED</span>
+                        <div style={{ fontSize: '0.9375rem', color: 'var(--text-strong)', fontWeight: 600, lineHeight: 1.3 }}>{t.what}</div>
+                        <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.4375rem', background: c, color: 'var(--ink-900)', padding: '3px 5px', flexShrink: 0, letterSpacing: '0.04em', alignSelf: 'flex-start' }}>UNLOCKED</span>
                       </div>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 3 }}>{t.when}</div>
-                      <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5, marginTop: 3 }}>{linkifyWhere(t.where, t.links, c)}</div>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 3 }}>{t.when}</div>
+                      <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.5, marginTop: 3 }}>{linkifyWhere(t.where, t.links, c)}</div>
                     </div>
                   </div>
                 )
@@ -230,7 +230,7 @@ export function About() {
 
         <div>
           <Card accent="i" accentBar>
-            <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 14, color: 'var(--text-strong)', margin: '0 0 20px', textTransform: 'uppercase' }}>Skill Meter</h3>
+            <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.875rem', color: 'var(--text-strong)', margin: '0 0 20px', textTransform: 'uppercase' }}>Skill Meter</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {SKILLS.map((s) => (
                 <ProgressBar key={s.name} value={s.value} piece={s.piece} label={s.name} cells={12} cellHeight={14} />
@@ -249,14 +249,14 @@ export function About() {
             display: 'flex', flexDirection: 'column',
           }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-hairline)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>// jstris profile</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)' }}>jstris.jezevec10.eu</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>// jstris profile</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)' }}>jstris.jezevec10.eu</span>
             </div>
 
             <div style={{ padding: '10px 16px', display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-hairline)' }}>
               <div>
-                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 15, color: 'var(--text-strong)' }}>JAMBO722</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', marginTop: 5 }}>40L PB 45.480 · 103 BLOCKS</div>
+                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.9375rem', color: 'var(--text-strong)' }}>JAMBO722</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', marginTop: 5 }}>40L PB 45.480 · 103 BLOCKS</div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(14, 6px)', gridTemplateRows: 'repeat(6, 6px)', gap: 1, flexShrink: 0, transform: 'translate(-8px, -8px)' }}>
                 {MINI_BOARD.flat().map((cell, i) => (
@@ -270,33 +270,33 @@ export function About() {
             </div>
 
             <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-hairline)' }}>
-              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 8, color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 9 }}>PERSONAL BESTS</div>
+              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5rem', color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 9 }}>PERSONAL BESTS</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
                 {JSTRIS_PBS.map((pb) => (
                   <div key={pb.label} style={{ display: 'grid', gridTemplateColumns: '38px 1fr auto', gap: 8, alignItems: 'baseline' }}>
-                    <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, color: `var(--piece-${pb.piece})` }}>{pb.label}</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-strong)' }}>{pb.time} <span style={{ color: 'var(--text-faint)', fontSize: 10 }}>· {pb.blocks} blocks</span></span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)', whiteSpace: 'nowrap' }}>{pb.date}</span>
+                    <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: `var(--piece-${pb.piece})` }}>{pb.label}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-strong)' }}>{pb.time} <span style={{ color: 'var(--text-faint)', fontSize: '0.625rem' }}>· {pb.blocks} blocks</span></span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)', whiteSpace: 'nowrap' }}>{pb.date}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             <div style={{ padding: '12px 16px', flex: 1 }}>
-              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 8, color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 9 }}>ALL-TIME STATS</div>
+              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5rem', color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 9 }}>ALL-TIME STATS</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 16px' }}>
                 {JSTRIS_STATS.flatMap(([l1, v1, l2, v2]) => [[l1, v1], [l2, v2]]).map(([label, value], i) => (
                   <div key={i}>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
-                    <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--text-strong)', marginTop: 3 }}>{value}</div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
+                    <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', marginTop: 3 }}>{value}</div>
                   </div>
                 ))}
               </div>
             </div>
 
             <div style={{ borderTop: '1px solid var(--border-hairline)', padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 8, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>One block at a time</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)' }}>CS @ UW · '30</span>
+              <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>One block at a time</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)' }}>CS @ UW · '30</span>
             </div>
           </div>
         </div>
@@ -312,8 +312,8 @@ export function About() {
                 <div key={a.key} style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
                   <span style={{ width: 6, height: 6, borderRadius: '50%', background: `var(--piece-${a.piece})`, flexShrink: 0, marginBottom: 1 }} />
                   <div style={{ minWidth: 0 }}>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{a.label} · {a.name}</span>
-                    <span style={{ fontSize: 11.5, color: 'var(--text-faint)', lineHeight: 1.4 }}> · {a.desc}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{a.label} · {a.name}</span>
+                    <span style={{ fontSize: '0.7188rem', color: 'var(--text-faint)', lineHeight: 1.4 }}> · {a.desc}</span>
                   </div>
                 </div>
               ))}

@@ -15,7 +15,7 @@ const CSS = `
 .tj-heroname span:hover{ transform:translateY(-6px); }
 .tj-pressstart{ display:inline-flex; align-items:center; gap:12px; cursor:pointer;
   background:none; border:none; padding:6px 8px; font-family:var(--font-pixel); text-transform:uppercase;
-  font-size:18px; color:var(--piece-o); letter-spacing:0.06em; text-shadow:0 3px 0 rgba(0,0,0,0.4); }
+  font-size:1.125rem; color:var(--piece-o); letter-spacing:0.06em; text-shadow:0 3px 0 rgba(0,0,0,0.4); }
 .tj-pressstart .tj-ps-label{ animation:tj-blink2 1.1s steps(1) infinite; }
 .tj-pressstart:hover .tj-ps-label{ animation:none; }
 .tj-pressstart:hover{ color:var(--piece-o-lit); }
@@ -44,7 +44,7 @@ export function Hero({ onNav, play }: { onNav: (id: Screen) => void; play: boole
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
           <Badge piece="s" dot>Now playing · CS @ UWATERLOO</Badge>
         </div>
-        <h1 className="tj-heroname" style={{ fontFamily: 'var(--font-pixel)', fontSize: 'clamp(34px, 7vw, 68px)', lineHeight: 1.1, textAlign: 'center', margin: 0, textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+        <h1 className="tj-heroname" style={{ fontFamily: 'var(--font-pixel)', fontSize: 'clamp(2.125rem, 7vw, 4.25rem)', lineHeight: 1.1, textAlign: 'center', margin: 0, textTransform: 'uppercase', letterSpacing: '0.02em' }}>
           {name.split('').map((ch, i) => (
             <span
               key={i}
@@ -53,7 +53,7 @@ export function Hero({ onNav, play }: { onNav: (id: Screen) => void; play: boole
             >{ch}</span>
           ))}
         </h1>
-        <p style={{ textAlign: 'center', maxWidth: 560, margin: '24px auto 0', fontSize: 18, color: 'var(--text-body)', lineHeight: 1.6 }}>
+        <p style={{ textAlign: 'center', maxWidth: 560, margin: '24px auto 0', fontSize: '1.125rem', color: 'var(--text-body)', lineHeight: 1.6 }}>
           Computer science major designing software that makes life a little easier.
           Figuring things out one block at a time.
         </p>

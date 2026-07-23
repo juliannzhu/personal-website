@@ -11,7 +11,7 @@ const CSS = `
 .tj-progress__cell--on{ background:var(--prog-c,var(--piece-s));
   box-shadow: inset 1px 1px 0 rgba(255,255,255,0.35), inset -1px -1px 0 rgba(0,0,0,0.3); }
 .tj-progress__meta{ display:flex;justify-content:space-between;margin-top:8px;
-  font-family:var(--font-mono);font-size:11px;color:var(--text-muted); }
+  font-family:var(--font-mono);font-size:0.6875rem;color:var(--text-muted); }
 `
 
 const PIECE: Record<string, string> = { i:'--piece-i', o:'--piece-o', t:'--piece-t', s:'--piece-s', z:'--piece-z', j:'--piece-j', l:'--piece-l' }

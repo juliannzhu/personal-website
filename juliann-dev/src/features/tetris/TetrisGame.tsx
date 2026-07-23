@@ -248,9 +248,9 @@ function AchTile({ a, stats, hovered, onHover }: { a: Achievement; stats: AchSta
         boxShadow: unlocked ? 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3)' : `inset 0 0 0 2px ${c}`,
         opacity: unlocked ? 1 : 0.55,
       }}>
-        <Icon icon={a.icon} style={{ fontSize: 16, color: unlocked ? 'var(--text-on-piece)' : c }} />
+        <Icon icon={a.icon} style={{ fontSize: '1rem', color: unlocked ? 'var(--text-on-piece)' : c }} />
       </div>
-      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 9, letterSpacing: '-0.01em', textAlign: 'center', lineHeight: 1.5, height: 28, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: unlocked ? 'var(--text-strong)' : 'var(--text-faint)', textTransform: 'uppercase', overflowWrap: 'break-word' }}>{a.title}</span>
+      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', letterSpacing: '-0.01em', textAlign: 'center', lineHeight: 1.5, height: 28, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: unlocked ? 'var(--text-strong)' : 'var(--text-faint)', textTransform: 'uppercase', overflowWrap: 'break-word' }}>{a.title}</span>
       <div style={{ width: '100%', height: 4, background: 'var(--border-hairline)', borderRadius: 2, overflow: 'hidden', visibility: (a.progress && progress < 1) ? 'visible' : 'hidden' }}>
         <div style={{ height: '100%', width: `${progress * 100}%`, background: c, transition: 'width 200ms' }} />
       </div>
@@ -273,11 +273,11 @@ function AchievementsModal({ stats, onClose }: { stats: AchStats; onClose: () =>
 
         {/* Title bar */}
         <div style={{ display: 'flex', alignItems: 'center', padding: '14px 18px', borderBottom: '2px solid var(--border-strong)', background: 'var(--ink-900)', flexShrink: 0 }}>
-          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 14, color: 'var(--text-strong)', textTransform: 'uppercase', flex: 1, letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Icon icon="pixelarticons:trophy" style={{ fontSize: 20, color: 'var(--piece-o)' }} /> Achievements
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-faint)', textTransform: 'none', letterSpacing: 0 }}>{unlockedCount}/{ACHIEVEMENTS.length}</span>
+          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.875rem', color: 'var(--text-strong)', textTransform: 'uppercase', flex: 1, letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Icon icon="pixelarticons:trophy" style={{ fontSize: '1.25rem', color: 'var(--piece-o)' }} /> Achievements
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-faint)', textTransform: 'none', letterSpacing: 0 }}>{unlockedCount}/{ACHIEVEMENTS.length}</span>
           </span>
-          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', fontSize: 20, lineHeight: 1, padding: '0 4px' }}>✕</button>
+          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', fontSize: '1.25rem', lineHeight: 1, padding: '0 4px' }}>✕</button>
         </div>
 
         {/* Grid + side detail panel, side by side so the panel's varying content (some
@@ -297,18 +297,18 @@ function AchievementsModal({ stats, onClose }: { stats: AchStats; onClose: () =>
               background: hovered.unlocked(stats) ? c : 'transparent',
               boxShadow: hovered.unlocked(stats) ? 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3)' : `inset 0 0 0 2px ${c}`,
             }}>
-              <Icon icon={hovered.icon} style={{ fontSize: 22, color: hovered.unlocked(stats) ? 'var(--text-on-piece)' : c }} />
+              <Icon icon={hovered.icon} style={{ fontSize: '1.375rem', color: hovered.unlocked(stats) ? 'var(--text-on-piece)' : c }} />
             </div>
-            <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: c, textTransform: 'uppercase', lineHeight: 1.4 }}>{hovered.title}</span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: 6, color: hovered.unlocked(stats) ? 'var(--piece-s)' : 'var(--text-faint)' }}>
+            <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', color: c, textTransform: 'uppercase', lineHeight: 1.4 }}>{hovered.title}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: 6, color: hovered.unlocked(stats) ? 'var(--piece-s)' : 'var(--text-faint)' }}>
               {hovered.unlocked(stats) ? '✓ Unlocked' : 'Locked'}
             </span>
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)', margin: '12px 0 0', lineHeight: 1.6, flex: 1 }}>{hovered.desc}</p>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)', margin: '12px 0 0', lineHeight: 1.6, flex: 1 }}>{hovered.desc}</p>
             <div style={{ marginTop: 12, visibility: (hovered.progress && progress < 1) ? 'visible' : 'hidden' }}>
               <div style={{ height: 6, background: 'var(--border-hairline)', borderRadius: 3, overflow: 'hidden' }}>
                 <div style={{ height: '100%', width: `${progress * 100}%`, background: c, transition: 'width 200ms' }} />
               </div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', marginTop: 5, textAlign: 'right' }}>{Math.round(progress * 100)}%</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', marginTop: 5, textAlign: 'right' }}>{Math.round(progress * 100)}%</div>
             </div>
           </aside>
         </div>
@@ -342,11 +342,11 @@ function AchievementToasts({ toasts }: { toasts: Achievement[] }) {
             width: 30, height: 30, flexShrink: 0, borderRadius: 'var(--radius-1)', display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: `var(--piece-${a.piece})`, boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3)',
           }}>
-            <Icon icon={a.icon} style={{ fontSize: 15, color: 'var(--text-on-piece)' }} />
+            <Icon icon={a.icon} style={{ fontSize: '0.9375rem', color: 'var(--text-on-piece)' }} />
           </div>
           <div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Achievement Unlocked</div>
-            <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: `var(--piece-${a.piece})`, marginTop: 3, textTransform: 'uppercase' }}>{a.title}</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Achievement Unlocked</div>
+            <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: `var(--piece-${a.piece})`, marginTop: 3, textTransform: 'uppercase' }}>{a.title}</div>
           </div>
         </div>
       ))}
@@ -395,7 +395,7 @@ function SettingsTabBtn({ id, current, label, onSelect }: TabBtnProps) {
       type="button"
       onClick={() => onSelect(id)}
       style={{
-        flex: 1, padding: '10px 0', fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase',
+        flex: 1, padding: '10px 0', fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase',
         letterSpacing: '0.06em', cursor: 'pointer', border: 'none',
         background: active ? 'color-mix(in srgb, var(--piece-i) 18%, var(--bg-well))' : 'var(--bg-well)',
         color: active ? 'var(--piece-i)' : 'var(--text-muted)',
@@ -410,11 +410,11 @@ interface SliderRowProps { label: string; val: number; min: number; max: number;
 function SettingsSlider({ label, val, min, max, step, unit, onChange }: SliderRowProps) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--border-hairline)' }}>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', width: 108, flexShrink: 0 }}>{label}</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', width: 108, flexShrink: 0 }}>{label}</span>
       <input type="range" min={min} max={max} step={step} value={val}
         onChange={(e) => onChange(Number(e.target.value))}
         style={{ flex: 1, accentColor: 'var(--piece-i)', cursor: 'pointer' }} />
-      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, color: 'var(--piece-i)', width: 52, textAlign: 'right', flexShrink: 0 }}>{val}{unit}</span>
+      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: 'var(--piece-i)', width: 52, textAlign: 'right', flexShrink: 0 }}>{val}{unit}</span>
     </div>
   )
 }
@@ -424,8 +424,8 @@ function SettingsToggle({ label, desc, val, onChange }: ToggleRowProps) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--border-hairline)' }}>
       <div style={{ flex: 1 }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)' }}>{label}</div>
-        {desc && <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', marginTop: 2 }}>{desc}</div>}
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>{label}</div>
+        {desc && <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', marginTop: 2 }}>{desc}</div>}
       </div>
       <button type="button" onClick={() => onChange(!val)} style={{
         width: 44, height: 22, borderRadius: 11, border: 'none', cursor: 'pointer', flexShrink: 0,
@@ -516,8 +516,8 @@ function SettingsModal({ settings, keybinds, onSave, onClose }: SettingsModalPro
 
         {/* Title bar */}
         <div style={{ display: 'flex', alignItems: 'center', padding: '12px 18px', borderBottom: '2px solid var(--border-strong)', background: 'var(--ink-900)', flexShrink: 0 }}>
-          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--text-strong)', textTransform: 'uppercase', flex: 1, letterSpacing: '0.04em', display: 'flex', alignItems: 'flex-end', gap: 8 }}><span style={{ fontSize: 22, lineHeight: 1, marginBottom: 4 }}>⚙</span> SETTINGS</span>
-          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 4px' }}>✕</button>
+          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase', flex: 1, letterSpacing: '0.04em', display: 'flex', alignItems: 'flex-end', gap: 8 }}><span style={{ fontSize: '1.375rem', lineHeight: 1, marginBottom: 4 }}>⚙</span> SETTINGS</span>
+          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', fontSize: '1.125rem', lineHeight: 1, padding: '0 4px' }}>✕</button>
         </div>
 
         {/* Tabs */}
@@ -532,17 +532,17 @@ function SettingsModal({ settings, keybinds, onSave, onClose }: SettingsModalPro
 
           {tab === 'controls' && (
             <div>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', margin: '0 0 12px', lineHeight: 1.6 }}>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', margin: '0 0 12px', lineHeight: 1.6 }}>
                 Click a key to rebind. Press Esc to cancel.
               </p>
               {BIND_ACTIONS.map(({ key, label }) => (
                 <div key={key} style={{ display: 'flex', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--border-hairline)' }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', flex: 1 }}>{label}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', flex: 1 }}>{label}</span>
                   <button
                     type="button"
                     onClick={() => setRebinding(rebinding === key ? null : key)}
                     style={{
-                      fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase',
+                      fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase',
                       padding: '5px 12px', cursor: 'pointer', borderRadius: 'var(--radius-1)', minWidth: 80, textAlign: 'center',
                       background: rebinding === key ? 'color-mix(in srgb, var(--piece-o) 22%, transparent)' : 'var(--bg-well)',
                       border: rebinding === key ? '2px solid var(--piece-o)' : '2px solid var(--border-strong)',
@@ -557,7 +557,7 @@ function SettingsModal({ settings, keybinds, onSave, onClose }: SettingsModalPro
 
           {tab === 'game' && (
             <div>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', margin: '0 0 6px', lineHeight: 1.6 }}>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', margin: '0 0 6px', lineHeight: 1.6 }}>
                 Movement timing and gameplay toggles.
               </p>
               <SettingsSlider label="DAS" val={s.das} min={0} max={300} step={1} unit="ms" onChange={(v) => setS(p => ({ ...p, das: v }))} />
@@ -567,7 +567,7 @@ function SettingsModal({ settings, keybinds, onSave, onClose }: SettingsModalPro
               <SettingsToggle label="Grid lines"   desc="Show board grid"              val={s.grid}      onChange={(v) => setS(p => ({ ...p, grid: v }))}      />
               <SettingsToggle label="Countdown"    desc="3-2-1 before game starts"     val={s.countdown} onChange={(v) => setS(p => ({ ...p, countdown: v }))} />
               <SettingsToggle label="Finesse mode" desc="Highlight suboptimal moves"   val={s.finesse}   onChange={(v) => setS(p => ({ ...p, finesse: v }))}   />
-              <div style={{ marginTop: 14, fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', lineHeight: 2 }}>
+              <div style={{ marginTop: 14, fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', lineHeight: 2 }}>
                 <b style={{ color: 'var(--text-muted)' }}>DAS</b>: delay before auto-repeat (Jstris default: 133ms)<br />
                 <b style={{ color: 'var(--text-muted)' }}>ARR</b>: speed of auto-repeat (Jstris default: 33ms)<br />
                 <b style={{ color: 'var(--text-muted)' }}>SDF</b>: soft drop multiplier (Jstris default: 5x, 41=infinity)
@@ -577,7 +577,7 @@ function SettingsModal({ settings, keybinds, onSave, onClose }: SettingsModalPro
 
           {tab === 'skin' && (
             <div>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', margin: '0 0 14px', lineHeight: 1.6 }}>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', margin: '0 0 14px', lineHeight: 1.6 }}>
                 Choose how blocks are rendered on the board.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -600,10 +600,10 @@ function SettingsModal({ settings, keybinds, onSave, onClose }: SettingsModalPro
                       ))}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, color: s.skin === skin.id ? 'var(--piece-i)' : 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 3 }}>{skin.label}</div>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-faint)' }}>{skin.desc}</div>
+                      <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: s.skin === skin.id ? 'var(--piece-i)' : 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 3 }}>{skin.label}</div>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)' }}>{skin.desc}</div>
                     </div>
-                    {s.skin === skin.id && <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--piece-s)', flexShrink: 0 }}>✓</span>}
+                    {s.skin === skin.id && <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--piece-s)', flexShrink: 0 }}>✓</span>}
                   </button>
                 ))}
               </div>
@@ -614,12 +614,12 @@ function SettingsModal({ settings, keybinds, onSave, onClose }: SettingsModalPro
         {/* Footer */}
         <div style={{ display: 'flex', gap: 10, padding: '12px 18px', borderTop: '2px solid var(--border-strong)', background: 'var(--ink-900)', flexShrink: 0 }}>
           <button type="button" onClick={() => { setS({ ...DEFAULT_SETTINGS }); setK({ ...DEFAULT_KEYBINDS }) }}
-            style={{ fontFamily: 'var(--font-pixel)', fontSize: 9, textTransform: 'uppercase', padding: '8px 12px', cursor: 'pointer', background: 'transparent', border: '2px solid var(--border-strong)', color: 'var(--text-muted)', borderRadius: 'var(--radius-1)' }}>
+            style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', textTransform: 'uppercase', padding: '8px 12px', cursor: 'pointer', background: 'transparent', border: '2px solid var(--border-strong)', color: 'var(--text-muted)', borderRadius: 'var(--radius-1)' }}>
             Reset All
           </button>
           <div style={{ flex: 1 }} />
           <button type="button" onClick={() => { onSave(s, k); onClose() }}
-            style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', padding: '8px 20px', cursor: 'pointer', background: 'var(--piece-s)', border: '2px solid var(--piece-s)', color: 'var(--text-on-piece)', borderRadius: 'var(--radius-1)', boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.25), inset -2px -2px 0 rgba(0,0,0,0.25)' }}>
+            style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', padding: '8px 20px', cursor: 'pointer', background: 'var(--piece-s)', border: '2px solid var(--piece-s)', color: 'var(--text-on-piece)', borderRadius: 'var(--radius-1)', boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.25), inset -2px -2px 0 rgba(0,0,0,0.25)' }}>
             Save & Close
           </button>
         </div>
@@ -935,12 +935,12 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
   }
 
   const panel: React.CSSProperties = { background: 'var(--ink-1000)', border: '2px solid var(--border-strong)' }
-  const panelHead: React.CSSProperties = { fontFamily: 'var(--font-pixel)', fontSize: 10, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12, textAlign: 'center' }
+  const panelHead: React.CSSProperties = { fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12, textAlign: 'center' }
 
   const BigStat = ({ label, val, color }: { label: string; val: string; color: string }) => (
     <div style={{ flex: 1, ...panel, padding: '12px 8px', textAlign: 'center' }}>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.14em', color: 'var(--text-faint)', textTransform: 'uppercase' }}>{label}</div>
-      <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 18, color, marginTop: 8 }}>{val}</div>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', letterSpacing: '0.14em', color: 'var(--text-faint)', textTransform: 'uppercase' }}>{label}</div>
+      <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.125rem', color, marginTop: 8 }}>{val}</div>
     </div>
   )
 
@@ -952,8 +952,8 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
         <button onClick={() => setShowAchievements(true)} title="Achievements"
           onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--piece-o)'; e.currentTarget.style.color = 'var(--piece-o)' }}
           onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-faint)' }}
-          style={{ position: 'absolute', top: 20, right: 20, display: 'flex', alignItems: 'center', gap: 8, padding: '9px 14px', cursor: 'pointer', background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', color: 'var(--text-faint)', fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.04em', transition: 'color 140ms, border-color 140ms' }}>
-          <Icon icon="pixelarticons:trophy" style={{ fontSize: 15 }} />
+          style={{ position: 'absolute', top: 20, right: 20, display: 'flex', alignItems: 'center', gap: 8, padding: '9px 14px', cursor: 'pointer', background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', color: 'var(--text-faint)', fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.04em', transition: 'color 140ms, border-color 140ms' }}>
+          <Icon icon="pixelarticons:trophy" style={{ fontSize: '0.9375rem' }} />
           Achievements
         </button>
 
@@ -965,7 +965,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
               style={{ ...panel, padding: 12, cursor: st.status === 'playing' ? 'pointer' : 'default', opacity: st.canHold ? 1 : 0.45, borderColor: (st.canHold && st.hold) ? 'var(--piece-t)' : 'var(--border-strong)' }}>
               <div style={panelHead}>Hold</div>
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 32 }}>
-                {st.hold ? <MiniPiece type={st.hold} /> : <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)' }}>{keyLabel(keybinds.hold)}</span>}
+                {st.hold ? <MiniPiece type={st.hold} /> : <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)' }}>{keyLabel(keybinds.hold)}</span>}
               </div>
             </button>
           </div>
@@ -977,21 +977,21 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
 
               {st.status === 'ready' && (
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 18, background: 'rgba(5,5,9,0.8)', textAlign: 'center', padding: 20 }}>
-                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 16, color: 'var(--piece-o)', textTransform: 'uppercase', textShadow: '0 3px 0 rgba(0,0,0,0.5)' }}>20-Line Sprint</div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', maxWidth: 180, lineHeight: 1.6 }}>Clear 20 lines as fast as you can.</div>
+                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1rem', color: 'var(--piece-o)', textTransform: 'uppercase', textShadow: '0 3px 0 rgba(0,0,0,0.5)' }}>20-Line Sprint</div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: 180, lineHeight: 1.6 }}>Clear 20 lines as fast as you can.</div>
                   <Button size="md" onClick={startGame} style={{ '--b': 'var(--piece-o)', '--b-lit': 'var(--piece-o-lit)', '--b-dim': 'var(--piece-o-dim)', color: 'var(--text-on-piece)' } as React.CSSProperties}>Start</Button>
                 </div>
               )}
               {st.status === 'won' && !enteringInitials && (
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, background: 'rgba(5,5,9,0.86)' }}>
-                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 18, color: 'var(--piece-s)', textTransform: 'uppercase' }}>Finish!</div>
-                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--piece-o)' }}>{fmtTime(st.finishMs)}</div>
+                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.125rem', color: 'var(--piece-s)', textTransform: 'uppercase' }}>Finish!</div>
+                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--piece-o)' }}>{fmtTime(st.finishMs)}</div>
                   <Button variant="success" size="sm" onClick={startGame}>Play Again</Button>
                 </div>
               )}
               {st.status === 'topout' && (
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, background: 'rgba(5,5,9,0.86)' }}>
-                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 18, color: 'var(--piece-z)', textTransform: 'uppercase' }}>Top Out</div>
+                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.125rem', color: 'var(--piece-z)', textTransform: 'uppercase' }}>Top Out</div>
                   <Button variant="danger" size="sm" onClick={startGame}>Retry</Button>
                 </div>
               )}
@@ -999,7 +999,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
               {/* Restart hold progress */}
               {st.status === 'playing' && restartProgress > 0 && (
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(5,5,9,0.88)', padding: '10px 14px' }}>
-                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 9, color: 'var(--piece-z)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6, textAlign: 'center' }}>
+                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', color: 'var(--piece-z)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6, textAlign: 'center' }}>
                     Hold to restart...
                   </div>
                   <div style={{ height: 5, background: 'var(--bg-well)', borderRadius: 3, overflow: 'hidden' }}>
@@ -1022,7 +1022,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
                 {st.queue.slice(0, 5).map((t, i) => <MiniPiece key={i} type={t} cell={i === 0 ? 13 : 11} />)}
               </div>
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, lineHeight: 1.9, color: 'var(--text-faint)', textAlign: 'center' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', lineHeight: 1.9, color: 'var(--text-faint)', textAlign: 'center' }}>
               {keyLabel(keybinds.left)}{keyLabel(keybinds.right)} MOVE<br/>
               {keyLabel(keybinds.rotateCW)} ROTATE<br/>
               {keyLabel(keybinds.softDrop)} SOFT<br/>
@@ -1035,15 +1035,15 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
             <button onClick={() => setShowSettings(true)}
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--piece-i)'; e.currentTarget.style.color = 'var(--piece-i)' }}
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-faint)' }}
-              style={{ position: 'absolute', top: ROWS * CELL + 32, left: 0, right: 0, height: 97, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 9, fontFamily: 'var(--font-pixel)', fontSize: 9, textTransform: 'uppercase', color: 'var(--text-faint)', background: 'transparent', border: '2px solid var(--border-strong)', paddingTop: 4, paddingRight: 9, paddingBottom: 9, paddingLeft: 9, cursor: 'pointer', borderRadius: 'var(--radius-1)', letterSpacing: '0.04em' }}>
-              <span style={{ fontSize: 44, lineHeight: 1 }}>⚙</span>
+              style={{ position: 'absolute', top: ROWS * CELL + 32, left: 0, right: 0, height: 97, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 9, fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', textTransform: 'uppercase', color: 'var(--text-faint)', background: 'transparent', border: '2px solid var(--border-strong)', paddingTop: 4, paddingRight: 9, paddingBottom: 9, paddingLeft: 9, cursor: 'pointer', borderRadius: 'var(--radius-1)', letterSpacing: '0.04em' }}>
+              <span style={{ fontSize: '2.75rem', lineHeight: 1 }}>⚙</span>
               <span>Settings</span>
             </button>
           </div>
 
           {/* LEADERBOARD */}
           <div style={{ width: 260, padding: 18, background: 'color-mix(in srgb, var(--ink-1000) 92%, transparent)', border: '2px solid var(--border-strong)', boxShadow: 'var(--shadow-soft)', display: 'flex', flexDirection: 'column', maxHeight: 540 }}>
-            <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--text-strong)', textTransform: 'uppercase', textAlign: 'center', paddingBottom: 14, borderBottom: '2px solid var(--border-hairline)', flexShrink: 0 }}>Fastest Sprints</div>
+            <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase', textAlign: 'center', paddingBottom: 14, borderBottom: '2px solid var(--border-hairline)', flexShrink: 0 }}>Fastest Sprints</div>
 
             {/* Scrollable scores list */}
             <div style={{ overflowY: 'auto', flex: 1, marginTop: 12, display: 'flex', flexDirection: 'column', gap: 2, scrollbarWidth: 'thin', scrollbarColor: 'var(--border-strong) transparent' }}>
@@ -1051,9 +1051,9 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
                 <div key={i}
                   ref={row.you ? yourRowRef : undefined}
                   style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', background: row.you ? 'color-mix(in srgb, var(--piece-i) 16%, transparent)' : 'transparent', border: row.you ? '2px solid var(--piece-i)' : '2px solid transparent', flexShrink: 0 }}>
-                  <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: i === 0 ? 'var(--piece-o)' : 'var(--text-faint)', width: 26 }}>{String(i+1).padStart(2,'0')}</span>
-                  <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: row.you ? 'var(--piece-i)' : 'var(--text-body)', flex: 1 }}>{row.name}</span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--text-strong)' }}>{fmtTime(row.ms)}</span>
+                  <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: i === 0 ? 'var(--piece-o)' : 'var(--text-faint)', width: 26 }}>{String(i+1).padStart(2,'0')}</span>
+                  <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: row.you ? 'var(--piece-i)' : 'var(--text-body)', flex: 1 }}>{row.name}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', fontWeight: 700, color: 'var(--text-strong)' }}>{fmtTime(row.ms)}</span>
                 </div>
               ))}
             </div>
@@ -1061,13 +1061,13 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
             {/* Sticky user rank — visible even when scrolled away from their entry */}
             {myResult && (
               <div style={{ flexShrink: 0, borderTop: '2px solid var(--border-hairline)', marginTop: 8, paddingTop: 8 }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>
                   Your rank: #{myResult.rank}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', background: 'color-mix(in srgb, var(--piece-i) 16%, transparent)', border: '2px solid var(--piece-i)' }}>
-                  <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--text-faint)', width: 26 }}>{String(myResult.rank).padStart(2,'0')}</span>
-                  <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, color: 'var(--piece-i)', flex: 1 }}>{myResult.name}</span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--text-strong)' }}>{fmtTime(myResult.ms)}</span>
+                  <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-faint)', width: 26 }}>{String(myResult.rank).padStart(2,'0')}</span>
+                  <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--piece-i)', flex: 1 }}>{myResult.name}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', fontWeight: 700, color: 'var(--text-strong)' }}>{fmtTime(myResult.ms)}</span>
                 </div>
               </div>
             )}
@@ -1075,7 +1075,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
             <button onClick={onClose}
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--piece-z)'; e.currentTarget.style.color = 'var(--piece-z)' }}
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-muted)' }}
-              style={{ flexShrink: 0, marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', color: 'var(--text-muted)', background: 'transparent', border: '2px solid var(--border-strong)', padding: '12px', cursor: 'pointer', borderRadius: 'var(--radius-1)' }}>
+              style={{ flexShrink: 0, marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', color: 'var(--text-muted)', background: 'transparent', border: '2px solid var(--border-strong)', padding: '12px', cursor: 'pointer', borderRadius: 'var(--radius-1)' }}>
               <span style={{ lineHeight: 1, position: 'relative', top: -3 }}>✕</span>
               <span>Close [esc]</span>
             </button>
@@ -1087,9 +1087,9 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
       {enteringInitials && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 9700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ background: 'var(--ink-900)', border: '2px solid var(--piece-s)', borderRadius: 'var(--radius-1)', padding: '32px 36px', textAlign: 'center', boxShadow: '0 0 40px color-mix(in srgb, var(--piece-s) 40%, transparent)', minWidth: 280 }}>
-            <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 18, color: 'var(--piece-s)', textTransform: 'uppercase', marginBottom: 8 }}>Finish!</div>
-            <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 28, color: 'var(--piece-o)', marginBottom: 4 }}>{fmtTime(st.finishMs)}</div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-faint)', marginBottom: 24 }}>Enter your initials</div>
+            <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.125rem', color: 'var(--piece-s)', textTransform: 'uppercase', marginBottom: 8 }}>Finish!</div>
+            <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.75rem', color: 'var(--piece-o)', marginBottom: 4 }}>{fmtTime(st.finishMs)}</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)', marginBottom: 24 }}>Enter your initials</div>
             <input
               autoFocus
               maxLength={3}
@@ -1097,7 +1097,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
               onChange={(e) => setInitials(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
               onKeyDown={(e) => { if (e.key === 'Enter') handleSubmitInitials() }}
               placeholder="AAA"
-              style={{ fontFamily: 'var(--font-pixel)', fontSize: 32, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.2em', background: 'var(--bg-well)', color: 'var(--piece-i)', border: '2px solid var(--piece-i)', borderRadius: 'var(--radius-1)', padding: '12px 16px', width: 140, display: 'block', margin: '0 auto 20px', outline: 'none' }} />
+              style={{ fontFamily: 'var(--font-pixel)', fontSize: '2rem', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.2em', background: 'var(--bg-well)', color: 'var(--piece-i)', border: '2px solid var(--piece-i)', borderRadius: 'var(--radius-1)', padding: '12px 16px', width: 140, display: 'block', margin: '0 auto 20px', outline: 'none' }} />
             <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
               <Button variant="ghost" size="sm" onClick={() => { setEnteringInitials(false); g.current.saved = true; rerender() }}>Skip</Button>
               <Button variant="success" size="sm" onClick={handleSubmitInitials}>Submit</Button>
@@ -1125,15 +1125,15 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
 export const HoldBox = forwardRef<HTMLElement, { onPlay: () => void }>(function HoldBox({ onPlay }, ref) {
   return (
     <aside ref={ref} className="tj-holdbox" style={{ position: 'fixed', top: '50%', left: 22, transform: 'translateY(-50%)', zIndex: 100, display: 'flex', flexDirection: 'column', gap: 12, padding: 16, width: 224, background: 'color-mix(in srgb, var(--ink-1000) 90%, transparent)', backdropFilter: 'blur(8px)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', boxShadow: 'var(--shadow-soft)' }}>
-      <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center', padding: '4px 0 12px', borderBottom: '2px solid var(--border-hairline)' }}>Hold</div>
+      <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.8125rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center', padding: '4px 0 12px', borderBottom: '2px solid var(--border-hairline)' }}>Hold</div>
       <button onClick={onPlay} title="Play Tetris"
         onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 22px color-mix(in srgb, var(--piece-t) 60%, transparent)' }}
         onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 14px color-mix(in srgb, var(--piece-t) 45%, transparent)' }}
         style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, width: '100%', padding: '20px 14px', cursor: 'pointer', backgroundColor: 'color-mix(in srgb, var(--piece-t) 20%, var(--bg-well))', borderWidth: '2px', borderStyle: 'solid', borderColor: 'var(--piece-t)', borderRadius: 'var(--radius-1)', boxShadow: '0 0 14px color-mix(in srgb, var(--piece-t) 45%, transparent)' }}>
         <Tetromino piece="t" size={14} bob />
-        <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 14, color: 'var(--text-strong)', textTransform: 'uppercase' }}>Play</span>
+        <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.875rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>Play</span>
       </button>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', textAlign: 'center', lineHeight: 1.6 }}>20-line sprint, beat the fastest time</div>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', textAlign: 'center', lineHeight: 1.6 }}>20-line sprint, beat the fastest time</div>
     </aside>
   )
 })

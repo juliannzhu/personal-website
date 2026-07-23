@@ -4,7 +4,7 @@ const CSS = `
 .tj-badge{
   --b: var(--piece-i);
   display:inline-flex;align-items:center;gap:6px;
-  font-family:var(--font-mono);font-weight:700;font-size:10px;
+  font-family:var(--font-mono);font-weight:700;font-size:0.625rem;
   letter-spacing:0.12em;text-transform:uppercase;
   padding:4px 8px;color:var(--text-on-piece);background:var(--b);
   border-radius:var(--radius-1);line-height:1;

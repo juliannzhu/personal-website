@@ -26,8 +26,8 @@ export function Contact() {
       <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, marginBottom: 28 }}>
         <div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Enter player 2</div>
-          <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Let's Connect</h2>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Enter player 2</div>
+          <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Let's Connect</h2>
         </div>
         <ScrollTetromino3D
           piece="i"
@@ -41,15 +41,15 @@ export function Contact() {
           style={{ opacity: 0.72, marginRight: 60 }}
         />
       </div>
-      <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: 'var(--text-strong)', margin: '0 0 14px', textTransform: 'uppercase', textAlign: 'right' }}>Find me</h3>
+      <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', color: 'var(--text-strong)', margin: '0 0 14px', textTransform: 'uppercase', textAlign: 'right' }}>Find me</h3>
       {/* Grid stretches both columns to equal height, so both boxes start and end flush */}
       <div className="tj-contact-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 32, alignItems: 'stretch' }}>
         <Card accent="i" accentBar style={{ display: 'flex', flexDirection: 'column' }}>
           {sent ? (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 0' }}>
               <Tetromino piece="s" size={22} />
-              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 16, color: 'var(--piece-s)', margin: '20px 0 8px', textTransform: 'uppercase' }}>Line Cleared!</div>
-              <p style={{ color: 'var(--text-muted)', fontSize: 15 }}>Thanks! I'll get back to you soon.</p>
+              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1rem', color: 'var(--piece-s)', margin: '20px 0 8px', textTransform: 'uppercase' }}>Line Cleared!</div>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9375rem' }}>Thanks! I'll get back to you soon.</p>
               <div style={{ marginTop: 20 }}><Button variant="ghost" size="sm" onClick={() => setSent(false)}>Send Another</Button></div>
             </div>
           ) : (
@@ -75,10 +75,10 @@ export function Contact() {
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = `var(--piece-${l.piece})`; e.currentTarget.style.transform = 'translateX(4px)' }}
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.transform = 'translateX(0)' }}
               style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 14px', flex: 1, textDecoration: 'none', background: 'var(--surface-card)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', transition: 'border-color 140ms, transform 140ms' }}>
-              <span style={{ color: `var(--piece-${l.piece})`, fontSize: 20, display: 'flex' }}><Icon icon={l.icon} /></span>
+              <span style={{ color: `var(--piece-${l.piece})`, fontSize: '1.25rem', display: 'flex' }}><Icon icon={l.icon} /></span>
               <span style={{ flex: 1 }}>
-                <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>{l.label}</span>
-                <span style={{ display: 'block', color: 'var(--text-strong)', fontSize: 13, fontWeight: 600 }}>{l.handle}</span>
+                <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>{l.label}</span>
+                <span style={{ display: 'block', color: 'var(--text-strong)', fontSize: '0.8125rem', fontWeight: 600 }}>{l.handle}</span>
               </span>
               <Icon icon="pixelarticons:chevron-right" style={{ color: 'var(--text-faint)' }} />
             </a>

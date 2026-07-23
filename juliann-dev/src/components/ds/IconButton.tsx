@@ -12,9 +12,9 @@ const CSS = `
 .tj-iconbtn:hover{ filter:brightness(1.18); }
 .tj-iconbtn:active{ transform:translateY(3px); box-shadow: inset 2px 2px 0 rgba(255,255,255,0.18), inset -2px -2px 0 rgba(0,0,0,0.4); }
 .tj-iconbtn:focus-visible{ outline:3px solid var(--piece-i); outline-offset:2px; }
-.tj-iconbtn--sm{ width:32px;height:32px;font-size:14px; }
-.tj-iconbtn--md{ width:40px;height:40px;font-size:18px; }
-.tj-iconbtn--lg{ width:48px;height:48px;font-size:22px; }
+.tj-iconbtn--sm{ width:32px;height:32px;font-size:0.875rem; }
+.tj-iconbtn--md{ width:40px;height:40px;font-size:1.125rem; }
+.tj-iconbtn--lg{ width:48px;height:48px;font-size:1.375rem; }
 .tj-iconbtn--accent{ --b: var(--piece-i); color:var(--text-on-piece); }
 .tj-iconbtn--ghost{ background:transparent; box-shadow:none; color:var(--text-muted); }
 .tj-iconbtn--ghost:hover{ background:rgba(255,255,255,0.06); color:var(--text-strong); filter:none; }

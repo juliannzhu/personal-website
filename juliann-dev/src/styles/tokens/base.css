@@ -2,6 +2,14 @@
 *::before,
 *::after { box-sizing: border-box; }
 
+/* Fluid root size: every fontSize in the app is in rem, so this single clamp is what
+   actually makes text scale across screen sizes. Caps at 16px (1rem = the original,
+   untouched px value) from ~1440px viewports up, so desktop looks exactly as before;
+   scales smoothly down to 14px at ~320px so small phones don't feel cramped/overflowing. */
+html {
+  font-size: clamp(14px, 13.43px + 0.179vw, 16px);
+}
+
 body {
   margin: 0;
   background-color: var(--bg-page);

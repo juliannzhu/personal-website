@@ -505,7 +505,7 @@ const CSS = `
   background: var(--bg-well); border: 2px dashed var(--border-hairline);
   border-radius: var(--radius-1); margin-bottom: 16px;
   position: relative; overflow: hidden;
-  display: flex; align-items: center; justify-content: center; font-size: 48px;
+  display: flex; align-items: center; justify-content: center; font-size:3rem;
 }
 /* Ken Burns zoom on hover */
 .tj-quest-img {
@@ -521,7 +521,7 @@ const CSS = `
   background: rgba(10,10,18,0.52);
   display: flex; align-items: center; justify-content: center;
   opacity: 0; transition: opacity 160ms;
-  font-family: var(--font-pixel); font-size: 9px; color: var(--text-muted);
+  font-family: var(--font-pixel); font-size:0.5625rem; color: var(--text-muted);
   text-transform: uppercase; letter-spacing: 0.1em;
 }
 .tj-quest-card:hover .tj-quest-hint { opacity: 1; }
@@ -558,11 +558,11 @@ const CSS = `
   min-width: 20px; height: 20px; padding: 0 4px; border-radius: 4px;
   background: rgba(10,10,18,0.72); border: 1.5px solid;
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  font-family: var(--font-mono); font-size:0.6875rem; font-weight: 600;
 }
 .tj-bento-caption {
   flex-shrink: 0; padding: 6px 10px 6px 0; min-height: 20px;
-  font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+  font-family: var(--font-mono); font-size:0.6875rem; color: var(--text-muted);
   background: var(--bg-well); border-top: 2px dashed var(--border-hairline);
 }
 .tj-bento-caption-placeholder { color: var(--text-faint); font-style: italic; }
@@ -596,8 +596,8 @@ function BackButton({ c, onBack, style }: { c: string; onBack: () => void; style
     <button onClick={onBack}
       onMouseEnter={(e) => { e.currentTarget.style.color = c }}
       onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)' }}
-      style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', padding: 0, transition: 'color 140ms', ...style }}>
-      <Icon icon="pixelarticons:arrow-left" style={{ fontSize: 14 }} />
+      style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', padding: 0, transition: 'color 140ms', ...style }}>
+      <Icon icon="pixelarticons:arrow-left" style={{ fontSize: '0.875rem' }} />
       Back to Side Quests
     </button>
   )
@@ -610,11 +610,11 @@ function QuestDetailHeader({ quest, c }: { quest: QuestCard; c: string }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 28 }}>
         <Tetromino piece={quest.piece} size={18} />
         <div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 6 }}>{'// Side Quest'}</div>
-          <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 22, color: 'var(--text-strong)', margin: 0, textTransform: 'uppercase' }}>{quest.title}</h2>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 6 }}>{'// Side Quest'}</div>
+          <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.375rem', color: 'var(--text-strong)', margin: 0, textTransform: 'uppercase' }}>{quest.title}</h2>
         </div>
       </div>
-      <p style={{ fontSize: 16, color: 'var(--text-muted)', maxWidth: 560, lineHeight: 1.7, marginBottom: 24 }}>{quest.sub}</p>
+      <p style={{ fontSize: '1rem', color: 'var(--text-muted)', maxWidth: 560, lineHeight: 1.7, marginBottom: 24 }}>{quest.sub}</p>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 40 }}>
         {quest.tags.map((t) => <Tag key={t} piece={quest.piece}>{t}</Tag>)}
       </div>
@@ -625,7 +625,7 @@ function QuestDetailHeader({ quest, c }: { quest: QuestCard; c: string }) {
 function StockNote({ text }: { text: string }) {
   return (
     <div style={{ marginTop: 24, padding: '16px 20px', background: 'var(--bg-well)', border: '2px solid var(--border-hairline)', borderRadius: 'var(--radius-1)' }}>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-faint)' }}>{text}</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)' }}>{text}</span>
     </div>
   )
 }
@@ -638,7 +638,7 @@ function VideoStrip({ videos }: { videos?: QuestVideo[] }) {
   return (
     <>
       <div style={{ marginTop: 32 }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>{'// Video clips'}</div>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>{'// Video clips'}</div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {videos.map((v, i) => (
             <button key={i} onClick={() => setOpenIdx(i)} aria-label={`Play video ${i + 1}`} style={{
@@ -648,7 +648,7 @@ function VideoStrip({ videos }: { videos?: QuestVideo[] }) {
               <img src={v.poster} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               <span style={{
                 position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: 'rgba(10,10,18,0.4)', fontSize: 28, color: '#fff',
+                background: 'rgba(10,10,18,0.4)', fontSize: '1.75rem', color: '#fff',
               }}>▶</span>
             </button>
           ))}
@@ -663,7 +663,7 @@ function VideoStrip({ videos }: { videos?: QuestVideo[] }) {
           <button onClick={() => setOpenIdx(null)} aria-label="Close video" style={{
             position: 'absolute', top: 24, right: 32, width: 40, height: 40, borderRadius: 4,
             background: 'var(--bg-well)', border: '2px solid var(--border-strong)', color: 'var(--text-strong)',
-            fontSize: 18, cursor: 'pointer',
+            fontSize: '1.125rem', cursor: 'pointer',
           }}>✕</button>
         </div>,
         document.body
@@ -832,7 +832,7 @@ function PolaroidCard({ src, spot, scrollRef, i, containerRef, onDragEnd, fit = 
           <img src={src} alt="" loading="lazy" draggable={false} style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
         </div>
       )}
-      <span style={{ position: 'absolute', bottom: 6, right: 10, fontFamily: 'var(--font-mono)', fontSize: 10, color: '#8a8270' }}>#{i + 1}</span>
+      <span style={{ position: 'absolute', bottom: 6, right: 10, fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: '#8a8270' }}>#{i + 1}</span>
     </div>
   )
 }
@@ -883,7 +883,7 @@ function PolaroidDetail({ quest, onBack }: { quest: QuestCard; onBack: () => voi
 function FilmstripCaption({ text }: { text?: string }) {
   if (!text) return null
   return (
-    <div style={{ padding: '6px 10px', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)', background: 'var(--bg-well)', border: '2px solid var(--border-hairline)', borderTop: 'none', borderBottomLeftRadius: 'var(--radius-1)', borderBottomRightRadius: 'var(--radius-1)' }}>
+    <div style={{ padding: '6px 10px', fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)', background: 'var(--bg-well)', border: '2px solid var(--border-hairline)', borderTop: 'none', borderBottomLeftRadius: 'var(--radius-1)', borderBottomRightRadius: 'var(--radius-1)' }}>
       {'// '}{text}
     </div>
   )
@@ -1007,8 +1007,8 @@ function MediaSlot({ src, index }: { src?: string; index: number }) {
         <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       ) : (
         <>
-          <span style={{ fontSize: 28, opacity: 0.35 }}>+</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <span style={{ fontSize: '1.75rem', opacity: 0.35 }}>+</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
             {index === 0 ? 'Add featured media' : 'Add photo or video'}
           </span>
         </>
@@ -1030,12 +1030,12 @@ function QuestDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
       <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 28 }}>
         <Tetromino piece={quest.piece} size={18} />
         <div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 6 }}>{'// Side Quest'}</div>
-          <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 22, color: 'var(--text-strong)', margin: 0, textTransform: 'uppercase' }}>{quest.title}</h2>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 6 }}>{'// Side Quest'}</div>
+          <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.375rem', color: 'var(--text-strong)', margin: 0, textTransform: 'uppercase' }}>{quest.title}</h2>
         </div>
       </div>
 
-      <p style={{ fontSize: 16, color: 'var(--text-muted)', maxWidth: 560, lineHeight: 1.7, marginBottom: 32 }}>{quest.sub}</p>
+      <p style={{ fontSize: '1rem', color: 'var(--text-muted)', maxWidth: 560, lineHeight: 1.7, marginBottom: 32 }}>{quest.sub}</p>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 40 }}>
         {quest.tags.map((t) => <Tag key={t} piece={quest.piece}>{t}</Tag>)}
       </div>
@@ -1047,7 +1047,7 @@ function QuestDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
       </div>
 
       <div style={{ marginTop: 24, padding: '16px 20px', background: 'var(--bg-well)', border: '2px solid var(--border-hairline)', borderRadius: 'var(--radius-1)' }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-faint)' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)' }}>
           {'// Add your own photos to public/assets/quests/ to populate this page'}
         </span>
       </div>
@@ -1256,9 +1256,9 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
         position: 'absolute', left: 24, top: '50%', transform: 'translateY(-50%)', width: TITLE_W, height: TILE_H, zIndex: 1,
         display: 'flex', flexDirection: 'column', justifyContent: 'center', transition: 'opacity 240ms',
       }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-j)' }}>{'// Beyond the code'}</div>
-        <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: 26, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Side Quests</h2>
-        <p style={{ fontSize: 16, color: 'var(--text-muted)', lineHeight: 1.6, marginTop: 16 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-j)' }}>{'// Beyond the code'}</div>
+        <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Side Quests</h2>
+        <p style={{ fontSize: '1rem', color: 'var(--text-muted)', lineHeight: 1.6, marginTop: 16 }}>
           Every developer needs a break.<br></br>
           This space is dedicated to the passion <br></br>
           projects, creative experiments, <br></br>
@@ -1277,15 +1277,15 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
             <Card accent={q.piece} accentBar style={{ display: 'flex', flexDirection: 'column', height: '100%', userSelect: 'none' }}>
               <div className="tj-quest-media">
                 {coverSrc && <img src={coverSrc} alt={q.title} className="tj-quest-img" />}
-                {!coverSrc && <span style={{ fontSize: 48 }}>{q.placeholder}</span>}
+                {!coverSrc && <span style={{ fontSize: '3rem' }}>{q.placeholder}</span>}
                 <div className="tj-quest-hint">Click to explore</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
                 <Tetromino piece={q.piece} size={11} />
-                <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color: 'var(--text-strong)', margin: 0, textTransform: 'uppercase' }}>{q.title}</h3>
+                <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.8125rem', color: 'var(--text-strong)', margin: 0, textTransform: 'uppercase' }}>{q.title}</h3>
               </div>
               <p style={{
-                fontSize: 14, color: 'var(--text-muted)', margin: '0 0 14px', lineHeight: 1.55, flex: 1,
+                fontSize: '0.875rem', color: 'var(--text-muted)', margin: '0 0 14px', lineHeight: 1.55, flex: 1,
                 display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
               }}>{q.sub}</p>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -1302,8 +1302,8 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
           <Card accent="s" accentBar style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 18, height: '100%', userSelect: 'none', padding: '32px 24px' }}>
             <Tetromino piece="s" size={13} bob />
             <div>
-              <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 15, color: 'var(--piece-s)', margin: 0, textTransform: 'uppercase', lineHeight: 1.5 }}>Quests Cleared!</h3>
-              <p style={{ fontSize: 14, color: 'var(--text-muted)', margin: '14px 0 0', lineHeight: 1.6 }}>
+              <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.9375rem', color: 'var(--piece-s)', margin: 0, textTransform: 'uppercase', lineHeight: 1.5 }}>Quests Cleared!</h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', margin: '14px 0 0', lineHeight: 1.6 }}>
                 Congratulations, that's the whole board! Thanks for exploring. Run it back?
               </p>
             </div>

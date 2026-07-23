@@ -145,11 +145,11 @@ export function Loader({ onDone }: { onDone?: () => void }) {
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 9000, background: 'var(--bg-well)', backgroundImage: 'var(--grid-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 30, opacity: fading ? 0 : 1, transition: `opacity ${FADE_MS}ms linear` }}>
-      <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 18, color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.08em', animation: 'tj-loader-blink 1s steps(1) infinite' }}>Loading</div>
+      <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.125rem', color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.08em', animation: 'tj-loader-blink 1s steps(1) infinite' }}>Loading</div>
       <div style={{ position: 'relative', width: W * CELL, height: H * CELL, background: 'var(--ink-1000)', backgroundImage: 'var(--grid-bg)', border: '4px solid var(--border-strong)', boxShadow: 'var(--shadow-soft)' }}>
         {groups}
       </div>
-      <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 30, color: 'var(--piece-o)', textShadow: '0 3px 0 rgba(0,0,0,0.4)' }}>{pct}%</div>
+      <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.875rem', color: 'var(--piece-o)', textShadow: '0 3px 0 rgba(0,0,0,0.4)' }}>{pct}%</div>
     </div>
   )
 }

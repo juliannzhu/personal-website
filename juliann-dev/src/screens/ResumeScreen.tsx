@@ -27,7 +27,7 @@ function ensureCSS() {
 const NAME_COLORS: Piece[] = ['i', 'o', 't', 's', 'z', 'j', 'l']
 
 function Kicker({ children, piece }: { children: string; piece: Piece }) {
-  return <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: `var(--piece-${piece})`, marginBottom: 14 }}>{`// ${children}`}</div>
+  return <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: `var(--piece-${piece})`, marginBottom: 14 }}>{`// ${children}`}</div>
 }
 
 function Bullets({ items, piece }: { items: string[]; piece: Piece }) {
@@ -35,7 +35,7 @@ function Bullets({ items, piece }: { items: string[]; piece: Piece }) {
     <ul style={{ listStyle: 'none', margin: '14px 0 0', padding: 0, display: 'flex', flexDirection: 'column', gap: 9 }}>
       {items.map((b, i) => (
         <li key={i} className="tj-resume-bullet" style={{ '--bc': `var(--piece-${piece})` } as React.CSSProperties}>
-          <span style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.6 }}>{b}</span>
+          <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>{b}</span>
         </li>
       ))}
     </ul>
@@ -48,14 +48,14 @@ function EntryHeader({ title, sub, role, location, date, piece }: { title: strin
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
           <Tetromino piece={piece} size={9} />
-          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color: 'var(--text-strong)', textTransform: 'uppercase' }}>{title}</span>
+          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.8125rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>{title}</span>
         </div>
-        {sub && <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-faint)', marginTop: 4, marginLeft: 19 }}>{sub}</div>}
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: `var(--piece-${piece})`, marginTop: 6, marginLeft: 19 }}>{role}</div>
+        {sub && <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: 4, marginLeft: 19 }}>{sub}</div>}
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: `var(--piece-${piece})`, marginTop: 6, marginLeft: 19 }}>{role}</div>
       </div>
       <div style={{ textAlign: 'right', flexShrink: 0 }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)' }}>{date}</div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-faint)', marginTop: 2 }}>{location}</div>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>{date}</div>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)', marginTop: 2 }}>{location}</div>
       </div>
     </div>
   )
@@ -161,8 +161,8 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
         {/* top bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40, gap: 12, flexWrap: 'wrap' }}>
           <button onClick={onClose} className="tj-resume-close"
-            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-well)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', padding: '9px 16px', cursor: 'pointer', color: 'var(--text-muted)', fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.04em', transition: 'color 140ms, border-color 140ms' }}>
-            <Icon icon="pixelarticons:arrow-left" style={{ fontSize: 14 }} />
+            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-well)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', padding: '9px 16px', cursor: 'pointer', color: 'var(--text-muted)', fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.04em', transition: 'color 140ms, border-color 140ms' }}>
+            <Icon icon="pixelarticons:arrow-left" style={{ fontSize: '0.875rem' }} />
             Back to site
           </button>
           <a href="/assets/JuliannZhu-resume.pdf" download style={{ textDecoration: 'none' }}>
@@ -172,7 +172,7 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
 
         {/* header */}
         <div style={{ marginBottom: 44 }}>
-          <h1 style={{ fontFamily: 'var(--font-pixel)', fontSize: 'clamp(26px, 5vw, 40px)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: 1.2 }}>
+          <h1 style={{ fontFamily: 'var(--font-pixel)', fontSize: 'clamp(1.625rem, 5vw, 2.5rem)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: 1.2 }}>
             {'JULIANN ZHU'.split('').map((ch, i) => (
               <span key={i} style={{ color: ch === ' ' ? undefined : `var(--piece-${NAME_COLORS[i % NAME_COLORS.length]})`, textShadow: ch === ' ' ? undefined : '0 3px 0 rgba(0,0,0,0.4)' }}>{ch === ' ' ? ' ' : ch}</span>
             ))}
@@ -180,8 +180,8 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
           <div className="tj-resume-contact" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 22px', marginTop: 18 }}>
             {CONTACT.map((c) => (
               <a key={c.label} href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined} rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                style={{ display: 'flex', alignItems: 'center', gap: 7, fontFamily: 'var(--font-mono)', fontSize: 13 }}>
-                <Icon icon={c.icon} style={{ fontSize: 15 }} />
+                style={{ display: 'flex', alignItems: 'center', gap: 7, fontFamily: 'var(--font-mono)', fontSize: '0.8125rem' }}>
+                <Icon icon={c.icon} style={{ fontSize: '0.9375rem' }} />
                 {c.label}
               </a>
             ))}
@@ -194,13 +194,13 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
           <Card accent="o" accentBar>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
               <div>
-                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 13, color: 'var(--text-strong)', textTransform: 'uppercase' }}>University of Waterloo</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--text-muted)', marginTop: 8 }}>BCS, Honours Computer Science with Co-operative Program</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--piece-o)', marginTop: 8 }}>President Scholarship of Distinction</div>
+                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.8125rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>University of Waterloo</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: 8 }}>BCS, Honours Computer Science with Co-operative Program</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--piece-o)', marginTop: 8 }}>President Scholarship of Distinction</div>
               </div>
               <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)' }}>Sep 2025 - Present</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-faint)', marginTop: 2 }}>Waterloo, ON</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Sep 2025 - Present</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)', marginTop: 2 }}>Waterloo, ON</div>
               </div>
             </div>
           </Card>
@@ -214,7 +214,7 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
               <div key={s.label} style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingBottom: i < SKILLS.length - 1 ? 12 : 0, borderBottom: i < SKILLS.length - 1 ? '1px solid var(--border-hairline)' : 'none' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ width: 8, height: 8, flexShrink: 0, background: `var(--piece-${s.piece})`, boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.4), inset -1px -1px 0 rgba(0,0,0,0.3)' }} />
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: `var(--piece-${s.piece})`, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{s.label}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: `var(--piece-${s.piece})`, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{s.label}</span>
                 </div>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                   {s.items.map((it) => <Tag key={it} piece={s.piece}>{it}</Tag>)}
@@ -257,8 +257,8 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
           <button
             onClick={() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
             className="tj-resume-close"
-            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-well)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', padding: '9px 16px', cursor: 'pointer', color: 'var(--text-muted)', fontFamily: 'var(--font-pixel)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.04em', transition: 'color 140ms, border-color 140ms' }}>
-            <Icon icon="pixelarticons:arrow-up" style={{ fontSize: 14 }} />
+            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-well)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', padding: '9px 16px', cursor: 'pointer', color: 'var(--text-muted)', fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.04em', transition: 'color 140ms, border-color 140ms' }}>
+            <Icon icon="pixelarticons:arrow-up" style={{ fontSize: '0.875rem' }} />
             Back to top
           </button>
         </div>

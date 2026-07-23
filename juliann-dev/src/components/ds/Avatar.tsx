@@ -38,7 +38,7 @@ export function Avatar({ src, alt = '', initials, size = 'md', piece = 'i', roun
   const px = typeof size === 'number' ? size : (SIZES[size] || SIZES.md)
   const cls = ['tj-avatar', round ? 'tj-avatar--round' : '', className].filter(Boolean).join(' ')
   return (
-    <span className={cls} style={{ width: px, height: px, fontSize: Math.round(px * 0.34), '--av-c': `var(${PIECE[piece] || PIECE.i})`, ...style } as React.CSSProperties} {...rest}>
+    <span className={cls} style={{ width: px, height: px, fontSize: `${(px * 0.34 / 16).toFixed(4).replace(/\.?0+$/, '')}rem`, '--av-c': `var(${PIECE[piece] || PIECE.i})`, ...style } as React.CSSProperties} {...rest}>
       {src ? <img src={src} alt={alt} /> : (initials || '').slice(0, 2).toUpperCase()}
     </span>
   )
