@@ -31,7 +31,7 @@ const PROJECTS: Project[] = [
       P('CaneOS', 'IMG_7777.jpg'),
       P('CaneOS', 'hackathons-5.jpg'),
       P('CaneOS', 'hackathons-6.jpg'),
-      P('CaneOS', 'hackathons-7.jpg'),
+      P('CaneOS', 'IMG_7749.jpg'),
       P('CaneOS', 'hackathons-8.jpg'),
       P('CaneOS', 'hackathons-9.jpg'),
       P('CaneOS', 'hackathons-10.jpg'),
@@ -226,14 +226,14 @@ function ProjectCarousel({ images, c }: { images: string[]; c: string }) {
 
   return (
     <div>
-      <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', overflow: 'hidden', borderRadius: 'var(--radius-1)', background: 'var(--bg-well)' }}>
+      <div style={{ position: 'relative', width: '100%', height: 'clamp(420px, 60vh, 720px)', overflow: 'hidden', borderRadius: 'var(--radius-1)', background: 'var(--bg-well)' }}>
         <div style={{
           display: 'flex', width: '100%', height: '100%',
           transform: `translateX(-${index * 100}%)`,
           transition: `transform ${CAROUSEL_TRANSITION_MS}ms ${CAROUSEL_EASING}`,
         }}>
           {images.map((src, i) => (
-            <img key={i} src={src} alt="" style={{ width: '100%', height: '100%', flexShrink: 0, objectFit: 'cover' }} />
+            <img key={i} src={src} alt="" style={{ width: '100%', height: '100%', flexShrink: 0, objectFit: 'contain' }} />
           ))}
         </div>
 
