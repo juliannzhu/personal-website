@@ -222,7 +222,7 @@ const ACHIEVEMENTS: Achievement[] = [
     unlocked: (s) => s.closeCallClear },
   { id: 'quick-draw', title: 'Quick Draw', desc: 'Score a Tetris within the first 10 seconds.', piece: 'j', icon: 'pixelarticons:speed-fast',
     unlocked: (s) => s.quickTetrisClear },
-  { id: 'completionist', title: 'Completionist', desc: 'Unlock every other achievement.', piece: 'l', icon: 'pixelarticons:diamond-gem',
+  { id: 'completionist', title: 'Grandmaster', desc: 'Unlock all 15 other achievements.', piece: 'l', icon: 'pixelarticons:diamond-gem',
     unlocked: (s) => ACHIEVEMENTS.filter((a) => a.id !== 'completionist').every((a) => a.unlocked(s)) },
 ]
 
@@ -269,7 +269,7 @@ function AchievementsModal({ stats, onClose }: { stats: AchStats; onClose: () =>
     <div
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
       style={{ position: 'fixed', inset: 0, zIndex: 9600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,5,9,0.82)', backdropFilter: 'blur(6px)' }}>
-      <div style={{ background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', width: 620, maxHeight: '88vh', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-1)', overflow: 'hidden', boxShadow: '0 0 40px rgba(0,0,0,0.6)' }}>
+      <div style={{ background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', width: 720, maxHeight: '88vh', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-1)', overflow: 'hidden', boxShadow: '0 0 40px rgba(0,0,0,0.6)' }}>
 
         {/* Title bar */}
         <div style={{ display: 'flex', alignItems: 'center', padding: '14px 18px', borderBottom: '2px solid var(--border-strong)', background: 'var(--ink-900)', flexShrink: 0 }}>
@@ -280,30 +280,37 @@ function AchievementsModal({ stats, onClose }: { stats: AchStats; onClose: () =>
           <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', fontSize: 20, lineHeight: 1, padding: '0 4px' }}>✕</button>
         </div>
 
-        {/* Grid */}
-        <div style={{ padding: '16px 18px 0', display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 10, overflowY: 'auto' }}>
-          {ACHIEVEMENTS.map((a) => (
-            <AchTile key={a.id} a={a} stats={stats} hovered={hoveredId === a.id} onHover={() => setHoveredId(a.id)} />
-          ))}
-        </div>
+        {/* Grid + side detail panel, side by side so the panel's varying content (some
+            achievements have a progress bar, some don't) never resizes the modal itself. */}
+        <div style={{ display: 'flex', gap: 16, padding: 18, overflow: 'hidden' }}>
+          <div style={{ flex: 1, minWidth: 0, display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 10, overflowY: 'auto', alignContent: 'start' }}>
+            {ACHIEVEMENTS.map((a) => (
+              <AchTile key={a.id} a={a} stats={stats} hovered={hoveredId === a.id} onHover={() => setHoveredId(a.id)} />
+            ))}
+          </div>
 
-        {/* Detail panel for the hovered/selected achievement */}
-        <div style={{ margin: '16px 18px 18px', padding: '14px 16px', background: 'var(--bg-well)', border: `2px solid ${c}`, borderRadius: 'var(--radius-1)', flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 6 }}>
-            <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: c, textTransform: 'uppercase' }}>{hovered.title}</span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em', color: hovered.unlocked(stats) ? 'var(--piece-s)' : 'var(--text-faint)' }}>
+          {/* Detail panel for the hovered/selected achievement — fixed width, and the progress
+              bar's space is always reserved (hidden, not removed) so its own height never changes either. */}
+          <aside style={{ width: 200, flexShrink: 0, display: 'flex', flexDirection: 'column', padding: '18px 16px', background: 'var(--bg-well)', border: `2px solid ${c}`, borderRadius: 'var(--radius-1)' }}>
+            <div style={{
+              width: 44, height: 44, borderRadius: 'var(--radius-1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginBottom: 14,
+              background: hovered.unlocked(stats) ? c : 'transparent',
+              boxShadow: hovered.unlocked(stats) ? 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3)' : `inset 0 0 0 2px ${c}`,
+            }}>
+              <Icon icon={hovered.icon} style={{ fontSize: 22, color: hovered.unlocked(stats) ? 'var(--text-on-piece)' : c }} />
+            </div>
+            <span style={{ fontFamily: 'var(--font-pixel)', fontSize: 12, color: c, textTransform: 'uppercase', lineHeight: 1.4 }}>{hovered.title}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: 6, color: hovered.unlocked(stats) ? 'var(--piece-s)' : 'var(--text-faint)' }}>
               {hovered.unlocked(stats) ? '✓ Unlocked' : 'Locked'}
             </span>
-          </div>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', margin: 0, lineHeight: 1.6 }}>{hovered.desc}</p>
-          {hovered.progress && progress < 1 && (
-            <div style={{ marginTop: 10 }}>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)', margin: '12px 0 0', lineHeight: 1.6, flex: 1 }}>{hovered.desc}</p>
+            <div style={{ marginTop: 12, visibility: (hovered.progress && progress < 1) ? 'visible' : 'hidden' }}>
               <div style={{ height: 6, background: 'var(--border-hairline)', borderRadius: 3, overflow: 'hidden' }}>
                 <div style={{ height: '100%', width: `${progress * 100}%`, background: c, transition: 'width 200ms' }} />
               </div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', marginTop: 5, textAlign: 'right' }}>{Math.round(progress * 100)}%</div>
             </div>
-          )}
+          </aside>
         </div>
       </div>
     </div>
