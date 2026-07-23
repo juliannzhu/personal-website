@@ -5,6 +5,7 @@ import { Card } from '../components/ds/Card'
 import { Tag } from '../components/ds/Tag'
 import { Tetromino } from '../components/ds/Tetromino'
 import { IconButton } from '../components/ds/IconButton'
+import { Button } from '../components/ds/Button'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 type DetailLayout = 'bento' | 'marquee' | 'polaroid' | 'filmstrip'
@@ -1062,6 +1063,10 @@ const TILE_W = 280
 const TILE_H = 400
 const GAP = 24
 const TITLE_W = 300
+// The carousel has one extra tile past the last quest — a "cleared" summary card
+// that loops back to the start — so anything keying off tile count uses this instead
+// of QUESTS.length directly.
+const CAROUSEL_LENGTH = QUESTS.length + 1
 const TITLE_GUTTER = 40
 const HEADER_H = 58
 const FOOTER_H = 84
@@ -1213,7 +1218,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
   }
 
   const goPrev = () => { stopAutoRotate(); jumpTo(Math.max(0, activeIndexRef.current - 1)) }
-  const goNext = () => { stopAutoRotate(); jumpTo(Math.min(QUESTS.length - 1, activeIndexRef.current + 1)) }
+  const goNext = () => { stopAutoRotate(); jumpTo(Math.min(CAROUSEL_LENGTH - 1, activeIndexRef.current + 1)) }
 
   // Auto-rotate: once the carousel scrolls into view, advance one tile every 4s —
   // wrapping back to the start at the end — until the user takes the wheel themselves.
@@ -1224,7 +1229,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
       if (entry.isIntersecting && autoRotateOnRef.current) {
         if (autoIntervalRef.current === undefined) {
           autoIntervalRef.current = window.setInterval(() => {
-            jumpTo((activeIndexRef.current + 1) % QUESTS.length)
+            jumpTo((activeIndexRef.current + 1) % CAROUSEL_LENGTH)
           }, AUTO_ROTATE_MS)
         }
       } else if (autoIntervalRef.current !== undefined) {
@@ -1263,7 +1268,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
         </p>
       </div>
 
-      <div ref={trackRef} style={{ position: 'absolute', top: '50%', left: 0, transform: 'translateY(-50%)', display: 'flex', gap: GAP, paddingLeft: 24 + TITLE_W + TITLE_GUTTER, paddingRight: 60, willChange: 'transform' }}>
+      <div ref={trackRef} style={{ position: 'absolute', top: '50%', left: 0, transform: 'translateY(-50%)', display: 'flex', gap: GAP, paddingLeft: 24 + TITLE_W + TITLE_GUTTER, paddingRight: '50vw', willChange: 'transform' }}>
         {QUESTS.map((q, i) => {
           const coverSrc = q.cover ?? q.images[0]
           return (
@@ -1290,6 +1295,23 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
           </div>
           )
         })}
+
+        {/* Final "cleared" tile — not a real quest, just a loop-back summary card */}
+        <div ref={(el) => { tileRefs.current[QUESTS.length] = el }}
+          style={{ width: TILE_W, height: TILE_H, flexShrink: 0 }}>
+          <Card accent="s" accentBar style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 18, height: '100%', userSelect: 'none', padding: '32px 24px' }}>
+            <Tetromino piece="s" size={13} bob />
+            <div>
+              <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: 15, color: 'var(--piece-s)', margin: 0, textTransform: 'uppercase', lineHeight: 1.5 }}>Quests Cleared!</h3>
+              <p style={{ fontSize: 14, color: 'var(--text-muted)', margin: '14px 0 0', lineHeight: 1.6 }}>
+                Congratulations, that's the whole board! Thanks for exploring. Run it back?
+              </p>
+            </div>
+            <Button variant="success" size="sm" leftIcon={<Icon icon="pixelarticons:reload" />} onClick={() => { stopAutoRotate(); jumpTo(0) }}>
+              Back to Start
+            </Button>
+          </Card>
+        </div>
       </div>
 
       <div ref={dotsRef} style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 8, zIndex: 2 }}>
@@ -1301,6 +1323,12 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
               transition: 'width 200ms, background 200ms',
             }} />
         ))}
+        <button onClick={() => { stopAutoRotate(); jumpTo(QUESTS.length) }} aria-label="Go to quests cleared"
+          style={{
+            width: activeIndex === QUESTS.length ? 20 : 7, height: 7, borderRadius: 4, padding: 0, border: 'none', cursor: 'pointer',
+            background: activeIndex === QUESTS.length ? 'var(--piece-s)' : 'var(--border-strong)',
+            transition: 'width 200ms, background 200ms',
+          }} />
       </div>
 
       {activeIndex > 0 && (
@@ -1311,7 +1339,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
           <Icon icon="pixelarticons:chevron-left" />
         </IconButton>
       )}
-      {activeIndex < QUESTS.length - 1 && (
+      {activeIndex < CAROUSEL_LENGTH - 1 && (
         <IconButton size="md" variant="ghost" label="Next quest" onClick={goNext}
           onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-strong)'; e.currentTarget.style.background = 'rgba(5,5,9,0.85)' }}
           onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.background = 'rgba(5,5,9,0.6)' }}
