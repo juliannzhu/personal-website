@@ -991,8 +991,8 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
               )}
               {st.status === 'topout' && (
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, background: 'rgba(5,5,9,0.86)' }}>
-                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.125rem', color: 'var(--piece-z)', textTransform: 'uppercase' }}>Top Out</div>
-                  <Button variant="danger" size="sm" onClick={startGame}>Retry</Button>
+                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.125rem', color: 'var(--piece-o)', textTransform: 'uppercase' }}>Game Over</div>
+                  <Button size="sm" onClick={startGame} style={{ '--b': 'var(--piece-o)', '--b-lit': 'var(--piece-o-lit)', '--b-dim': 'var(--piece-o-dim)', color: 'var(--text-on-piece)' } as React.CSSProperties}>Retry</Button>
                 </div>
               )}
 
