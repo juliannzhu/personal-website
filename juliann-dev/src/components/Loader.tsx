@@ -85,7 +85,7 @@ function simulateStack(W: number, H: number): { placements: Placement[]; maxStac
 export function Loader({ onDone }: { onDone?: () => void }) {
   ensureCSS()
   const W = 10, H = 12, CELL = 30
-  const FILL_MS = 3000, FLASH_MS = 180, CLEAR_ROW_MS = 42, FADE_MS = 320
+  const FILL_MS = 2500, FLASH_MS = 180, CLEAR_ROW_MS = 42, FADE_MS = 320
 
   const sim = useMemo(() => simulateStack(W, H), [])
   const N = sim.placements.length
