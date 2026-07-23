@@ -86,7 +86,7 @@ export function Contact() {
         </div>
       </div>
       </section>
-      <PileFooter />
+      <PileFooter quote={'Perfection is a cleared board,\nthen the next piece drops anyway.'} />
     </>
   )
 }

@@ -271,6 +271,13 @@ const PILE_CSS = `
   85%  { transform: translateY(0); opacity: 1; }
   100% { transform: translateY(0); opacity: 0; }
 }
+/* PileFooter breaks out to full viewport width, escaping .tj-main's desktop
+   padding-right:300px (reserved for the fixed NEXT sidebar) — this reproduces that same
+   reservation just for the quote overlay, so its centered column lines up with the rest
+   of the page's content instead of centering across the full, sidebar-ignorant width. */
+@media (min-width: 721px) {
+  .tj-quote-inset { padding-right: 300px; }
+}
 `
 let pileCssInjected = false
 function ensurePileCSS() {
@@ -279,7 +286,7 @@ function ensurePileCSS() {
   }
 }
 
-export function PileFooter() {
+export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: string; kicker?: string } = {}) {
   ensurePileCSS()
   const ref = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState(0)
@@ -315,43 +322,66 @@ export function PileFooter() {
   return (
     <div ref={ref} style={{
       width: breakout.width || undefined, marginLeft: breakout.width ? breakout.marginLeft : undefined,
-      background: 'var(--bg-well)', height: '49.5vh', minHeight: 330, maxHeight: 630,
+      height: '65vh', minHeight: 420, maxHeight: 760,
       borderTop: '2px solid var(--border-strong)', position: 'relative', overflow: 'hidden',
-      opacity: 0.7,
-      backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)',
-      backgroundSize: `${unit}px ${unit}px`,
     }}>
-      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: maxRow * unit }}>
-        {placed.map((p, i) => {
-          const bottomRows = p.topHeight - (p.shape.h - 1)
-          return (
-            <PieceShape key={`p${i}`} piece={p.piece} shape={p.shape} cellSize={cellSize}
-              style={{ left: p.col * unit, bottom: bottomRows * unit }} />
-          )
-        })}
-        {fillers.flatMap((f, fi) => {
-          const squares = []
-          for (let row = f.from; row < f.to; row++) {
-            squares.push(
-              <div key={`f${fi}-${row}`} style={{
-                position: 'absolute', left: f.col * unit, bottom: row * unit,
-                width: cellSize, height: cellSize,
-                background: `var(--piece-${f.piece})`,
-                boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.35)',
-              }} />
+      {/* pile graphic — kept at its own dimmed opacity so it reads as backdrop, independent
+          of the fully-opaque quote layer sitting on top of it */}
+      <div style={{
+        position: 'absolute', inset: 0, background: 'var(--bg-well)', opacity: 0.8,
+        backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)',
+        backgroundSize: `${unit}px ${unit}px`,
+      }}>
+        <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: maxRow * unit }}>
+          {placed.map((p, i) => {
+            const bottomRows = p.topHeight - (p.shape.h - 1)
+            return (
+              <PieceShape key={`p${i}`} piece={p.piece} shape={p.shape} cellSize={cellSize}
+                style={{ left: p.col * unit, bottom: bottomRows * unit }} />
             )
-          }
-          return squares
-        })}
-        {stationaryExtras.map((p, i) => (
-          <PieceShape key={`extra${i}`} piece={p.piece} shape={p.shape} cellSize={cellSize}
-            style={{ left: p.col * unit, bottom: p.restRow * unit }} />
-        ))}
-        {fallingSpots.map((f, i) => (
-          <FallingPiece key={`fall${i}`} piece={f.piece} shape={f.shape} unit={unit} cellSize={cellSize}
-            left={f.col * unit} restBottom={f.restRow * unit} delay={i * 620} smearFrom={f.smearFrom} />
-        ))}
+          })}
+          {fillers.flatMap((f, fi) => {
+            const squares = []
+            for (let row = f.from; row < f.to; row++) {
+              squares.push(
+                <div key={`f${fi}-${row}`} style={{
+                  position: 'absolute', left: f.col * unit, bottom: row * unit,
+                  width: cellSize, height: cellSize,
+                  background: `var(--piece-${f.piece})`,
+                  boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.35)',
+                }} />
+              )
+            }
+            return squares
+          })}
+          {stationaryExtras.map((p, i) => (
+            <PieceShape key={`extra${i}`} piece={p.piece} shape={p.shape} cellSize={cellSize}
+              style={{ left: p.col * unit, bottom: p.restRow * unit }} />
+          ))}
+          {fallingSpots.map((f, i) => (
+            <FallingPiece key={`fall${i}`} piece={f.piece} shape={f.shape} unit={unit} cellSize={cellSize}
+              left={f.col * unit} restBottom={f.restRow * unit} delay={i * 620} smearFrom={f.smearFrom} />
+          ))}
+        </div>
       </div>
+
+      {quote && (
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-start', paddingTop: 72, background: 'rgba(5,5,9,0.6)' }}>
+          <div className="tj-quote-inset" style={{ width: '100%' }}>
+            <div style={{ maxWidth: 1080, width: '100%', margin: '0 auto', padding: '0 24px' }}>
+              <div style={{ position: 'relative', paddingLeft: 32, borderLeft: '3px solid var(--piece-i)', maxWidth: 760 }}>
+                <span style={{ position: 'absolute', left: -20, top: -38, fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '6rem', lineHeight: 1, color: 'var(--piece-i)', opacity: 0.32, userSelect: 'none' }} aria-hidden="true">&ldquo;</span>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--piece-i)', marginBottom: 16 }}>{kicker}</div>
+                <blockquote style={{ margin: 0, fontFamily: 'var(--font-pixel)', textTransform: 'uppercase', letterSpacing: '0.02em', fontSize: 'clamp(0.9375rem, 1.8vw, 1.25rem)', color: 'var(--text-strong)', lineHeight: 1.7 }}>
+                  {quote.split('\n').map((line, i, arr) => (
+                    <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                  ))}
+                </blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
