@@ -396,29 +396,6 @@ const QUESTS: QuestCard[] = [
     videos: videosFor('poker', 4),
   },
   {
-    id: 'hackathons',
-    piece: 'o',
-    title: 'HACKATHONS',
-    sub: 'Late nights, bad coffee, and building something from nothing in 24 hours flat.',
-    tags: ['Devpost', 'Team Projects', 'Late Nights'],
-    placeholder: '💻',
-    images: Array.from({ length: 12 }, (_, i) => Q(`hackathons/hackathons-${i + 1}.jpg`)),
-    cover: Q('hackathons/hackathons-10.jpg'),
-    layout: 'polaroid',
-    polaroidFit: 'native',
-    // 11 pinned to the leftmost column so its height (it's an extreme 1:3 portrait
-    // crop) reads as an edge accent instead of colliding with the rest of the scatter.
-    polaroidOverrides: {
-      [Q('hackathons/hackathons-1.jpg')]: { width: 257 },
-      [Q('hackathons/hackathons-2.jpg')]: { width: 285 },
-      [Q('hackathons/hackathons-4.jpg')]: { width: 216 },
-      [Q('hackathons/hackathons-8.jpg')]: { width: 210 },
-      [Q('hackathons/hackathons-9.jpg')]: { width: 248 },
-      [Q('hackathons/hackathons-10.jpg')]: { width: 270 },
-      [Q('hackathons/hackathons-11.jpg')]: { col: 0 },
-    },
-  },
-  {
     id: 'people',
     piece: 't',
     title: 'FRIENDS',

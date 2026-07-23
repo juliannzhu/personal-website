@@ -4,13 +4,17 @@ import { Card } from '../components/ds/Card'
 import { Tag } from '../components/ds/Tag'
 import { Button } from '../components/ds/Button'
 import { Tetromino } from '../components/ds/Tetromino'
+import { IconButton } from '../components/ds/IconButton'
 import { ScrollTetromino3D } from '../components/ScrollTetromino3D'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 type Cat = 'all' | 'web' | 'ai' | 'systems' | 'research'
 
-// images live in /public/assets/projects/ — add screenshots and list them in each project's `images` array
+// images live in /public/assets/build log/<ProjectName>/ — add screenshots and list them in each project's `images` array
 type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; devpost?: string; images?: string[] }
+
+// images live in /public/assets/build log/<folder>/
+const P = (folder: string, file: string) => `/assets/build%20log/${folder}/${file}`
 
 const PROJECTS: Project[] = [
   {
@@ -21,6 +25,17 @@ const PROJECTS: Project[] = [
     tags: ['Swift', 'SwiftUI', 'Python', 'C++', 'Gemini API', 'Auth0'],
     cat: 'ai',
     year: 'Jul 2026',
+    images: [
+      P('CaneOS', 'app-screens.jpg'),
+      P('CaneOS', 'IMG_7768.jpg'),
+      P('CaneOS', 'IMG_7777.jpg'),
+      P('CaneOS', 'hackathons-5.jpg'),
+      P('CaneOS', 'hackathons-6.jpg'),
+      P('CaneOS', 'hackathons-7.jpg'),
+      P('CaneOS', 'hackathons-8.jpg'),
+      P('CaneOS', 'hackathons-9.jpg'),
+      P('CaneOS', 'hackathons-10.jpg'),
+    ],
   },
   {
     id: 'trulyher',
@@ -31,6 +46,7 @@ const PROJECTS: Project[] = [
     cat: 'ai',
     year: 'Sep 2025',
     devpost: 'https://devpost.com/juliannzhu',
+    images: [P('TrulyHer', 'hackathons-11.jpg'), P('TrulyHer', 'hackathons-12.jpg')],
   },
   {
     id: 'neuralearn',
@@ -41,6 +57,12 @@ const PROJECTS: Project[] = [
     cat: 'ai',
     year: 'Sep 2024',
     devpost: 'https://devpost.com/juliannzhu',
+    images: [
+      P('NeuraLearn', 'hackathons-1.jpg'),
+      P('NeuraLearn', 'hackathons-2.jpg'),
+      P('NeuraLearn', 'hackathons-3.jpg'),
+      P('NeuraLearn', 'hackathons-4.jpg'),
+    ],
   },
   {
     id: 'project-tech-careers',
@@ -88,6 +110,17 @@ const PROJECTS: Project[] = [
     tags: ['Research', 'Prototyping', 'Green Energy', 'STEAM'],
     cat: 'research',
     year: 'Jul 2024',
+    images: [
+      P('Charg-E', '209BF43A-1FE5-4546-B40B-D4043B7CA15E.JPG'),
+      P('Charg-E', '2DC38CE4-3E0A-4719-9116-2C5741FE9B3A.JPG'),
+      P('Charg-E', '3684E1A4-2A4F-4FB0-8EDF-CD23A309169D.JPG'),
+      P('Charg-E', '46BE028A-E739-4648-82B2-907358B43BC2.JPG'),
+      P('Charg-E', '5CAF3E2E-E9EB-4463-AB94-39CE17B5715D.JPG'),
+      P('Charg-E', 'IMG_9164.jpg'),
+      P('Charg-E', 'IMG_9595.jpg'),
+      P('Charg-E', 'IMG_9850.jpg'),
+      P('Charg-E', 'IMG_9852.jpg'),
+    ],
   },
   {
     id: 'geomap',
@@ -182,6 +215,62 @@ function MediaSlot({ src, index }: { src?: string; index: number }) {
   )
 }
 
+// Same slide duration/easing and arrow/dot styling as the Side Quests carousel.
+const CAROUSEL_TRANSITION_MS = 600
+const CAROUSEL_EASING = 'cubic-bezier(0.65, 0, 0.35, 1)'
+
+function ProjectCarousel({ images, c }: { images: string[]; c: string }) {
+  const [index, setIndex] = useState(0)
+  const goPrev = () => setIndex((i) => Math.max(0, i - 1))
+  const goNext = () => setIndex((i) => Math.min(images.length - 1, i + 1))
+
+  return (
+    <div>
+      <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', overflow: 'hidden', borderRadius: 'var(--radius-1)', background: 'var(--bg-well)' }}>
+        <div style={{
+          display: 'flex', width: '100%', height: '100%',
+          transform: `translateX(-${index * 100}%)`,
+          transition: `transform ${CAROUSEL_TRANSITION_MS}ms ${CAROUSEL_EASING}`,
+        }}>
+          {images.map((src, i) => (
+            <img key={i} src={src} alt="" style={{ width: '100%', height: '100%', flexShrink: 0, objectFit: 'cover' }} />
+          ))}
+        </div>
+
+        {index > 0 && (
+          <IconButton size="md" variant="ghost" label="Previous photo" onClick={goPrev}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-strong)'; e.currentTarget.style.background = 'rgba(5,5,9,0.85)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.background = 'rgba(5,5,9,0.6)' }}
+            style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 1, background: 'rgba(5,5,9,0.6)', border: '2px solid var(--border-strong)', color: 'var(--text-strong)', backdropFilter: 'blur(4px)' }}>
+            <Icon icon="pixelarticons:chevron-left" />
+          </IconButton>
+        )}
+        {index < images.length - 1 && (
+          <IconButton size="md" variant="ghost" label="Next photo" onClick={goNext}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-strong)'; e.currentTarget.style.background = 'rgba(5,5,9,0.85)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.background = 'rgba(5,5,9,0.6)' }}
+            style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 1, background: 'rgba(5,5,9,0.6)', border: '2px solid var(--border-strong)', color: 'var(--text-strong)', backdropFilter: 'blur(4px)' }}>
+            <Icon icon="pixelarticons:chevron-right" />
+          </IconButton>
+        )}
+      </div>
+
+      {images.length > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 14 }}>
+          {images.map((_, i) => (
+            <button key={i} onClick={() => setIndex(i)} aria-label={`Go to photo ${i + 1}`}
+              style={{
+                width: i === index ? 20 : 7, height: 7, borderRadius: 4, padding: 0, border: 'none', cursor: 'pointer',
+                background: i === index ? c : 'var(--border-strong)',
+                transition: 'width 200ms, background 200ms',
+              }} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
   const c = `var(--piece-${p.piece})`
   const images = p.images ?? []
@@ -217,17 +306,23 @@ function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <MediaSlot key={i} src={images[i]} index={i} />
-        ))}
-      </div>
+      {images.length > 0 ? (
+        <ProjectCarousel images={images} c={c} />
+      ) : (
+        <>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <MediaSlot key={i} src={images[i]} index={i} />
+            ))}
+          </div>
 
-      <div style={{ marginTop: 24, padding: '16px 20px', background: 'var(--bg-well)', border: '2px solid var(--border-hairline)', borderRadius: 'var(--radius-1)' }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)' }}>
-          {'// Add screenshots to public/assets/projects/ and list them in the images array in Projects.tsx'}
-        </span>
-      </div>
+          <div style={{ marginTop: 24, padding: '16px 20px', background: 'var(--bg-well)', border: '2px solid var(--border-hairline)', borderRadius: 'var(--radius-1)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)' }}>
+              {'// Add screenshots to public/assets/build log/<ProjectName>/ and list them in the images array in Projects.tsx'}
+            </span>
+          </div>
+        </>
+      )}
 
       <div style={{ marginTop: 40 }}>
         <BackButton c={c} onBack={onBack} />
