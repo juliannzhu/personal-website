@@ -1305,13 +1305,17 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
 
       {activeIndex > 0 && (
         <IconButton size="md" variant="ghost" label="Previous quest" onClick={goPrev}
-          style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 3 }}>
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-strong)'; e.currentTarget.style.background = 'rgba(5,5,9,0.85)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.background = 'rgba(5,5,9,0.6)' }}
+          style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 3, background: 'rgba(5,5,9,0.6)', border: '2px solid var(--border-strong)', color: 'var(--text-strong)', backdropFilter: 'blur(4px)' }}>
           <Icon icon="pixelarticons:chevron-left" />
         </IconButton>
       )}
       {activeIndex < QUESTS.length - 1 && (
         <IconButton size="md" variant="ghost" label="Next quest" onClick={goNext}
-          style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 3 }}>
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-strong)'; e.currentTarget.style.background = 'rgba(5,5,9,0.85)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.background = 'rgba(5,5,9,0.6)' }}
+          style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 3, background: 'rgba(5,5,9,0.6)', border: '2px solid var(--border-strong)', color: 'var(--text-strong)', backdropFilter: 'blur(4px)' }}>
           <Icon icon="pixelarticons:chevron-right" />
         </IconButton>
       )}
