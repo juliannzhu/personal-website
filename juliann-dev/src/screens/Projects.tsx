@@ -16,7 +16,7 @@ const PROJECTS: Project[] = [
   {
     id: 'caneos',
     title: 'CANEOS',
-    piece: 'z',
+    piece: 'i',
     tagline: 'Clip-on white cane module that detects overhead hazards for visually impaired users, pairing ToF sensors and YOLOv6 camera detection with companion iPhone and Apple Watch apps.',
     tags: ['Swift', 'SwiftUI', 'Python', 'C++', 'Gemini API', 'Auth0'],
     cat: 'ai',
@@ -25,7 +25,7 @@ const PROJECTS: Project[] = [
   {
     id: 'trulyher',
     title: 'TRULYHER',
-    piece: 't',
+    piece: 'o',
     tagline: 'AI-powered web app that helps women in CS manage imposter syndrome through speech/text journaling and mood detection.',
     tags: ['React', 'JavaScript', 'Base44', 'AI', 'UI/UX'],
     cat: 'ai',
@@ -35,7 +35,7 @@ const PROJECTS: Project[] = [
   {
     id: 'neuralearn',
     title: 'NEURALEARN',
-    piece: 'i',
+    piece: 't',
     tagline: 'AI-driven study tool that generates adaptive quizzes and instant Q&A responses based on your notes using Gemini AI.',
     tags: ['Python', 'Gemini AI', 'NLP', 'HTML/CSS', 'API'],
     cat: 'ai',
@@ -45,7 +45,7 @@ const PROJECTS: Project[] = [
   {
     id: 'project-tech-careers',
     title: 'PROJECT TECH CAREERS',
-    piece: 'o',
+    piece: 's',
     tagline: 'Four-stage mentorship platform supporting women at different stages of their CS education. Won the Gender Equality Track Award.',
     tags: ['JavaScript', 'HTML', 'CSS', 'UI/UX'],
     cat: 'web',
@@ -55,7 +55,7 @@ const PROJECTS: Project[] = [
   {
     id: 'grafana-dashboards',
     title: 'GRAFANA DASHBOARDS',
-    piece: 's',
+    piece: 'z',
     tagline: 'Satellite system monitoring dashboards with MySQL data sources. Reduced dashboard load time by 86% via SQL optimization.',
     tags: ['Grafana', 'MySQL', 'SQL', 'Data Viz', 'InfluxDB'],
     cat: 'systems',
@@ -83,7 +83,7 @@ const PROJECTS: Project[] = [
   {
     id: 'charg-e-design-team',
     title: 'CHARG-E DESIGN TEAM',
-    piece: 't',
+    piece: 'i',
     tagline: 'Research and Prototype Design Lead at the University of Lethbridge. Developed an electromagnetic vibrational energy harvester prototype, earning the Application of Theme Award from a panel of engineers and industry judges.',
     tags: ['Research', 'Prototyping', 'Green Energy', 'STEAM'],
     cat: 'research',
@@ -92,7 +92,7 @@ const PROJECTS: Project[] = [
   {
     id: 'geomap',
     title: 'GEOMAP',
-    piece: 'j',
+    piece: 'o',
     tagline: 'Interactive digital map website for the IB Geography curriculum. Integrated OOP and case-study databases into a browser-compatible visualization tool, built with iterative client feedback.',
     tags: ['JavaScript', 'HTML', 'CSS', 'Python', 'Window.js'],
     cat: 'web',

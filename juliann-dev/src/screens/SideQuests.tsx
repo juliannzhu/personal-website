@@ -298,7 +298,7 @@ const POOL_GALLERY: BentoPhoto[] = [
 const QUESTS: QuestCard[] = [
   {
     id: 'volleyball',
-    piece: 's',
+    piece: 'i',
     title: 'VOLLEYBALL',
     sub: 'Team Captain at Merivale HS (2021-2025). Led the team to NCSSAA Tier 1 finals, won 7 regional tournaments, 4 consecutive Marauders Cups, and MVP in 2021 and 2023.',
     tags: ['Team Captain', 'NCSSAA', 'MVP x2', 'Marauders Cup'],
@@ -310,7 +310,7 @@ const QUESTS: QuestCard[] = [
   },
   {
     id: 'music',
-    piece: 'l',
+    piece: 'o',
     title: 'PIANO',
     sub: 'A different kind of keyboard layout than what most developers know. I recently completed my RCM Level 10 Certificate. 13 years of weekly lessons, 10 hours of practice per week, and 6 recitals annually.',
     tags: ['RCM Level 10', 'Classical', 'Technique', 'Ear Training'],
@@ -334,7 +334,7 @@ const QUESTS: QuestCard[] = [
   },
   {
     id: 'baking',
-    piece: 'l',
+    piece: 's',
     title: 'BAKING',
     sub: 'Flour, sugar, and oven-baked experiments. A great way to relax and enjoy good food with others.',
     tags: ['Macarons', 'Cookies', 'Stress Relief'],
@@ -345,7 +345,7 @@ const QUESTS: QuestCard[] = [
   },
   {
     id: 'art',
-    piece: 's',
+    piece: 'z',
     title: 'ART',
     sub: 'CSS is great, but sometimes I need real arts and crafts. Here lies all the sketches, paints, and messy creative outlets.',
     tags: ['Pixel Art', 'UI/UX', 'Sketching'],
@@ -356,7 +356,7 @@ const QUESTS: QuestCard[] = [
   },
   {
     id: 'travel',
-    piece: 'i',
+    piece: 'j',
     title: 'TRAVELLING',
     sub: 'New cities, new food, new perspectives. Every trip comes back with way too many photos.',
     tags: ['Explore', 'Food', 'Photography'],
@@ -367,7 +367,7 @@ const QUESTS: QuestCard[] = [
   },
   {
     id: 'modelling',
-    piece: 'z',
+    piece: 'l',
     title: 'MODELLING',
     sub: 'Posing, lighting, angles, mixed in with photos of myself that I just genuinely like. Most end up in my camera roll but some make it to Instagram.',
     tags: ['Photography', 'Portraits', 'Creative'],
@@ -378,7 +378,7 @@ const QUESTS: QuestCard[] = [
   },
   {
     id: 'poker',
-    piece: 'z',
+    piece: 'i',
     title: 'POKER',
     sub: 'Game theory, probability, and reading patterns under pressure.',
     tags: ['Strategy', 'Game Theory', "Texas Hold'em"],
@@ -396,7 +396,7 @@ const QUESTS: QuestCard[] = [
   },
   {
     id: 'hackathons',
-    piece: 'i',
+    piece: 'o',
     title: 'HACKATHONS',
     sub: 'Late nights, bad coffee, and building something from nothing in 24 hours flat.',
     tags: ['Devpost', 'Team Projects', 'Late Nights'],
@@ -419,7 +419,7 @@ const QUESTS: QuestCard[] = [
   },
   {
     id: 'people',
-    piece: 'j',
+    piece: 't',
     title: 'FRIENDS',
     sub: 'Quality time is my love language. My dog is a Shiba Inu named Pompom and he is a menace.',
     tags: ['Friends', 'Shiba Inu', 'Pompom', 'Quality Time'],
@@ -430,7 +430,7 @@ const QUESTS: QuestCard[] = [
   },
   {
     id: 'robotics',
-    piece: 'i',
+    piece: 's',
     title: 'ROBOTICS',
     sub: 'Mechanical Member of Spark Youth FIRST Robotics Club (2024-2025) in Kanata, ON. Built drive components and autonomous systems for the 2023 FIRST Robotics Competition.',
     tags: ['FRC', 'Mechanical', 'Autonomous', 'Kanata'],
@@ -442,7 +442,7 @@ const QUESTS: QuestCard[] = [
   },
   {
     id: 'photography',
-    piece: 'o',
+    piece: 'z',
     title: 'PHOTOGRAPHY',
     sub: 'Candid shots, travel photos, and life through a lens. Instagram: @juliann.zhu',
     tags: ['Candid', 'Travel', 'Film'],
@@ -465,7 +465,7 @@ const QUESTS: QuestCard[] = [
   },
   {
     id: 'relay',
-    piece: 'z',
+    piece: 'l',
     title: 'RELAY FOR LIFE',
     sub: 'Team Captain for Relay For Life in Nepean, ON (2023-2025). Raised over $700 for cancer research, contributing to a total of $29,000 raised by our community.',
     tags: ['Team Captain', 'Fundraising', 'Cancer Research', 'Community'],
@@ -481,7 +481,7 @@ const QUESTS: QuestCard[] = [
   },
   {
     id: 'lego',
-    piece: 'o',
+    piece: 'i',
     title: 'FIRST LEGO LEAGUE',
     sub: 'Instructor and Logistics Lead (2024-2025) in Kanata, ON. Introduced kids to STEM through robotics, supervised budgeting and construction, and delivered bi-weekly coding lessons using LEGO SPIKE.',
     tags: ['Instructor', 'STEM', 'LEGO SPIKE', 'Logistics Lead'],
