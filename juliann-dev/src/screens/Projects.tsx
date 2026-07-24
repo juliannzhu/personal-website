@@ -313,7 +313,7 @@ function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
       )}
 
       {(p.link || p.github || p.devpost) && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 40 }}>
           {p.github && (
             <a href={p.github} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
               <Button variant="secondary" leftIcon={<Icon icon="pixelarticons:github" />}>GitHub</Button>
