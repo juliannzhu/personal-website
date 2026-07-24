@@ -30,12 +30,13 @@ const PROJECTS: Project[] = [
     images: [
       P('CaneOS', 'app-screens.jpg'),
       P('CaneOS', 'device-test.jpg'),
-      P('CaneOS', 'hackathons-5.jpg'),
-      P('CaneOS', 'hackathons-6.jpg'),
-      P('CaneOS', 'IMG_7749.jpg'),
-      P('CaneOS', 'hackathons-8.jpg'),
-      P('CaneOS', 'hackathons-9.jpg'),
+      P('CaneOS', 'architecture.png'),
       P('CaneOS', 'hackathons-10.jpg'),
+      P('CaneOS', 'hackathons-9.jpg'),
+      P('CaneOS', 'hackathons-8.jpg'),
+      P('CaneOS', 'IMG_7749.jpg'),
+      P('CaneOS', 'hackathons-6.jpg'),
+      P('CaneOS', 'hackathons-5.jpg'),
     ],
   },
   {

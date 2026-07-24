@@ -137,6 +137,9 @@ const ART_GALLERY: BentoPhoto[] = [
   { src: Q('art/art-17.jpg'), size: 'wide', number: 17, fit: 'contain' },
   { src: Q('art/art-18.jpg'), size: 'sm', number: 18, fit: 'contain' },
   { src: Q('art/art-19.jpg'), size: 'wide', number: 19 },
+  { src: Q('art/art-20.jpg'), size: 'tall', number: 20, caption: '3D wooden puzzle piano build', fit: 'contain' },
+  { src: Q('art/art-21.jpg'), size: 'tall', number: 21, fit: 'contain' },
+  { src: Q('art/art-22.jpg'), size: 'tall', number: 22, fit: 'contain' },
 ]
 
 // Sized so the 6-column grid fills exactly 3 rows with no leftover gaps:
