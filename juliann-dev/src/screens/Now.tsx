@@ -112,7 +112,7 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   {
     piece: 'o',
     label: 'Learning',
-    text: 'FastAPI and SQLAlchemy for the ORBCOMM dashboard pipeline, racing to have it demo-ready for my supervisors.',
+    text: 'A rotation of easy recipes that survive a dorm kitchen and I could bring to a potluck.',
   },
   {
     piece: 's',

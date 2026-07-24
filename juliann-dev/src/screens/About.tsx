@@ -302,11 +302,11 @@ export function About() {
         </div>
       </div>
 
-      <div style={{ marginTop: 64 }}>
+      <div style={{ marginTop: 32 }}>
         <SectionTitle kicker="// Player stats" size={20}>How I Stack</SectionTitle>
         <Card accent="t" accentBar>
           <div className="tj-radar-grid" style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: 24, alignItems: 'center' }}>
-            <RadarChart points={ATTRIBUTES.map((a) => ({ key: a.key, label: a.label, value: a.value, piece: a.piece }))} />
+            <RadarChart size={380} points={ATTRIBUTES.map((a) => ({ key: a.key, label: a.label, value: a.value, piece: a.piece }))} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
               {ATTRIBUTES.map((a) => (
                 <div key={a.key} style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>

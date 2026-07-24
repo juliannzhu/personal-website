@@ -11,7 +11,7 @@ function ensure() {
 
 export type RadarPoint = { key: string; label: string; value: number; max?: number; piece: 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l' }
 
-export function RadarChart({ points, size = 420 }: { points: RadarPoint[]; size?: number }) {
+export function RadarChart({ points, size = 300 }: { points: RadarPoint[]; size?: number }) {
   ensure()
   const cx = size / 2
   const cy = size / 2
@@ -31,10 +31,10 @@ export function RadarChart({ points, size = 420 }: { points: RadarPoint[]; size?
   return (
     <svg viewBox={`0 0 ${size} ${size}`} width="100%" style={{ maxWidth: size, display: 'block', margin: '0 auto', overflow: 'visible' }}>
       {ringPolys.map((poly, i) => (
-        <polygon key={i} points={poly} fill="none" stroke="var(--border-hairline)" strokeWidth={1} opacity={0.4} />
+        <polygon key={i} points={poly} fill="none" stroke="var(--border-hairline)" strokeWidth={1} opacity={0.7} />
       ))}
       {axisEnds.map(([x, y], i) => (
-        <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--border-hairline)" strokeWidth={1} opacity={0.4} />
+        <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--border-hairline)" strokeWidth={1} opacity={0.7} />
       ))}
       <polygon
         className="tj-radar-poly"
@@ -54,11 +54,11 @@ export function RadarChart({ points, size = 420 }: { points: RadarPoint[]; size?
         return (
           <g key={p.key}>
             <text x={x} y={y - 6} textAnchor={anchor} dominantBaseline="middle"
-              style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', fill: 'var(--text-muted)', textTransform: 'uppercase' }}>
+              style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', fill: 'var(--text-strong)', textTransform: 'uppercase' }}>
               {p.label}
             </text>
             <text x={x} y={y + 8} textAnchor={anchor} dominantBaseline="middle"
-              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', fill: 'var(--text-faint)' }}>
+              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', fill: 'var(--text-muted)' }}>
               {p.value}/{p.max ?? 10}
             </text>
           </g>
