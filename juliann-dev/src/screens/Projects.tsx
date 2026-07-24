@@ -69,6 +69,9 @@ const PROJECTS: Project[] = [
     github: 'https://github.com/girish316/HackTheHill',
     devpost: 'https://devpost.com/software/neuralearn',
     images: [
+      P('NeuraLearn', 'app-screenshot-01.png'),
+      P('NeuraLearn', 'app-screenshot-02.png'),
+      P('NeuraLearn', 'app-screenshot-03.png'),
       P('NeuraLearn', 'hackathons-1.jpg'),
       P('NeuraLearn', 'hackathons-2.jpg'),
       P('NeuraLearn', 'hackathons-3.jpg'),
