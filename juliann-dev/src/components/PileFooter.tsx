@@ -372,7 +372,7 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
               <div style={{ position: 'relative', paddingLeft: 32, borderLeft: '3px solid var(--piece-i)', maxWidth: 760 }}>
                 <span style={{ position: 'absolute', left: -20, top: -38, fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '6rem', lineHeight: 1, color: 'var(--piece-i)', opacity: 0.32, userSelect: 'none' }} aria-hidden="true">&ldquo;</span>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--piece-i)', marginBottom: 16 }}>{kicker}</div>
-                <blockquote style={{ margin: 0, fontFamily: 'var(--font-pixel)', textTransform: 'uppercase', letterSpacing: '0.02em', fontSize: 'clamp(0.9375rem, 1.8vw, 1.25rem)', color: 'var(--text-strong)', lineHeight: 1.7 }}>
+                <blockquote style={{ margin: 0, fontFamily: 'var(--font-pixel)', textTransform: 'uppercase', letterSpacing: '0.02em', fontSize: 'clamp(0.8125rem, 1.5vw, 1.0625rem)', color: 'var(--text-strong)', lineHeight: 1.7 }}>
                   {quote.split('\n').map((line, i, arr) => (
                     <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
                   ))}

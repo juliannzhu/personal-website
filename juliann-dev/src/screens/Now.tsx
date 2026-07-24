@@ -112,7 +112,7 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   {
     piece: 'o',
     label: 'Learning',
-    text: 'Apple Watch development and bridging Swift into existing code. Prepping for Hack the 6ix this summer.',
+    text: 'FastAPI and SQLAlchemy for the ORBCOMM dashboard pipeline, racing to have it demo-ready for my supervisors.',
   },
   {
     piece: 's',
