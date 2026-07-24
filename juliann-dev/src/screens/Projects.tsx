@@ -155,7 +155,7 @@ const PROJECTS: Project[] = [
     title: 'GRAFANA DASHBOARDS',
     piece: 'o',
     tagline: 'Satellite system monitoring dashboards built with Grafana and MySQL data sources, reduced dashboard load time by 86% through SQL query optimization.',
-    tags: ['Grafana', 'MySQL', 'SQLAlchemy', 'FastAPI', 'APScheduler', 'MariaDB'],
+    tags: ['MySQL', 'SQLAlchemy', 'FastAPI', 'APScheduler', 'MariaDB'],
     cat: 'systems',
     year: '2026',
   },
