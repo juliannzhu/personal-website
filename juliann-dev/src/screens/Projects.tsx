@@ -27,8 +27,7 @@ const PROJECTS: Project[] = [
     year: 'Jul 2026',
     images: [
       P('CaneOS', 'app-screens.jpg'),
-      P('CaneOS', 'IMG_7768.jpg'),
-      P('CaneOS', 'IMG_7777.jpg'),
+      P('CaneOS', 'device-test.jpg'),
       P('CaneOS', 'hackathons-5.jpg'),
       P('CaneOS', 'hackathons-6.jpg'),
       P('CaneOS', 'IMG_7749.jpg'),
