@@ -11,7 +11,7 @@ type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 type Cat = 'all' | 'web' | 'ai' | 'systems' | 'research'
 
 // images live in /public/assets/build log/<ProjectName>/ — add screenshots and list them in each project's `images` array
-type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; devpost?: string; images?: string[] }
+type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; github?: string; devpost?: string; images?: string[] }
 
 // images live in /public/assets/build log/<folder>/
 const P = (folder: string, file: string) => `/assets/build%20log/${folder}/${file}`
@@ -25,6 +25,8 @@ const PROJECTS: Project[] = [
     tags: ['Swift', 'SwiftUI', 'Python', 'C++', 'Gemini API', 'Auth0'],
     cat: 'ai',
     year: 'Jul 2026',
+    github: 'https://github.com/Emily3226/CaneOS',
+    devpost: 'https://devpost.com/software/caneos',
     images: [
       P('CaneOS', 'app-screens.jpg'),
       P('CaneOS', 'device-test.jpg'),
@@ -44,7 +46,8 @@ const PROJECTS: Project[] = [
     tags: ['React', 'JavaScript', 'Base44', 'AI', 'UI/UX'],
     cat: 'ai',
     year: 'Sep 2025',
-    devpost: 'https://devpost.com/juliannzhu',
+    github: 'https://github.com/ErinGu0/TrulyHer',
+    devpost: 'https://devpost.com/software/trulyher',
     images: [P('TrulyHer', 'hackathons-11.jpg'), P('TrulyHer', 'hackathons-12.jpg')],
   },
   {
@@ -55,7 +58,8 @@ const PROJECTS: Project[] = [
     tags: ['Python', 'Gemini AI', 'NLP', 'HTML/CSS', 'API'],
     cat: 'ai',
     year: 'Sep 2024',
-    devpost: 'https://devpost.com/juliannzhu',
+    github: 'https://github.com/girish316/HackTheHill',
+    devpost: 'https://devpost.com/software/neuralearn',
     images: [
       P('NeuraLearn', 'hackathons-1.jpg'),
       P('NeuraLearn', 'hackathons-2.jpg'),
@@ -99,7 +103,7 @@ const PROJECTS: Project[] = [
     tags: ['React', 'TypeScript', 'Vite', 'CSS', 'Web Audio'],
     cat: 'web',
     year: '2026',
-    link: '#',
+    github: 'https://github.com/juliannzhu/personal-website',
   },
   {
     id: 'charg-e-design-team',
@@ -290,21 +294,6 @@ function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
         {p.tags.map((t) => <Tag key={t} piece={p.piece}>{t}</Tag>)}
       </div>
 
-      {(p.link || p.devpost) && (
-        <div style={{ display: 'flex', gap: 16, marginBottom: 40 }}>
-          {p.devpost && (
-            <a href={p.devpost} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-              <Button variant="secondary" leftIcon={<Icon icon="pixelarticons:external-link" />}>Devpost</Button>
-            </a>
-          )}
-          {p.link && p.link !== '#' && (
-            <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-              <Button variant="secondary" leftIcon={<Icon icon="pixelarticons:external-link" />}>Live</Button>
-            </a>
-          )}
-        </div>
-      )}
-
       {images.length > 0 ? (
         <ProjectCarousel images={images} c={c} />
       ) : (
@@ -321,6 +310,26 @@ function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
             </span>
           </div>
         </>
+      )}
+
+      {(p.link || p.github || p.devpost) && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 24 }}>
+          {p.github && (
+            <a href={p.github} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+              <Button variant="secondary" leftIcon={<Icon icon="pixelarticons:github" />}>GitHub</Button>
+            </a>
+          )}
+          {p.devpost && (
+            <a href={p.devpost} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+              <Button variant="secondary" leftIcon={<Icon icon="pixelarticons:external-link" />}>Devpost</Button>
+            </a>
+          )}
+          {p.link && p.link !== '#' && (
+            <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+              <Button variant="secondary" leftIcon={<Icon icon="pixelarticons:external-link" />}>Live</Button>
+            </a>
+          )}
+        </div>
       )}
 
       <div style={{ marginTop: 40 }}>
