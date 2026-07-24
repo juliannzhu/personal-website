@@ -1,0 +1,237 @@
+/**
+GeoMap Window CSS
+ICS4U-01
+Ariel Liu, Emma Guo, Juliann Zhu
+This file is a modified version of the original window.css provided by the window.js library imported from https://github.com/m-thalmann/windowjs, and styles the elements of the windows that display when case studies are clicked.
+
+History:
+Apr 4, 2024: File creation
+Apr 17, 2024: Modification of window colour theme, removal of minimize button 
+Apr 18, 2024: Title and icon size changes
+Apr 22, 2024: Modification of border and bar colours
+Apr 24, 2024: Title font and size changes
+*/
+
+.window {
+  position: absolute;
+  z-index: 1;
+  box-sizing: border-box;
+  transform: scale(1);
+}
+
+.window:not(.window_no_animation):not(.window_moving) {
+  transition: transform 0.2s, width 0.1s, height 0.1s, left 0.02s, right 0.02s;
+}
+
+.window * {
+  position: relative;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+
+.window.window_alway_on_top {
+  z-index: 10;
+}
+
+.window.window_alway_on_top.window_selected {
+  z-index: 11;
+}
+
+.window .window_bar {
+  border: 0px solid #ccc;
+  background-color: #b7e4c7;
+  height: 2.5em;
+}
+
+.window .window_bar,
+.text_not_selectable {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.window .window_bar > * {
+  display: inline-block;
+}
+
+.window .window_bar * {
+  transition: all 0.2s;
+}
+
+.window .window_bar .window_icon {
+  margin: 0 10px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.window .window_bar .window_title {
+  cursor: default;
+  padding: 5px;
+  overflow: visible;
+  max-width: calc(100% - 150px);
+  vertical-align: middle;
+  color: #164F2F;
+  /* -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black; */
+  font-family: "Hammersmith One";
+  font-weight: 400;
+  font-size: 1.5em;
+}
+
+.window .window_bar .window_toggle_buttons {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  vertical-align: top;
+  margin-left: 10px;
+  z-index: 2;
+}
+
+.window .window_bar .window_toggle_buttons:after {
+  clear: both;
+}
+
+.window .window_bar .window_toggle_buttons > * {
+  padding-top: 5px;
+  padding-bottom: 2px;
+  width: 3em;
+  text-align: center;
+  cursor: pointer;
+  height: 95%;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.window .window_bar .window_toggle_buttons > *:hover {
+  background-color: #3d895f;
+  color: white;
+}
+
+.window.window_not_maximizable .window_button_toggle_maximize,
+.window.window_not_minimizable .window_button_minimize {
+  display: none;
+}
+
+.window .window_bar .window_toggle_buttons .window_button_close:hover {
+  background-color: red;
+  color: white;
+}
+
+.window .window_content {
+  overflow: auto;
+  background-color: #5fb78c;
+  position: absolute;
+  top: 2em;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  /** display: flex;*/
+}
+
+.window.window_maximized:not(.window_minimized) {
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.window.window_minimized {
+  transform: scale(0);
+}
+
+.window.window_hidden {
+  display: none;
+}
+
+.window.window_selected {
+  -webkit-box-shadow: 0px 0px 17px -4px rgba(0, 0, 0, 0.73);
+  -moz-box-shadow: 0px 0px 17px -4px rgba(0, 0, 0, 0.73);
+  box-shadow: 0px 0px 17px -4px rgba(0, 0, 0, 0.73);
+  z-index: 2;
+}
+
+.window.window_selected .window_bar {
+  background-color: #5fb78c;
+}
+
+.window.window_selected
+  .window_bar
+  .window_toggle_buttons
+  .window_button_close:hover {
+  background-color: #f12;
+  color: #fff;
+}
+
+.window.window_maximized .window_resize_handle,
+.window.window_not_resizable .window_resize_handle,
+.window.window_resizing .window_resize_handle {
+  display: none;
+}
+
+.window .window_resize_handle {
+  position: absolute;
+  display: block;
+  opacity: 0;
+}
+
+.window .window_resize_handle_n,
+.window_resize_handle_s {
+  height: 3px;
+  left: 0;
+  right: 0;
+}
+
+.window .window_resize_handle_w,
+.window .window_resize_handle_e {
+  width: 3px;
+  top: 0;
+  bottom: 0;
+}
+
+.window .window_resize_handle_n,
+.window .window_resize_handle_ne,
+.window .window_resize_handle_nw {
+  top: -3px;
+}
+
+.window .window_resize_handle_s,
+.window .window_resize_handle_se,
+.window .window_resize_handle_sw {
+  bottom: -3px;
+}
+
+.window .window_resize_handle_w,
+.window .window_resize_handle_sw,
+.window .window_resize_handle_nw {
+  left: -3px;
+}
+
+.window .window_resize_handle_e,
+.window .window_resize_handle_ne,
+.window .window_resize_handle_se {
+  right: -3px;
+}
+
+.window .window_resize_handle_ne,
+.window .window_resize_handle_se,
+.window .window_resize_handle_sw,
+.window .window_resize_handle_nw {
+  width: 3px;
+  height: 3px;
+}
+
+.window.window_bar_hidden .window_bar {
+  display: none;
+}
+
+.window.window_bar_hidden .window_content {
+  top: 0;
+}
+
+/* changes made to styling of windows - colour of window background, title text, button spacing and colours, etc. */

@@ -152,6 +152,13 @@ const PROJECTS: Project[] = [
     tags: ['JavaScript', 'HTML', 'CSS', 'Python', 'Window.js'],
     cat: 'web',
     year: 'Jun 2024',
+    link: '/geomap/map.html',
+    images: [
+      P('Geomap', 'geomap-01.png'),
+      P('Geomap', 'geomap-02.png'),
+      P('Geomap', 'geomap-03.png'),
+      P('Geomap', 'geomap-04.png'),
+    ],
   },
 ]
 

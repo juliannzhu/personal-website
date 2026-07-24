@@ -1,0 +1,313 @@
+/**
+GeoMap CSS
+ICS4U-01
+Ariel Liu, Emma Guo, Juliann Zhu
+This file functions as the main CSS for the frontend styling of GeoMap, a web application designed to help students study the IB Geography course.
+
+History:
+Jan 26, 2024: File creation
+Jan 30, 2024: SVG map implementation, styling to change colours of countries when hovering over them
+Feb 6, 2024: Clickable map with country names appearing
+Feb 14, 2024: Legend styling
+Feb 26, 2024: Zoom function and elements styling
+Mar 7, 2024: Image and graph element styling
+Apr 17, 2024: Welcome screen styling
+Apr 18, 2024: Window and image div styling
+Apr 22, 2024: Animations for intro screen
+*/
+
+/* setting document font families */
+@font-face {
+  font-family: "Playfair Display";
+  src: url(fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf);
+  font-family: "Hammersmith One";
+  src: url(fonts/Hammersmith_One/HammersmithOne-Regular.ttf);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+header {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 1005;
+  height: 80px;
+  font-family: "Hammersmith One";
+}
+
+.titleScreen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 100%;
+}
+
+#text {
+  color: white;
+}
+
+body {
+  background-color: #071e12;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+/* country name labels */
+
+#name {
+  position: absolute;
+  color: black;
+  background-color: rgba(255, 255, 255, 0.76);
+  height: fit-content;
+  width: fit-content;
+  opacity: 0;
+  border-radius: 10px;
+  border: none;
+  padding: 0px 5px;
+  font-size: 1.5 rem;
+}
+
+/* map  styling */
+
+.map_image path {
+  transition: fill 0.3s;
+}
+
+svg path {
+  cursor: pointer;
+}
+
+svg path:hover {
+  fill: green;
+}
+
+/* legend side nav styling */
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 30px;
+  color: #f1f1f1;
+  display: block;
+}
+
+.sidenav label {
+  padding: 0px 0px 0px 0px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #f1f1f1;
+  left: -35px;
+}
+
+.sidenav input[type="checkbox"] {
+  width: 75px;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+  color: white;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {
+    padding-top: 15px;
+  }
+  .sidenav a {
+    font-size: 18px;
+  }
+}
+
+#main {
+  transition: margin-left 0.5s;
+  padding: 16px;
+}
+
+.ham-menu {
+  display: inline-block;
+  position: relative;
+  margin: 30px 20px;
+}
+
+.ham-menu,
+.ham-menu::before,
+.ham-menu::after {
+  width: 30px;
+  height: 6px;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.ham-menu::before,
+.ham-menu::after {
+  content: "";
+  display: block;
+  position: absolute;
+}
+
+.ham-menu::before {
+  bottom: 130%;
+}
+
+.ham-menu::after {
+  top: 130%;
+}
+
+/* Case Study Assets */
+
+#img-div {
+  background-color: #b7e4c7;
+  margin: 15px;
+  padding: 12px;
+}
+
+/* case study window stuff*/
+#mycontent {
+  font-family: "Playfair Display";
+  color: #164f2f;
+}
+
+.title-div {
+  color: #b7e4c7;
+  font-family: "Hammersmith One";
+  margin-right: 15px;
+  margin-left: 15px;
+  line-height: 1.6;
+  font-size: 3.5em;
+  text-align: center;
+}
+
+.window-div {
+  background-color: #b7e4c7;
+  margin: 15px;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+.graphics-div {
+  margin: 20px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+/* The Close Button */
+.close {
+  color: #6d6868;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Compass Rose */
+.compass {
+  width: 140px;
+  height: auto;
+  position: fixed;
+  bottom: 2%;
+  left: 1%;
+}
+
+.logo {
+  width: 280px;
+  height: 65px;
+  position: relative;
+  top: 0;
+  left: 20px;
+}
+
+/* zoom button */
+.zoomButton {
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  bottom: 55px;
+  right: 10px;
+}
+
+/** Case Study Graphics */
+#caseStudyImage {
+  width: 40%;
+  height: 40%;
+}
+
+#graphObject {
+  width: 40%;
+  height: 500px;
+}
+
+/* intro screen animation */
+#titleScreen {
+  animation-name: animatetop;
+  animation-duration: 1s;
+}
+
+@keyframes animatetop {
+  from {
+    top: -300px;
+    opacity: 0;
+  }
+  to {
+    top: 0;
+    opacity: 1;
+  }
+}
+
+/* Alternative animation options
+
+/* #titleScreen {
+  animation-name: fadeOut;
+  animation-duration: 2s;
+} */
+
+/* @keyframes fadeOut {
+  from {
+    top: 1;
+    opacity: 1;
+  }
+  to {
+    top: 0;
+    opacity: 0;
+  }
+}
+
+#titleScreen {
+  animation-name: fadeOut;
+  animation-duration: 3s;
+}
+
+@keyframes fadeOut {
+  100% {
+    opacity: 1;
+  }
+  0% {
+    opacity: 0;
+  }
+} */
