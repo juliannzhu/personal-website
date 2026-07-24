@@ -104,13 +104,21 @@ const PROJECTS: Project[] = [
   },
   {
     id: 'tetris-juliann',
-    title: 'TETRIS.JULIANN',
+    title: 'PERSONAL WEBSITE',
     piece: 'l',
-    tagline: 'This website: a fully playable Tetris portfolio built with React, Vite, and TypeScript, complete with sound effects and a leaderboard. You\'re looking at it.',
+    tagline: 'This website: a fully playable Tetris portfolio built with React, Vite, and TypeScript, complete with a leaderboard. You\'re looking at it.',
     tags: ['React', 'TypeScript', 'Vite', 'CSS', 'Web Audio'],
     cat: 'web',
     year: '2026',
     github: 'https://github.com/juliannzhu/personal-website',
+    images: [
+      P('tetris-website', 'architecture.svg'),
+      P('tetris-website', 'ideation-01.png'),
+      P('tetris-website', 'ideation-02.png'),
+      P('tetris-website', 'ideation-03.png'),
+      P('tetris-website', 'ideation-04.png'),
+      P('tetris-website', 'ideation-05.png'),
+    ],
   },
   {
     id: 'charg-e-design-team',
