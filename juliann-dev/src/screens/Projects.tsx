@@ -21,7 +21,7 @@ const PROJECTS: Project[] = [
     id: 'caneos',
     title: 'CANEOS',
     piece: 'i',
-    tagline: 'Clip-on white cane module that detects overhead hazards for visually impaired users, pairing ToF sensors and YOLOv6 camera detection with companion iPhone and Apple Watch apps.',
+    tagline: 'Clip-on white cane module that detects overhead hazards for visually impaired users, pairing ToF sensors and YOLOv6 camera detection with companion iPhone and Apple Watch apps for voice narration, emergency SOS alerts, and live location sharing.',
     tags: ['Swift', 'SwiftUI', 'Python', 'C++', 'Gemini API', 'Auth0'],
     cat: 'ai',
     year: 'Jul 2026',
@@ -40,7 +40,7 @@ const PROJECTS: Project[] = [
     id: 'trulyher',
     title: 'TRULYHER',
     piece: 'o',
-    tagline: 'AI-powered web app that helps women in CS manage imposter syndrome through speech/text journaling and mood detection.',
+    tagline: 'AI-powered web app that helps women in computer science manage imposter syndrome through speech and text journaling paired with real-time mood detection.',
     tags: ['React', 'JavaScript', 'Base44', 'AI', 'UI/UX'],
     cat: 'ai',
     year: 'Sep 2025',
@@ -51,7 +51,7 @@ const PROJECTS: Project[] = [
     id: 'neuralearn',
     title: 'NEURALEARN',
     piece: 't',
-    tagline: 'AI-driven study tool that generates adaptive quizzes and instant Q&A responses based on your notes using Gemini AI.',
+    tagline: 'AI-driven study tool that generates adaptive quizzes and instant Q&A responses based on your own notes, powered by Gemini AI to make studying more efficient.',
     tags: ['Python', 'Gemini AI', 'NLP', 'HTML/CSS', 'API'],
     cat: 'ai',
     year: 'Sep 2024',
@@ -67,7 +67,7 @@ const PROJECTS: Project[] = [
     id: 'project-tech-careers',
     title: 'PROJECT TECH CAREERS',
     piece: 's',
-    tagline: 'Four-stage mentorship platform supporting women at different stages of their CS education. Won the Gender Equality Track Award.',
+    tagline: 'Four-stage mentorship platform supporting women at different stages of their computer science education, connecting them with mentors and resources along the way. Won the Gender Equality Track Award.',
     tags: ['JavaScript', 'HTML', 'CSS', 'UI/UX'],
     cat: 'web',
     year: 'May 2024',
@@ -77,7 +77,7 @@ const PROJECTS: Project[] = [
     id: 'grafana-dashboards',
     title: 'GRAFANA DASHBOARDS',
     piece: 'z',
-    tagline: 'Satellite system monitoring dashboards with MySQL data sources. Reduced dashboard load time by 86% via SQL optimization.',
+    tagline: 'Satellite system monitoring dashboards built with Grafana and MySQL data sources, reduced dashboard load time by 86% through SQL query optimization.',
     tags: ['Grafana', 'MySQL', 'SQL', 'Data Viz', 'InfluxDB'],
     cat: 'systems',
     year: '2026',
@@ -86,7 +86,7 @@ const PROJECTS: Project[] = [
     id: 'llm-security-research',
     title: 'LLM SECURITY RESEARCH',
     piece: 'j',
-    tagline: 'Co-authoring a SOUPS research paper on how users seek security & privacy advice from LLMs and evaluating accuracy vs expert guidance.',
+    tagline: 'Co-authoring a SOUPS research paper on how users seek security and privacy advice from large language models, evaluating the accuracy of that advice against expert guidance.',
     tags: ['Research', 'LLMs', 'Security', 'Privacy', 'SOUPS'],
     cat: 'research',
     year: '2026',
@@ -95,7 +95,7 @@ const PROJECTS: Project[] = [
     id: 'tetris-juliann',
     title: 'TETRIS.JULIANN',
     piece: 'l',
-    tagline: 'This website: a fully playable Tetris portfolio built with React, Vite, and TypeScript. You\'re looking at it.',
+    tagline: 'This website: a fully playable Tetris portfolio built with React, Vite, and TypeScript, complete with sound effects and a leaderboard. You\'re looking at it.',
     tags: ['React', 'TypeScript', 'Vite', 'CSS', 'Web Audio'],
     cat: 'web',
     year: '2026',
@@ -285,7 +285,7 @@ function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
         </div>
       </div>
 
-      <p style={{ fontSize: '1rem', color: 'var(--text-muted)', maxWidth: 640, lineHeight: 1.7, marginBottom: 24 }}>{p.tagline}</p>
+      <p style={{ fontSize: '1rem', color: 'var(--text-muted)', lineHeight: 1.7, marginBottom: 24 }}>{p.tagline}</p>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 32 }}>
         {p.tags.map((t) => <Tag key={t} piece={p.piece}>{t}</Tag>)}
       </div>
