@@ -10,11 +10,11 @@ import { ScrollTetromino3D } from '../components/ScrollTetromino3D'
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 type Cat = 'all' | 'web' | 'ai' | 'systems' | 'research'
 
-// images live in /public/assets/build log/<ProjectName>/ — add screenshots and list them in each project's `images` array
+// images live in /public/assets/build-log/<ProjectName>/ — add screenshots and list them in each project's `images` array
 type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; github?: string; devpost?: string; images?: string[] }
 
-// images live in /public/assets/build log/<folder>/
-const P = (folder: string, file: string) => `/assets/build%20log/${folder}/${file}`
+// images live in /public/assets/build-log/<folder>/
+const P = (folder: string, file: string) => `/assets/build-log/${folder}/${file}`
 
 const PROJECTS: Project[] = [
   {
@@ -48,7 +48,14 @@ const PROJECTS: Project[] = [
     year: 'Sep 2025',
     github: 'https://github.com/ErinGu0/TrulyHer',
     devpost: 'https://devpost.com/software/trulyher',
-    images: [P('TrulyHer', 'hackathons-11.jpg'), P('TrulyHer', 'hackathons-12.jpg')],
+    images: [
+      P('TrulyHer', 'app-screens-1.jpg'),
+      P('TrulyHer', 'app-screens-2.jpg'),
+      P('TrulyHer', 'app-screens-3.jpg'),
+      P('TrulyHer', 'app-screens-4.jpg'),
+      P('TrulyHer', 'hackathons-11.jpg'),
+      P('TrulyHer', 'hackathons-12.jpg'),
+    ],
   },
   {
     id: 'neuralearn',
