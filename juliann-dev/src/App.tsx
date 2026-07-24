@@ -72,7 +72,6 @@ type StackScreenId = Exclude<Screen, 'home'>
 const REST_IDS: StackScreenId[] = ['about', 'projects', 'sidequests', 'now', 'contact']
 const STACK_SCREENS: Partial<Record<StackScreenId, React.ReactNode>> = {
   about: <About />,
-  projects: <Projects />,
   now: <Now />,
   contact: <Contact />,
 }
@@ -86,6 +85,9 @@ export default function App() {
   // Bumped whenever "Quests" is clicked while already on the side quests section, so a
   // quest detail page that's open can be told to close back to the grid of tiles.
   const [questsResetTick, setQuestsResetTick] = useState(0)
+  // Same idea for "Projects": bumped when clicked again while already on that section,
+  // so an open project detail page closes back to the Build Log grid.
+  const [projectsResetTick, setProjectsResetTick] = useState(0)
   const scrollPaneRef = useRef<HTMLDivElement>(null)
   const sectionRefs = useRef<Partial<Record<Screen, HTMLDivElement | null>>>({})
   const holdBoxRef = useRef<HTMLElement>(null)
@@ -95,6 +97,7 @@ export default function App() {
   const go = useCallback((id: Screen) => {
     if (id === activeSection) {
       if (id === 'sidequests') setQuestsResetTick((t) => t + 1)
+      if (id === 'projects') setProjectsResetTick((t) => t + 1)
       return
     }
     sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -162,7 +165,7 @@ export default function App() {
             </div>
             {REST_IDS.map((id) => (
               <div key={id} data-section={id} ref={(el) => { sectionRefs.current[id] = el }}>
-                <RevealOnScroll>{id === 'sidequests' ? <SideQuests resetSignal={questsResetTick} /> : STACK_SCREENS[id]}</RevealOnScroll>
+                <RevealOnScroll>{id === 'sidequests' ? <SideQuests resetSignal={questsResetTick} /> : id === 'projects' ? <Projects resetSignal={projectsResetTick} /> : STACK_SCREENS[id]}</RevealOnScroll>
               </div>
             ))}
           </main>

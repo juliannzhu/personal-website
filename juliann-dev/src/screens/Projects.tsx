@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Icon } from '@iconify/react'
 import { Card } from '../components/ds/Card'
 import { Tag } from '../components/ds/Tag'
@@ -330,11 +330,15 @@ function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
   )
 }
 
-export function Projects() {
+export function Projects({ resetSignal }: { resetSignal?: number } = {}) {
   ensureCSS()
   const [filter, setFilter] = useState<Cat>('all')
   const [openId, setOpenId] = useState<string | null>(null)
   const shown = PROJECTS.filter((p) => filter === 'all' || p.cat === filter)
+
+  // Bumped by App.tsx when "Projects" is clicked again while already on this section —
+  // closes whatever project detail is open so the full Build Log grid is visible again.
+  useEffect(() => { setOpenId(null) }, [resetSignal])
 
   if (openId) {
     const project = PROJECTS.find((p) => p.id === openId)!
