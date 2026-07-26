@@ -328,6 +328,17 @@ function ensureAchCSS() {
   }
 }
 
+const COUNTDOWN_CSS = `
+@keyframes tj-countdown-flash { 0% { opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+.tj-countdown-num { animation: tj-countdown-flash 650ms linear both; }
+`
+let countdownCssInjected = false
+function ensureCountdownCSS() {
+  if (!countdownCssInjected && typeof document !== 'undefined') {
+    const s = document.createElement('style'); s.textContent = COUNTDOWN_CSS; document.head.appendChild(s); countdownCssInjected = true
+  }
+}
+
 function AchievementToasts({ toasts }: { toasts: Achievement[] }) {
   if (!toasts.length) return null
   return (
