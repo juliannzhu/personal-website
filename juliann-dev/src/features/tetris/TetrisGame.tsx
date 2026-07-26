@@ -717,7 +717,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     const s = freshState('playing')
     const t = s.queue.shift()!; ensureQueue(s)
     s.cur = spawn(t); s.startTime = Date.now()
-    g.current = s; setEnteringInitials(false); setInitials(''); setRestartProgress(0); setClock(Date.now())
+    g.current = s; setEnteringInitials(false); setInitials(''); setClock(Date.now())
     usedHoldRef.current = false; lastActionWasRotateRef.current = false; lastClearWasTetrisRef.current = false
     achRef.current.gamesPlayed++
     checkAchievements()
@@ -823,27 +823,24 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     if (softTimer.current) { clearInterval(softTimer.current); softTimer.current = null }
   }, [])
 
-  const beginRestartHold = useCallback(() => {
-    if (restartInterval.current || g.current.status !== 'playing') return
-    restartStart.current = Date.now()
-    setRestartProgress(0.1)
-    restartInterval.current = setInterval(() => {
-      const elapsed = Date.now() - (restartStart.current ?? Date.now())
-      const pct = Math.min(100, (elapsed / 3000) * 100)
-      setRestartProgress(pct)
-      if (pct >= 100) {
-        if (restartInterval.current) { clearInterval(restartInterval.current); restartInterval.current = null }
-        restartStart.current = null
-        startGame()
-      }
-    }, 50)
-  }, [startGame])
+  const STEP_MS = 650
+  const runCountdown = useCallback(() => {
+    if (countdown || g.current.status !== 'playing') return
+    // reset immediately so the board is clean and frozen while 3-2-1-GO plays
+    g.current = freshState('ready')
+    setEnteringInitials(false); setInitials('')
+    // set '3' in the same batch as the reset so the ready/start screen never gets a frame to flash
+    setCountdown('3')
+    rerender()
+    const steps: Array<'2' | '1' | 'GO'> = ['2', '1', 'GO']
+    steps.forEach((step, i) => {
+      countdownTimers.current.push(setTimeout(() => setCountdown(step), (i + 1) * STEP_MS))
+    })
+    countdownTimers.current.push(setTimeout(() => { setCountdown(null); startGame() }, (steps.length + 1) * STEP_MS))
+  }, [countdown, rerender, startGame])
 
-  const cancelRestartHold = useCallback(() => {
-    if (restartInterval.current) { clearInterval(restartInterval.current); restartInterval.current = null }
-    restartStart.current = null
-    setRestartProgress(0)
-  }, [])
+  // Clear any pending countdown timers if the modal closes mid-countdown
+  useEffect(() => () => { countdownTimers.current.forEach(clearTimeout); countdownTimers.current = [] }, [])
 
   // Gravity
   useEffect(() => {
@@ -869,12 +866,14 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
       const k = e.key
       if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(k)) e.preventDefault()
       if (k === 'Escape') { onClose(); return }
+      if (countdown) return
       const st = g.current.status
       if (st === 'ready' || st === 'topout') { if (k === 'Enter' || k === ' ') startGame(); return }
       if (st === 'won') {
         if (!enteringInitials && (k === 'Enter' || k === ' ')) startGame()
         return
       }
+      if (k.toLowerCase() === keybinds.restart.toLowerCase()) { runCountdown(); return }
       // playing
       if (k === keybinds.left)       { e.preventDefault(); const s = settings; const arr = s.arr; const das = s.das; move(-1, 0); SFX.move(); stopAutoRepeat(); dasTimer.current = setTimeout(() => { if (arr === 0) { while (move(-1, 0)) { SFX.move() } } else { arrTimer.current = setInterval(() => { move(-1, 0); SFX.move() }, arr) } }, das) }
       else if (k === keybinds.right) { e.preventDefault(); const s = settings; const arr = s.arr; const das = s.das; move(1, 0); SFX.move(); stopAutoRepeat(); dasTimer.current = setTimeout(() => { if (arr === 0) { while (move(1, 0)) { SFX.move() } } else { arrTimer.current = setInterval(() => { move(1, 0); SFX.move() }, arr) } }, das) }
@@ -1015,7 +1014,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
             <div style={{ position: 'relative', padding: 6, background: 'var(--ink-1000)', border: '4px solid var(--border-strong)', boxShadow: 'var(--shadow-soft)' }}>
               <div style={{ display: 'grid', gridTemplateColumns: `repeat(${COLS}, ${CELL}px)` }}>{cells}</div>
 
-              {st.status === 'ready' && (
+              {st.status === 'ready' && !countdown && (
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 18, background: 'rgba(5,5,9,0.8)', textAlign: 'center', padding: 20 }}>
                   <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1rem', color: 'var(--piece-o)', textTransform: 'uppercase', textShadow: '0 3px 0 rgba(0,0,0,0.5)' }}>20-Line Sprint</div>
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: 180, lineHeight: 1.6 }}>Clear 20 lines as fast as you can.</div>
@@ -1036,15 +1035,12 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
                 </div>
               )}
 
-              {/* Restart hold progress */}
-              {st.status === 'playing' && restartProgress > 0 && (
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(5,5,9,0.88)', padding: '10px 14px' }}>
-                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', color: 'var(--piece-z)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6, textAlign: 'center' }}>
-                    Hold to restart...
-                  </div>
-                  <div style={{ height: 5, background: 'var(--bg-well)', borderRadius: 3, overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${restartProgress}%`, background: 'var(--piece-z)', transition: 'width 50ms linear' }} />
-                  </div>
+              {/* 3-2-1-GO restart countdown */}
+              {countdown && (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,5,9,0.6)' }}>
+                  <span key={countdown} className="tj-countdown-num" style={{ fontFamily: 'var(--font-pixel)', fontSize: countdown === 'GO' ? '1.5rem' : '1.75rem', color: 'var(--piece-o)', textShadow: '0 3px 0 rgba(0,0,0,0.5)' }}>
+                    {countdown}
+                  </span>
                 </div>
               )}
             </div>
