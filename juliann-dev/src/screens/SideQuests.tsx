@@ -590,7 +590,7 @@ function QuestDetailHeader({ quest, c }: { quest: QuestCard; c: string }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 28 }}>
         <Tetromino piece={quest.piece} size={18} />
         <div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 6 }}>{'// Side Quest'}</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 6 }}>{'// Side Quest'}</div>
           <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.375rem', color: 'var(--text-strong)', margin: 0, textTransform: 'uppercase' }}>{quest.title}</h2>
         </div>
       </div>
@@ -618,7 +618,7 @@ function VideoStrip({ videos }: { videos?: QuestVideo[] }) {
   return (
     <>
       <div style={{ marginTop: 32 }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>{'// Video clips'}</div>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>{'// Video clips'}</div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {videos.map((v, i) => (
             <button key={i} onClick={() => setOpenIdx(i)} aria-label={`Play video ${i + 1}`} style={{
@@ -1010,7 +1010,7 @@ function QuestDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
       <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 28 }}>
         <Tetromino piece={quest.piece} size={18} />
         <div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 6 }}>{'// Side Quest'}</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 6 }}>{'// Side Quest'}</div>
           <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.375rem', color: 'var(--text-strong)', margin: 0, textTransform: 'uppercase' }}>{quest.title}</h2>
         </div>
       </div>
@@ -1236,7 +1236,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
         position: 'absolute', left: 24, top: '50%', transform: 'translateY(-50%)', width: TITLE_W, height: TILE_H, zIndex: 1,
         display: 'flex', flexDirection: 'column', justifyContent: 'center', transition: 'opacity 240ms',
       }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-j)' }}>{'// Beyond the code'}</div>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-j)' }}>{'// Beyond the code'}</div>
         <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Side Quests</h2>
         <p style={{ fontSize: '1rem', color: 'var(--text-muted)', lineHeight: 1.6, marginTop: 16 }}>
           Every developer needs a break.<br></br>

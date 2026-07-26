@@ -38,7 +38,7 @@
   --text-strong: #ffffff;
   --text-body:   #c9c9dc;
   --text-muted:  #8a8aa6;
-  --text-faint:  #5c5c78;
+  --text-faint:  #8080a8;
   --text-on-piece: #0a0a12;
 
   --accent:         var(--piece-i);

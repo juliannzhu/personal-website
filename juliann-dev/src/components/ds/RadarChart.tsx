@@ -58,7 +58,7 @@ export function RadarChart({ points, size = 300 }: { points: RadarPoint[]; size?
               {p.label}
             </text>
             <text x={x} y={y + 8} textAnchor={anchor} dominantBaseline="middle"
-              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', fill: 'var(--text-muted)' }}>
+              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', fill: 'var(--text-muted)' }}>
               {p.value}/{p.max ?? 10}
             </text>
           </g>

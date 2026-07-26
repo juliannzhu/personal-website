@@ -195,7 +195,7 @@ function ProjectCard({ p, onOpen }: { p: Project; onOpen: (id: string) => void }
     <Card accent={p.piece} interactive accentBar onClick={() => onOpen(p.id)} style={{ display: 'flex', flexDirection: 'column', height: '100%', cursor: 'pointer' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Tetromino piece={p.piece} size={14} />
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)' }}>{p.year}</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-faint)' }}>{p.year}</span>
       </div>
       <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.8125rem', color: 'var(--text-strong)', margin: '20px 0 0', textTransform: 'uppercase', lineHeight: 1.4 }}>{p.title}</h3>
       <p style={{
@@ -314,7 +314,7 @@ function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 28 }}>
         <Tetromino piece={p.piece} size={18} />
         <div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 6 }}>{`// ${p.year}`}</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 6 }}>{`// ${p.year}`}</div>
           <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.375rem', color: 'var(--text-strong)', margin: 0, textTransform: 'uppercase' }}>{p.title}</h2>
         </div>
       </div>
@@ -388,7 +388,7 @@ export function Projects({ resetSignal }: { resetSignal?: number } = {}) {
     <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, marginBottom: 28 }}>
         <div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Completed lines</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Completed lines</div>
           <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Build Log</h2>
         </div>
         <ScrollTetromino3D

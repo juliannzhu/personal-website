@@ -27,7 +27,7 @@ function ensureCSS() {
 const NAME_COLORS: Piece[] = ['i', 'o', 't', 's', 'z', 'j', 'l']
 
 function Kicker({ children, piece }: { children: string; piece: Piece }) {
-  return <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: `var(--piece-${piece})`, marginBottom: 14 }}>{`// ${children}`}</div>
+  return <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: `var(--piece-${piece})`, marginBottom: 14 }}>{`// ${children}`}</div>
 }
 
 function Bullets({ items, piece }: { items: string[]; piece: Piece }) {
