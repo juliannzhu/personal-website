@@ -31,10 +31,10 @@ export function RadarChart({ points, size = 300 }: { points: RadarPoint[]; size?
   return (
     <svg viewBox={`0 0 ${size} ${size}`} width="100%" style={{ maxWidth: size, display: 'block', margin: '0 auto', overflow: 'visible' }}>
       {ringPolys.map((poly, i) => (
-        <polygon key={i} points={poly} fill="none" stroke="var(--border-hairline)" strokeWidth={1} opacity={0.7} />
+        <polygon key={i} points={poly} fill="none" stroke="var(--text-muted)" strokeWidth={1} opacity={0.4} />
       ))}
       {axisEnds.map(([x, y], i) => (
-        <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--border-hairline)" strokeWidth={1} opacity={0.7} />
+        <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--text-muted)" strokeWidth={1} opacity={0.4} />
       ))}
       <polygon
         className="tj-radar-poly"
