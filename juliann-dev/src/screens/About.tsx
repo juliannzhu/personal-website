@@ -93,7 +93,7 @@ const JSTRIS_STATS: [string, string, string, string][] = [
 const ATTRIBUTES = [
   { key: 'str', label: 'STR', desc: 'Backend & systems',       value: 6, piece: 'z' as const },
   { key: 'cha', label: 'CHA', desc: 'UX & human impact',       value: 8, piece: 'l' as const },
-  { key: 'dex', label: 'DEX', desc: 'Piano & UI crafting',     value: 9, piece: 'o' as const },
+  { key: 'dex', label: 'DEX', desc: 'Precision & UI crafting', value: 9, piece: 'o' as const },
   { key: 'vit', label: 'VIT', desc: 'Resilience & debugging',  value: 7, piece: 's' as const },
   { key: 'agi', label: 'AGI', desc: 'Frontend performance',    value: 7, piece: 'i' as const },
   { key: 'int', label: 'INT', desc: 'AI & LLM research',       value: 9, piece: 't' as const },
@@ -183,7 +183,7 @@ export function About() {
 
   return (
     <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px', position: 'relative' }}>
-      <SectionTitle kicker="// Player 1">About</SectionTitle>
+      <SectionTitle kicker="// Player 1">About Me</SectionTitle>
       {/* Floated in the gutter between the two grid columns, level with the "About"
           heading above the Juliann Zhu / Skill Meter row. */}
       <ScrollTetromino3D
@@ -267,7 +267,7 @@ export function About() {
             <div style={{ marginBottom: 12 }}>
               <Tabs
                 piece="i"
-                items={[{ value: 'skills', label: 'Skill Meter' }, { value: 'stack', label: 'How I Stack' }]}
+                items={[{ value: 'skills', label: 'The Stack' }, { value: 'stack', label: 'Attributes' }]}
                 value={statsTab}
                 onChange={(v) => setStatsTab(v as 'skills' | 'stack')}
               />
