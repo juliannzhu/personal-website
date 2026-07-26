@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Icon } from '@iconify/react'
 import { Card } from '../components/ds/Card'
 import { Tag } from '../components/ds/Tag'
@@ -307,8 +307,12 @@ function ProjectCarousel({ images, c }: { images: string[]; c: string }) {
 function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
   const c = `var(--piece-${p.piece})`
   const images = p.images ?? []
+  const topRef = useRef<HTMLDivElement>(null)
+  // Opening a project from partway down the grid would otherwise land on its detail
+  // page still scrolled to that position — snap the scroll stack back to the top of it.
+  useEffect(() => { topRef.current?.scrollIntoView({ block: 'start' }) }, [])
   return (
-    <section className="tj-project-detail" style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 72px' }}>
+    <section ref={topRef} className="tj-project-detail" style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 72px' }}>
       <BackButton c={c} onBack={onBack} />
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 28 }}>
