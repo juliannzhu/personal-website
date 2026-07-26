@@ -1228,7 +1228,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
   }, [])
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', height: `calc(100vh - ${HEADER_H + FOOTER_H}px)`, overflow: 'hidden' }}>
+    <div ref={containerRef} className="tj-quest-carousel" style={{ position: 'relative', height: `calc(100vh - ${HEADER_H + FOOTER_H}px)`, overflow: 'hidden' }}>
       {/* height matches TILE_H and centers its content with flex, so the title block's
           vertical center lines up exactly with the tile cards' vertical center regardless
           of how many lines the copy wraps to. */}
@@ -1343,6 +1343,23 @@ export function SideQuests({ resetSignal }: { resetSignal?: number } = {}) {
   // Bumped by App.tsx when "Quests" is clicked again while already on this section —
   // closes whatever quest detail is open so the full tile grid is visible again.
   useEffect(() => { setOpenId(null) }, [resetSignal])
+
+  // Opening a quest from partway down the carousel would otherwise land on its detail
+  // page still scrolled to that position — snap back to the top of it. All QuestDetail
+  // layout variants (bento/marquee/polaroid/filmstrip/default) share this class.
+  useEffect(() => {
+    if (openId) document.querySelector('.tj-quest-detail')?.scrollIntoView({ block: 'start' })
+  }, [openId])
+
+  // Likewise, scrolling down within a quest detail page and then hitting Back would
+  // otherwise leave the scroll position wherever it was — which can land past the
+  // carousel, in Now/Contact. Only fires on an actual detail-to-carousel transition,
+  // not on first mount (prevOpenId starts null too, so the condition below stays false).
+  const prevOpenId = useRef<string | null>(null)
+  useEffect(() => {
+    if (prevOpenId.current && !openId) document.querySelector('.tj-quest-carousel')?.scrollIntoView({ block: 'start' })
+    prevOpenId.current = openId
+  }, [openId])
 
   if (openId) {
     const quest = QUESTS.find(q => q.id === openId)!
