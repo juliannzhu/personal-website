@@ -49,7 +49,6 @@ body::before {
   .tj-about-grid { grid-template-columns: 1fr !important; }
   .tj-contact-grid { grid-template-columns: 1fr !important; }
   .tj-stats-grid { grid-template-columns: 1fr 1fr !important; }
-  .tj-radar-grid { grid-template-columns: 1fr !important; }
 
   /* hero padding so it clears the mobile nav */
   .tj-hero-section { padding-top: 24px !important; }

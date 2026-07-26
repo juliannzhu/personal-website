@@ -5,6 +5,7 @@ import { Tag } from '../components/ds/Tag'
 import { Tetromino } from '../components/ds/Tetromino'
 import { Avatar } from '../components/ds/Avatar'
 import { RadarChart } from '../components/ds/RadarChart'
+import { Tabs } from '../components/ds/Tabs'
 import { ScrollTetromino3D } from '../components/ScrollTetromino3D'
 
 const SKILLS = [
@@ -90,12 +91,12 @@ const JSTRIS_STATS: [string, string, string, string][] = [
 ]
 
 const ATTRIBUTES = [
-  { key: 'str', label: 'STR', name: 'Strength',     desc: 'Backend/Systems Processing: handling heavy computations and low-level code.', value: 6, piece: 'z' as const },
-  { key: 'agi', label: 'AGI', name: 'Agility',      desc: 'Frontend Performance: writing fluid animations and highly responsive, fast web interfaces.', value: 7, piece: 'i' as const },
-  { key: 'int', label: 'INT', name: 'Intelligence', desc: 'AI & LLM Research: technical depth across data, models, and machine learning.', value: 9, piece: 't' as const },
-  { key: 'vit', label: 'VIT', name: 'Vitality',     desc: 'Resilience / Bug Fixing: untangling chaotic logic and surviving intense study terms.', value: 7, piece: 's' as const },
-  { key: 'dex', label: 'DEX', name: 'Dexterity',    desc: 'Piano & UI Crafting: fine motor skills, typing speed, and aesthetic precision.', value: 9, piece: 'o' as const },
-  { key: 'cha', label: 'CHA', name: 'Charisma',     desc: 'User Experience & Human Impact: designing tools that make people happy.', value: 8, piece: 'l' as const },
+  { key: 'str', label: 'STR', desc: 'Backend & systems',       value: 6, piece: 'z' as const },
+  { key: 'cha', label: 'CHA', desc: 'UX & human impact',       value: 8, piece: 'l' as const },
+  { key: 'dex', label: 'DEX', desc: 'Piano & UI crafting',     value: 9, piece: 'o' as const },
+  { key: 'vit', label: 'VIT', desc: 'Resilience & debugging',  value: 7, piece: 's' as const },
+  { key: 'agi', label: 'AGI', desc: 'Frontend performance',    value: 7, piece: 'i' as const },
+  { key: 'int', label: 'INT', desc: 'AI & LLM research',       value: 9, piece: 't' as const },
 ]
 
 function SectionTitle({ kicker, children, size = 26 }: { kicker: string; children: string; size?: number }) {
@@ -133,19 +134,51 @@ function ensureAboutCSS() {
   }
 }
 
+const ABOUT_GRID_BREAKPOINT = 720
+
 export function About() {
   ensureAboutCSS()
-  const achievementsRef = useRef<HTMLDivElement>(null)
-  const [achHeight, setAchHeight] = useState<number>()
+  const leftColRef = useRef<HTMLDivElement>(null)
+  const firstTileRef = useRef<HTMLDivElement>(null)
+  const [statsCardHeight, setStatsCardHeight] = useState<number>()
+  const [jstrisHeight, setJstrisHeight] = useState<number>()
+  const [statsTab, setStatsTab] = useState<'skills' | 'stack'>('skills')
 
+  // Two alignments, both only meaningful in the two-column (desktop) layout:
+  // the Player Stats card's bottom (plus the 20px gap above the Jstris card)
+  // lines up with the top of the first Achievements Unlocked tile, and the
+  // Jstris card's own bottom lines up with the bottom of the last tile (the
+  // RCM Piano Certificate). Below the ABOUT_GRID_BREAKPOINT the grid collapses
+  // to a single column, so the two heights are reset to auto.
   useLayoutEffect(() => {
-    const el = achievementsRef.current
-    if (!el) return
-    const ro = new ResizeObserver((entries) => {
-      for (const entry of entries) setAchHeight(entry.contentRect.height)
-    })
-    ro.observe(el)
-    return () => ro.disconnect()
+    const col = leftColRef.current
+    const tile = firstTileRef.current
+    if (!col || !tile) return
+    const recompute = () => {
+      if (window.innerWidth <= ABOUT_GRID_BREAKPOINT) {
+        setStatsCardHeight(undefined)
+        setJstrisHeight(undefined)
+        return
+      }
+      const colRect = col.getBoundingClientRect()
+      const cardHeight = tile.getBoundingClientRect().top - colRect.top - 20
+      setStatsCardHeight(cardHeight)
+      setJstrisHeight(colRect.height - cardHeight - 20)
+    }
+    const ro = new ResizeObserver(recompute)
+    ro.observe(col)
+    recompute()
+    window.addEventListener('resize', recompute)
+    // The whole section fades/scales in via the ancestor RevealOnScroll wrapper
+    // (see that component) — a measurement taken mid-transition is captured at
+    // <1 scale and comes out slightly too small. Re-measure once that settles.
+    const revealEl = col.closest('.tj-reveal')
+    revealEl?.addEventListener('transitionend', recompute)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', recompute)
+      revealEl?.removeEventListener('transitionend', recompute)
+    }
   }, [])
 
   return (
@@ -166,7 +199,7 @@ export function About() {
         style={{ position: 'absolute', top: 85, left: 420, opacity: 0.72, zIndex: 1 }}
       />
       <div className="tj-about-grid" style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 40, alignItems: 'start' }}>
-        <div>
+        <div ref={leftColRef}>
           <div style={{ display: 'flex', gap: 18, alignItems: 'center', marginBottom: 24 }}>
             <Avatar initials="JZ" piece="t" size="xl" />
             <div>
@@ -195,7 +228,7 @@ export function About() {
             <Tag piece="l">Full Stack Development</Tag>
           </div>
 
-          <div ref={achievementsRef} style={{ marginTop: 40 }}>
+          <div style={{ marginTop: 40 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 16 }}>
               <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', color: 'var(--piece-o)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Achievements Unlocked</h3>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)' }}>6 / 6</span>
@@ -204,7 +237,7 @@ export function About() {
               {TIMELINE.map((t, i) => {
                 const c = `var(--piece-${t.piece})`
                 return (
-                  <div key={i} style={{
+                  <div key={i} ref={i === 0 ? firstTileRef : undefined} style={{
                     display: 'flex', gap: 12, alignItems: 'flex-start',
                     padding: '10px 12px 10px 14px',
                     background: `color-mix(in srgb, ${c} 7%, var(--bg-well))`,
@@ -228,22 +261,52 @@ export function About() {
           </div>
         </div>
 
-        <div>
-          <Card accent="i" accentBar>
-            <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.875rem', color: 'var(--text-strong)', margin: '0 0 20px', textTransform: 'uppercase' }}>Skill Meter</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {SKILLS.map((s) => (
-                <ProgressBar key={s.name} value={s.value} piece={s.piece} label={s.name} cells={12} cellHeight={14} />
-              ))}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <Card accent="i" accentBar style={{ height: statsCardHeight, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.875rem', color: 'var(--text-strong)', margin: '0 0 12px', textTransform: 'uppercase' }}>Player Stats</h3>
+            <div style={{ marginBottom: 12 }}>
+              <Tabs
+                piece="i"
+                items={[{ value: 'skills', label: 'Skill Meter' }, { value: 'stack', label: 'How I Stack' }]}
+                value={statsTab}
+                onChange={(v) => setStatsTab(v as 'skills' | 'stack')}
+              />
             </div>
+            {statsTab === 'skills' ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
+                {SKILLS.map((s) => (
+                  <ProgressBar key={s.name} value={s.value} piece={s.piece} label={s.name} cells={12} cellHeight={11} />
+                ))}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                <div style={{ marginTop: 14 }}>
+                  <RadarChart size={320} points={ATTRIBUTES.map((a) => ({ key: a.key, label: a.label, value: a.value, piece: a.piece }))} />
+                </div>
+                {/* This spacer fills everything below the chart, then centers the
+                    attribute list within it — so the list sits evenly between the
+                    chart's bottom and the panel's bottom, not glued to either. */}
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1, width: '100%' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(3, auto)', gridAutoFlow: 'column', gap: '16px 16px', width: '100%' }}>
+                    {ATTRIBUTES.map((a) => (
+                      <div key={a.key} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: `var(--piece-${a.piece})`, flexShrink: 0 }} />
+                        <div style={{ display: 'flex', gap: 6, alignItems: 'baseline', minWidth: 0 }}>
+                          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.06em', flexShrink: 0 }}>{a.label}</span>
+                          <span style={{ fontSize: '0.6875rem', color: 'var(--text-faint)', whiteSpace: 'nowrap' }}>{a.desc}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </Card>
 
-          {/* Bottom-right: Jstris profile card, height synced to Achievements Unlocked.
-              Subtract 28px: this column starts ~28px lower than the achievements column
-              (Skill Meter card is taller than the bio header above it), so matching
-              raw heights would overshoot the achievements block's bottom edge. */}
+          {/* Jstris profile card is sized so its own bottom edge lines up with the
+              bottom of the last Achievements Unlocked tile (RCM Piano Certificate). */}
           <div style={{
-            marginTop: 20, minHeight: achHeight ? achHeight - 28 : achHeight,
+            marginTop: 20, height: jstrisHeight, flexShrink: 0,
             border: '2px solid var(--border-hairline)', borderRadius: 'var(--radius-1)',
             background: 'var(--bg-well)', overflow: 'hidden',
             display: 'flex', flexDirection: 'column',
@@ -300,26 +363,6 @@ export function About() {
             </div>
           </div>
         </div>
-      </div>
-
-      <div style={{ marginTop: 32 }}>
-        <SectionTitle kicker="// Player stats" size={20}>How I Stack</SectionTitle>
-        <Card accent="t" accentBar>
-          <div className="tj-radar-grid" style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: 24, alignItems: 'center' }}>
-            <RadarChart size={380} points={ATTRIBUTES.map((a) => ({ key: a.key, label: a.label, value: a.value, piece: a.piece }))} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
-              {ATTRIBUTES.map((a) => (
-                <div key={a.key} style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
-                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: `var(--piece-${a.piece})`, flexShrink: 0, marginBottom: 1 }} />
-                  <div style={{ minWidth: 0 }}>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{a.label} · {a.name}</span>
-                    <span style={{ fontSize: '0.7188rem', color: 'var(--text-faint)', lineHeight: 1.4 }}> · {a.desc}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
       </div>
     </section>
   )
