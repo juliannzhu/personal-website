@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback, forwardRef } from 'react'
+import { useRef, useState, useEffect, useLayoutEffect, useCallback, forwardRef } from 'react'
 import { Icon } from '@iconify/react'
 import { Button } from '../../components/ds/Button'
 import { Tetromino } from '../../components/ds/Tetromino'
@@ -645,6 +645,28 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
   const [restartProgress, setRestartProgress] = useState(0)
   const yourRowRef = useRef<HTMLDivElement>(null)
 
+  // Pixel-perfect cross-column alignment: Settings tile <-> Time tile, leaderboard bottom <-> board bottom.
+  // Measured (not hardcoded) because tile heights depend on rendered text metrics for the pixel fonts.
+  const timeStatRef = useRef<HTMLDivElement>(null)
+  const nextPanelRef = useRef<HTMLDivElement>(null)
+  const leaderboardRef = useRef<HTMLDivElement>(null)
+  const [settingsBox, setSettingsBox] = useState<{ marginTop: number; height: number }>({ marginTop: 12, height: 97 })
+  const [leaderboardHeight, setLeaderboardHeight] = useState<number | undefined>(undefined)
+
+  useLayoutEffect(() => {
+    const recompute = () => {
+      if (!timeStatRef.current || !nextPanelRef.current || !leaderboardRef.current) return
+      const timeRect = timeStatRef.current.getBoundingClientRect()
+      const nextPanelRect = nextPanelRef.current.getBoundingClientRect()
+      setSettingsBox({ marginTop: timeRect.top - nextPanelRect.bottom, height: timeRect.height })
+      setLeaderboardHeight(timeRect.bottom - leaderboardRef.current.getBoundingClientRect().top)
+    }
+    recompute()
+    document.fonts?.ready.then(recompute)
+    window.addEventListener('resize', recompute)
+    return () => window.removeEventListener('resize', recompute)
+  }, [])
+
   const dasTimer  = useRef<ReturnType<typeof setTimeout> | null>(null)
   const arrTimer  = useRef<ReturnType<typeof setInterval> | null>(null)
   const softTimer = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -937,8 +959,8 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
   const panel: React.CSSProperties = { background: 'var(--ink-1000)', border: '2px solid var(--border-strong)' }
   const panelHead: React.CSSProperties = { fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12, textAlign: 'center' }
 
-  const BigStat = ({ label, val, color }: { label: string; val: string; color: string }) => (
-    <div style={{ flex: 1, ...panel, padding: '12px 8px', textAlign: 'center' }}>
+  const BigStat = ({ label, val, color, boxRef }: { label: React.ReactNode; val: string; color: string; boxRef?: React.Ref<HTMLDivElement> }) => (
+    <div ref={boxRef} style={{ flex: 1, ...panel, padding: '12px 8px', textAlign: 'center' }}>
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', letterSpacing: '0.14em', color: 'var(--text-faint)', textTransform: 'uppercase' }}>{label}</div>
       <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.125rem', color, marginTop: 8 }}>{val}</div>
     </div>
@@ -968,6 +990,14 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
                 {st.hold ? <MiniPiece type={st.hold} /> : <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)' }}>{keyLabel(keybinds.hold)}</span>}
               </div>
             </button>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', lineHeight: 1.9, color: 'var(--text-faint)', textAlign: 'center' }}>
+              {keyLabel(keybinds.left)}{keyLabel(keybinds.right)} MOVE<br/>
+              {keyLabel(keybinds.rotateCW)} ROTATE<br/>
+              {keyLabel(keybinds.softDrop)} SOFT<br/>
+              {keyLabel(keybinds.hardDrop)} HARD<br/>
+              {keyLabel(keybinds.hold)} HOLD<br/>
+              ESC QUIT
+            </div>
           </div>
 
           {/* BOARD */}
@@ -1010,40 +1040,40 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
             </div>
             <div style={{ display: 'flex', gap: 10, width: COLS * CELL + 20 }}>
               <BigStat label="Lines Left" val={String(linesLeft)} color={linesLeft === 0 ? 'var(--piece-s)' : 'var(--piece-i)'} />
-              <BigStat label="Time" val={fmtTime(elapsed)} color="var(--piece-o)" />
+              <BigStat label={<>Time<br/>Elapsed</>} val={fmtTime(elapsed)} color="var(--piece-o)" boxRef={timeStatRef} />
             </div>
           </div>
 
           {/* NEXT + controls + settings */}
-          <div style={{ width: 96, position: 'relative', display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ ...panel, padding: 12 }}>
+          <div style={{ width: 96, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+            <div ref={nextPanelRef} style={{ ...panel, padding: 12 }}>
               <div style={panelHead}>Next</div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-                {st.queue.slice(0, 5).map((t, i) => <MiniPiece key={i} type={t} cell={i === 0 ? 13 : 11} />)}
+                {st.queue.slice(0, 5).map((t, i) => {
+                  const cell = i === 0 ? 13 : 11
+                  // fixed slot size (tallest piece is 4 cells) so the panel height
+                  // never changes as different piece shapes cycle through the queue
+                  const slot = 4 * cell + 3 * 2
+                  return (
+                    <div key={i} style={{ height: slot, width: slot, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <MiniPiece type={t} cell={cell} />
+                    </div>
+                  )
+                })}
               </div>
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', lineHeight: 1.9, color: 'var(--text-faint)', textAlign: 'center' }}>
-              {keyLabel(keybinds.left)}{keyLabel(keybinds.right)} MOVE<br/>
-              {keyLabel(keybinds.rotateCW)} ROTATE<br/>
-              {keyLabel(keybinds.softDrop)} SOFT<br/>
-              {keyLabel(keybinds.hardDrop)} HARD<br/>
-              {keyLabel(keybinds.hold)} HOLD<br/>
-              ESC QUIT
-            </div>
-            {/* absolutely positioned so it stays bottom-aligned with the Lines Left / Time
-                row regardless of how tall the Next preview happens to be for the current queue */}
             <button onClick={() => setShowSettings(true)}
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--piece-i)'; e.currentTarget.style.color = 'var(--piece-i)' }}
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-faint)' }}
-              style={{ position: 'absolute', top: ROWS * CELL + 32, left: 0, right: 0, height: 97, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 9, fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', textTransform: 'uppercase', color: 'var(--text-faint)', background: 'transparent', border: '2px solid var(--border-strong)', paddingTop: 4, paddingRight: 9, paddingBottom: 9, paddingLeft: 9, cursor: 'pointer', borderRadius: 'var(--radius-1)', letterSpacing: '0.04em' }}>
+              style={{ marginTop: settingsBox.marginTop, height: settingsBox.height, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 9, fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', textTransform: 'uppercase', color: 'var(--text-faint)', background: 'transparent', border: '2px solid var(--border-strong)', paddingTop: 4, paddingRight: 9, paddingBottom: 9, paddingLeft: 9, cursor: 'pointer', borderRadius: 'var(--radius-1)', letterSpacing: '0.04em' }}>
               <span style={{ fontSize: '2.75rem', lineHeight: 1 }}>⚙</span>
               <span>Settings</span>
             </button>
           </div>
 
           {/* LEADERBOARD */}
-          <div style={{ width: 260, padding: 18, background: 'color-mix(in srgb, var(--ink-1000) 92%, transparent)', border: '2px solid var(--border-strong)', boxShadow: 'var(--shadow-soft)', display: 'flex', flexDirection: 'column', maxHeight: 540 }}>
-            <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase', textAlign: 'center', paddingBottom: 14, borderBottom: '2px solid var(--border-hairline)', flexShrink: 0 }}>Fastest Sprints</div>
+          <div ref={leaderboardRef} style={{ width: 260, padding: 18, background: 'color-mix(in srgb, var(--ink-1000) 92%, transparent)', border: '2px solid var(--border-strong)', boxShadow: 'var(--shadow-soft)', display: 'flex', flexDirection: 'column', height: leaderboardHeight ?? 540 }}>
+            <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase', textAlign: 'center', paddingBottom: 14, borderBottom: '2px solid var(--border-hairline)', flexShrink: 0 }}>Leaderboard</div>
 
             {/* Scrollable scores list */}
             <div style={{ overflowY: 'auto', flex: 1, marginTop: 12, display: 'flex', flexDirection: 'column', gap: 2, scrollbarWidth: 'thin', scrollbarColor: 'var(--border-strong) transparent' }}>
