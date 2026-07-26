@@ -8,6 +8,8 @@ const CSS = `
   padding:12px 16px;position:relative;transition:color var(--dur);
   border-top-left-radius:var(--radius-1);border-top-right-radius:var(--radius-1);
 }
+.tj-tabs--full{ display:flex; }
+.tj-tabs--full .tj-tab{ flex:1 1 0; text-align:center; }
 .tj-tab:hover{ color:var(--text-body); background:rgba(255,255,255,0.04); }
 .tj-tab--active{ color:var(--text-on-piece); background:var(--tab-c,var(--piece-i)); }
 .tj-tab--active::after{ content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--tab-c,var(--piece-i)); }
@@ -33,12 +35,13 @@ interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   value?: string
   onChange?: (value: string) => void
   piece?: 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
+  full?: boolean
 }
 
-export function Tabs({ items = [], value, onChange, piece = 'i', className = '', ...rest }: TabsProps) {
+export function Tabs({ items = [], value, onChange, piece = 'i', full = false, className = '', ...rest }: TabsProps) {
   ensure()
   return (
-    <div className={['tj-tabs', className].filter(Boolean).join(' ')} role="tablist" style={{ '--tab-c': `var(${PIECE[piece] || PIECE.i})` } as React.CSSProperties} {...rest}>
+    <div className={['tj-tabs', full && 'tj-tabs--full', className].filter(Boolean).join(' ')} role="tablist" style={{ '--tab-c': `var(${PIECE[piece] || PIECE.i})` } as React.CSSProperties} {...rest}>
       {items.map((it) => (
         <button key={it.value} role="tab" aria-selected={value === it.value}
           className={'tj-tab' + (value === it.value ? ' tj-tab--active' : '')}

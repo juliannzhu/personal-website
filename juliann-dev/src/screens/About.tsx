@@ -267,6 +267,7 @@ export function About() {
             <div style={{ marginBottom: 12 }}>
               <Tabs
                 piece="i"
+                full
                 items={[{ value: 'skills', label: 'The Stack' }, { value: 'stack', label: 'Attributes' }]}
                 value={statsTab}
                 onChange={(v) => setStatsTab(v as 'skills' | 'stack')}
