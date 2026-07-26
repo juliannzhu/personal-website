@@ -102,7 +102,7 @@ const ATTRIBUTES = [
 function SectionTitle({ kicker, children, size = 26 }: { kicker: string; children: string; size?: number }) {
   return (
     <div style={{ marginBottom: 28 }}>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>{kicker}</div>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>{kicker}</div>
       <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: `${size / 16}rem`, color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>{children}</h2>
     </div>
   )
@@ -231,7 +231,7 @@ export function About() {
           <div style={{ marginTop: 40 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 16 }}>
               <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', color: 'var(--piece-o)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Achievements Unlocked</h3>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)' }}>6 / 6</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)' }}>6 / 6</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {TIMELINE.map((t, i) => {
@@ -312,15 +312,15 @@ export function About() {
             background: 'var(--bg-well)', overflow: 'hidden',
             display: 'flex', flexDirection: 'column',
           }}>
-            <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-hairline)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>// jstris profile</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)' }}>jstris.jezevec10.eu</span>
+            <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-hairline)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>// jstris profile</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)' }}>jstris.jezevec10.eu</span>
             </div>
 
-            <div style={{ padding: '10px 16px', display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-hairline)' }}>
+            <div style={{ padding: '12px 16px', display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-hairline)' }}>
               <div>
                 <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.9375rem', color: 'var(--text-strong)' }}>JAMBO722</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', marginTop: 5 }}>40L PB 45.480 · 103 BLOCKS</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)', marginTop: 6 }}>40L PB 45.480 · 103 BLOCKS</div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(14, 6px)', gridTemplateRows: 'repeat(6, 6px)', gap: 1, flexShrink: 0, transform: 'translate(-8px, -8px)' }}>
                 {MINI_BOARD.flat().map((cell, i) => (
@@ -333,9 +333,9 @@ export function About() {
               </div>
             </div>
 
-            <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-hairline)' }}>
-              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5rem', color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 9 }}>PERSONAL BESTS</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+            <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-hairline)' }}>
+              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 10 }}>PERSONAL BESTS</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {JSTRIS_PBS.map((pb) => (
                   <div key={pb.label} style={{ display: 'grid', gridTemplateColumns: '38px 1fr auto', gap: 8, alignItems: 'baseline' }}>
                     <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: `var(--piece-${pb.piece})` }}>{pb.label}</span>
@@ -346,9 +346,9 @@ export function About() {
               </div>
             </div>
 
-            <div style={{ padding: '12px 16px', flex: 1 }}>
-              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5rem', color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 9 }}>ALL-TIME STATS</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 16px' }}>
+            <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 11 }}>ALL-TIME STATS</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 16px' }}>
                 {JSTRIS_STATS.flatMap(([l1, v1, l2, v2]) => [[l1, v1], [l2, v2]]).map(([label, value], i) => (
                   <div key={i}>
                     <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
@@ -356,11 +356,6 @@ export function About() {
                   </div>
                 ))}
               </div>
-            </div>
-
-            <div style={{ borderTop: '1px solid var(--border-hairline)', padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>One block at a time</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)' }}>CS @ UW · '30</span>
             </div>
           </div>
         </div>
