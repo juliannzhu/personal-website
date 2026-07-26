@@ -483,7 +483,7 @@ const BIND_ACTIONS: { key: keyof KeyBinds; label: string }[] = [
   { key: 'hardDrop',  label: 'Hard Drop'  },
   { key: 'softDrop',  label: 'Soft Drop'  },
   { key: 'hold',      label: 'Hold'       },
-  { key: 'restart',   label: 'Restart (hold 3s)' },
+  { key: 'restart',   label: 'Restart' },
 ]
 
 const SKINS: { id: GameSettings['skin']; label: string; desc: string }[] = [
@@ -883,19 +883,17 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
       else if (k === keybinds.softDrop)  { stopSoftDrop(); const interval = Math.max(1, Math.floor(800 / (settings.sdf === 41 ? 800 : settings.sdf))); softTimer.current = setInterval(() => { move(0, 1); SFX.softDrop() }, interval) }
       else if (k === keybinds.hardDrop)  hardDrop()
       else if (k === keybinds.hold)      holdPiece()
-      else if (k.toLowerCase() === keybinds.restart.toLowerCase()) beginRestartHold()
     }
 
     const onKeyUp = (e: KeyboardEvent) => {
       if (e.key === keybinds.left || e.key === keybinds.right) stopAutoRepeat()
       if (e.key === keybinds.softDrop) stopSoftDrop()
-      if (e.key.toLowerCase() === keybinds.restart.toLowerCase()) cancelRestartHold()
     }
 
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('keyup', onKeyUp)
     return () => { window.removeEventListener('keydown', onKeyDown); window.removeEventListener('keyup', onKeyUp) }
-  }, [keybinds, showSettings, enteringInitials, settings, move, rotate, hardDrop, holdPiece, startGame, stopAutoRepeat, stopSoftDrop, beginRestartHold, cancelRestartHold, onClose])
+  }, [keybinds, showSettings, enteringInitials, countdown, settings, move, rotate, hardDrop, holdPiece, startGame, stopAutoRepeat, stopSoftDrop, runCountdown, onClose])
 
   // On mount, try to load live scores if an API is configured
   useEffect(() => {
