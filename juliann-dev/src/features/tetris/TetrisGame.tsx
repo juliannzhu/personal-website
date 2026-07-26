@@ -653,7 +653,8 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
   const [showSettings, setShowSettings] = useState(false)
   const [enteringInitials, setEnteringInitials] = useState(false)
   const [initials, setInitials] = useState('')
-  const [restartProgress, setRestartProgress] = useState(0)
+  const [countdown, setCountdown] = useState<'3' | '2' | '1' | 'GO' | null>(null)
+  const countdownTimers = useRef<ReturnType<typeof setTimeout>[]>([])
   const yourRowRef = useRef<HTMLDivElement>(null)
 
   // Pixel-perfect cross-column alignment: Settings tile <-> Time tile, leaderboard bottom <-> board bottom.
@@ -681,11 +682,10 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
   const dasTimer  = useRef<ReturnType<typeof setTimeout> | null>(null)
   const arrTimer  = useRef<ReturnType<typeof setInterval> | null>(null)
   const softTimer = useRef<ReturnType<typeof setInterval> | null>(null)
-  const restartInterval = useRef<ReturnType<typeof setInterval> | null>(null)
-  const restartStart = useRef<number | null>(null)
 
   // Achievements
   ensureAchCSS()
+  ensureCountdownCSS()
   const achRef = useRef<AchStats>(loadAchStats())
   const usedHoldRef = useRef(false)
   const lastActionWasRotateRef = useRef(false)
@@ -991,11 +991,12 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
         <div style={{ display: 'flex', gap: 18, alignItems: 'stretch', flexWrap: 'wrap', justifyContent: 'center' }}>
 
           {/* HOLD */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, width: 92 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 92 }}>
             <button onClick={holdPiece} title={`Hold (${keyLabel(keybinds.hold)})`}
               style={{ ...panel, padding: 12, cursor: st.status === 'playing' ? 'pointer' : 'default', opacity: st.canHold ? 1 : 0.45, borderColor: (st.canHold && st.hold) ? 'var(--piece-t)' : 'var(--border-strong)' }}>
               <div style={panelHead}>Hold</div>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 32 }}>
+              {/* fixed slot (tallest piece is 4 cells) so the button height never changes with the held piece */}
+              <div style={{ height: 58, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 {st.hold ? <MiniPiece type={st.hold} /> : <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)' }}>{keyLabel(keybinds.hold)}</span>}
               </div>
             </button>
