@@ -36,6 +36,11 @@ body::before {
 
 /* ---- mobile ---- */
 @media (max-width: 720px) {
+  /* Root rem scale shrinks down to 14px on desktop's fluid clamp, which reads too
+     small on phones — hold it a step above the desktop baseline instead so every
+     rem-sized description/caption/tag across the site bumps up together. */
+  html { font-size: 17px !important; }
+
   nav { display: none !important; }
   .tj-mobile-nav { display: flex !important; }
   .tj-hud { display: none !important; }
@@ -60,6 +65,10 @@ body::before {
 
   /* hero padding so it clears the mobile nav */
   .tj-hero-section { padding-top: 24px !important; }
+
+  /* name is the first thing on the page — give it more presence than the general
+     text bump above on its own would */
+  .tj-heroname { font-size: clamp(2.75rem, 12vw, 4.25rem) !important; }
 
   /* reduce section padding */
   section { padding-left: 16px !important; padding-right: 16px !important; }
