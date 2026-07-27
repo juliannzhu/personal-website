@@ -4,6 +4,20 @@ import { Button } from '../../components/ds/Button'
 import { Tetromino } from '../../components/ds/Tetromino'
 import { SFX } from '../../audio/soundEngine'
 
+// Same 720px breakpoint the rest of the site uses for mobile — the game swaps its whole
+// layout (touch controls, stacked HUD) below this instead of just scaling down.
+const MOBILE_BREAKPOINT = '(max-width: 720px)'
+function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.matchMedia(MOBILE_BREAKPOINT).matches)
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_BREAKPOINT)
+    const onChange = () => setIsMobile(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  return isMobile
+}
+
 // ---- piece data -------------------------------------------------------
 type PieceKey = 'I' | 'O' | 'T' | 'S' | 'Z' | 'J' | 'L'
 type ColorKey = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
@@ -259,6 +273,7 @@ function AchTile({ a, stats, hovered, onHover }: { a: Achievement; stats: AchSta
 }
 
 function AchievementsModal({ stats, onClose }: { stats: AchStats; onClose: () => void }) {
+  const isMobile = useIsMobile()
   const [hoveredId, setHoveredId] = useState<string>(ACHIEVEMENTS[0].id)
   const hovered = ACHIEVEMENTS.find((a) => a.id === hoveredId) ?? ACHIEVEMENTS[0]
   const unlockedCount = ACHIEVEMENTS.filter((a) => a.unlocked(stats)).length
@@ -268,8 +283,8 @@ function AchievementsModal({ stats, onClose }: { stats: AchStats; onClose: () =>
   return (
     <div
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
-      style={{ position: 'fixed', inset: 0, zIndex: 9600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,5,9,0.82)', backdropFilter: 'blur(6px)' }}>
-      <div style={{ background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', width: 720, maxHeight: '88vh', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-1)', overflow: 'hidden', boxShadow: '0 0 40px rgba(0,0,0,0.6)' }}>
+      style={{ position: 'fixed', inset: 0, zIndex: 9600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,5,9,0.82)', backdropFilter: 'blur(6px)', padding: isMobile ? 12 : 0 }}>
+      <div style={{ background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', width: isMobile ? '100%' : 720, maxWidth: 720, maxHeight: '88vh', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-1)', overflow: 'hidden', boxShadow: '0 0 40px rgba(0,0,0,0.6)' }}>
 
         {/* Title bar */}
         <div style={{ display: 'flex', alignItems: 'center', padding: '14px 18px', borderBottom: '2px solid var(--border-strong)', background: 'var(--ink-900)', flexShrink: 0 }}>
@@ -280,10 +295,11 @@ function AchievementsModal({ stats, onClose }: { stats: AchStats; onClose: () =>
           <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', fontSize: '1.25rem', lineHeight: 1, padding: '0 4px' }}>✕</button>
         </div>
 
-        {/* Grid + side detail panel, side by side so the panel's varying content (some
-            achievements have a progress bar, some don't) never resizes the modal itself. */}
-        <div style={{ display: 'flex', gap: 16, padding: 18, overflow: 'hidden' }}>
-          <div style={{ flex: 1, minWidth: 0, display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 10, overflowY: 'auto', alignContent: 'start' }}>
+        {/* Grid + side detail panel, side by side on desktop so the panel's varying content (some
+            achievements have a progress bar, some don't) never resizes the modal itself. Stacked
+            on mobile instead, since there's no room for two columns. */}
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 16, padding: 18, overflow: isMobile ? 'auto' : 'hidden' }}>
+          <div style={{ flex: 1, minWidth: 0, display: 'grid', gridTemplateColumns: `repeat(${isMobile ? 3 : 4}, minmax(0, 1fr))`, gap: 10, overflowY: isMobile ? 'visible' : 'auto', alignContent: 'start' }}>
             {ACHIEVEMENTS.map((a) => (
               <AchTile key={a.id} a={a} stats={stats} hovered={hoveredId === a.id} onHover={() => setHoveredId(a.id)} />
             ))}
@@ -291,7 +307,7 @@ function AchievementsModal({ stats, onClose }: { stats: AchStats; onClose: () =>
 
           {/* Detail panel for the hovered/selected achievement — fixed width, and the progress
               bar's space is always reserved (hidden, not removed) so its own height never changes either. */}
-          <aside style={{ width: 200, flexShrink: 0, display: 'flex', flexDirection: 'column', padding: '18px 16px', background: 'var(--bg-well)', border: `2px solid ${c}`, borderRadius: 'var(--radius-1)' }}>
+          <aside style={{ width: isMobile ? '100%' : 200, flexShrink: 0, display: 'flex', flexDirection: 'column', padding: '18px 16px', background: 'var(--bg-well)', border: `2px solid ${c}`, borderRadius: 'var(--radius-1)' }}>
             <div style={{
               width: 44, height: 44, borderRadius: 'var(--radius-1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginBottom: 14,
               background: hovered.unlocked(stats) ? c : 'transparent',
@@ -500,6 +516,7 @@ interface SettingsModalProps {
 }
 
 function SettingsModal({ settings, keybinds, onSave, onClose }: SettingsModalProps) {
+  const isMobile = useIsMobile()
   const [tab, setTab] = useState<string>('controls')
   const [s, setS] = useState<GameSettings>({ ...settings })
   const [k, setK] = useState<KeyBinds>({ ...keybinds })
@@ -522,8 +539,8 @@ function SettingsModal({ settings, keybinds, onSave, onClose }: SettingsModalPro
   return (
     <div
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
-      style={{ position: 'fixed', inset: 0, zIndex: 9600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,5,9,0.82)', backdropFilter: 'blur(6px)' }}>
-      <div style={{ ...panel, width: 440, maxHeight: '88vh', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-1)', overflow: 'hidden', boxShadow: '0 0 40px rgba(0,0,0,0.6)' }}>
+      style={{ position: 'fixed', inset: 0, zIndex: 9600, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,5,9,0.82)', backdropFilter: 'blur(6px)', padding: isMobile ? 12 : 0 }}>
+      <div style={{ ...panel, width: isMobile ? '100%' : 440, maxWidth: 440, maxHeight: '88vh', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-1)', overflow: 'hidden', boxShadow: '0 0 40px rgba(0,0,0,0.6)' }}>
 
         {/* Title bar */}
         <div style={{ display: 'flex', alignItems: 'center', padding: '12px 18px', borderBottom: '2px solid var(--border-strong)', background: 'var(--ink-900)', flexShrink: 0 }}>
@@ -639,9 +656,38 @@ function SettingsModal({ settings, keybinds, onSave, onClose }: SettingsModalPro
   )
 }
 
+// ---- Touch controls (mobile) -------------------------------------------------------
+// Pointer Events (not touch+click) so the same handler covers touch and mouse without
+// double-firing. onDown covers both tap actions (rotate/hold/hard-drop) and the start of
+// a held action (move/soft-drop); onUp stops the held action's repeat, if it has one.
+function CtrlBtn({ icon, label, accent, wide, onDown, onUp }: {
+  icon?: string; label?: string; accent?: string; wide?: boolean
+  onDown: () => void; onUp?: () => void
+}) {
+  return (
+    <button
+      onPointerDown={(e) => { e.preventDefault(); onDown() }}
+      onPointerUp={onUp}
+      onPointerLeave={onUp}
+      onPointerCancel={onUp}
+      onContextMenu={(e) => e.preventDefault()}
+      style={{
+        flex: wide ? 2 : 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4,
+        padding: '12px 4px', minHeight: 52, cursor: 'pointer', touchAction: 'none', userSelect: 'none',
+        WebkitUserSelect: 'none', WebkitTapHighlightColor: 'transparent',
+        background: 'var(--bg-well)', border: `2px solid ${accent ?? 'var(--border-strong)'}`, borderRadius: 'var(--radius-1)',
+        color: accent ?? 'var(--text-muted)',
+      }}>
+      {icon && <Icon icon={icon} style={{ fontSize: '1.375rem' }} />}
+      {label && <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.02em' }}>{label}</span>}
+    </button>
+  )
+}
+
 // ---- TetrisGame -------------------------------------------------------
 export function TetrisGame({ onClose }: { onClose: () => void }) {
   const CELL = 20
+  const isMobile = useIsMobile()
   const g = useRef<GameState>(freshState('ready'))
   const [, force] = useState(0)
   const [, setClock] = useState(0)
@@ -823,6 +869,23 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     if (softTimer.current) { clearInterval(softTimer.current); softTimer.current = null }
   }, [])
 
+  // Shared by the keyboard handler and the on-screen touch buttons: an initial move plus
+  // a DAS-delayed auto-repeat, so both input paths feel identical.
+  const startMoveRepeat = useCallback((dir: -1 | 1) => {
+    const { arr, das } = settings
+    move(dir, 0); SFX.move(); stopAutoRepeat()
+    dasTimer.current = setTimeout(() => {
+      if (arr === 0) { while (move(dir, 0)) SFX.move() }
+      else { arrTimer.current = setInterval(() => { move(dir, 0); SFX.move() }, arr) }
+    }, das)
+  }, [settings, move, stopAutoRepeat])
+
+  const startSoftDropRepeat = useCallback(() => {
+    stopSoftDrop()
+    const interval = Math.max(1, Math.floor(800 / (settings.sdf === 41 ? 800 : settings.sdf)))
+    softTimer.current = setInterval(() => { move(0, 1); SFX.softDrop() }, interval)
+  }, [settings, move, stopSoftDrop])
+
   const STEP_MS = 650
   const runCountdown = useCallback(() => {
     if (countdown || g.current.status !== 'playing') return
@@ -875,11 +938,11 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
       }
       if (k.toLowerCase() === keybinds.restart.toLowerCase()) { runCountdown(); return }
       // playing
-      if (k === keybinds.left)       { e.preventDefault(); const s = settings; const arr = s.arr; const das = s.das; move(-1, 0); SFX.move(); stopAutoRepeat(); dasTimer.current = setTimeout(() => { if (arr === 0) { while (move(-1, 0)) { SFX.move() } } else { arrTimer.current = setInterval(() => { move(-1, 0); SFX.move() }, arr) } }, das) }
-      else if (k === keybinds.right) { e.preventDefault(); const s = settings; const arr = s.arr; const das = s.das; move(1, 0); SFX.move(); stopAutoRepeat(); dasTimer.current = setTimeout(() => { if (arr === 0) { while (move(1, 0)) { SFX.move() } } else { arrTimer.current = setInterval(() => { move(1, 0); SFX.move() }, arr) } }, das) }
+      if (k === keybinds.left)       { e.preventDefault(); startMoveRepeat(-1) }
+      else if (k === keybinds.right) { e.preventDefault(); startMoveRepeat(1) }
       else if (k === keybinds.rotateCW)  rotate()
       else if (k === keybinds.rotateCCW) rotate()
-      else if (k === keybinds.softDrop)  { stopSoftDrop(); const interval = Math.max(1, Math.floor(800 / (settings.sdf === 41 ? 800 : settings.sdf))); softTimer.current = setInterval(() => { move(0, 1); SFX.softDrop() }, interval) }
+      else if (k === keybinds.softDrop)  startSoftDropRepeat()
       else if (k === keybinds.hardDrop)  hardDrop()
       else if (k === keybinds.hold)      holdPiece()
     }
@@ -892,7 +955,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('keyup', onKeyUp)
     return () => { window.removeEventListener('keydown', onKeyDown); window.removeEventListener('keyup', onKeyUp) }
-  }, [keybinds, showSettings, enteringInitials, countdown, settings, move, rotate, hardDrop, holdPiece, startGame, stopAutoRepeat, stopSoftDrop, runCountdown, onClose])
+  }, [keybinds, showSettings, enteringInitials, countdown, settings, move, rotate, hardDrop, holdPiece, startGame, startMoveRepeat, startSoftDropRepeat, runCountdown, onClose])
 
   // On mount, try to load live scores if an API is configured
   useEffect(() => {
@@ -974,19 +1037,160 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     </div>
   )
 
+  // Ready/won/topout/countdown overlays sit inside the board frame identically on both
+  // layouts — built once so mobile and desktop never drift out of sync with each other.
+  const boardOverlays = (
+    <>
+      {st.status === 'ready' && !countdown && (
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 18, background: 'rgba(5,5,9,0.8)', textAlign: 'center', padding: 20 }}>
+          <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1rem', color: 'var(--piece-o)', textTransform: 'uppercase', textShadow: '0 3px 0 rgba(0,0,0,0.5)' }}>20-Line Sprint</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: 180, lineHeight: 1.6 }}>Clear 20 lines as fast as you can.</div>
+          <Button size="md" onClick={startGame} style={{ '--b': 'var(--piece-o)', '--b-lit': 'var(--piece-o-lit)', '--b-dim': 'var(--piece-o-dim)', color: 'var(--text-on-piece)' } as React.CSSProperties}>Start</Button>
+        </div>
+      )}
+      {st.status === 'won' && !enteringInitials && (
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, background: 'rgba(5,5,9,0.86)' }}>
+          <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.125rem', color: 'var(--piece-s)', textTransform: 'uppercase' }}>Finish!</div>
+          <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--piece-o)' }}>{fmtTime(st.finishMs)}</div>
+          <Button variant="success" size="sm" onClick={startGame}>Play Again</Button>
+        </div>
+      )}
+      {st.status === 'topout' && (
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, background: 'rgba(5,5,9,0.86)' }}>
+          <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.125rem', color: 'var(--piece-o)', textTransform: 'uppercase' }}>Game Over</div>
+          <Button size="sm" onClick={startGame} style={{ '--b': 'var(--piece-o)', '--b-lit': 'var(--piece-o-lit)', '--b-dim': 'var(--piece-o-dim)', color: 'var(--text-on-piece)' } as React.CSSProperties}>Retry</Button>
+        </div>
+      )}
+      {/* 3-2-1-GO restart countdown */}
+      {countdown && (
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,5,9,0.6)' }}>
+          <span key={countdown} className="tj-countdown-num" style={{ fontFamily: 'var(--font-pixel)', fontSize: countdown === 'GO' ? '1.5rem' : '1.75rem', color: 'var(--piece-o)', textShadow: '0 3px 0 rgba(0,0,0,0.5)' }}>
+            {countdown}
+          </span>
+        </div>
+      )}
+    </>
+  )
+
+  const boardEl = (
+    <div style={{ position: 'relative', padding: 6, background: 'var(--ink-1000)', border: '4px solid var(--border-strong)', boxShadow: 'var(--shadow-soft)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${COLS}, ${CELL}px)` }}>{cells}</div>
+      {boardOverlays}
+    </div>
+  )
+
+  const mobileIconBtn: React.CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, cursor: 'pointer', background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', color: 'var(--text-faint)', fontSize: '1rem' }
+  const mobileColW = COLS * CELL + 40
+
   return (
     <>
       <div onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
-        style={{ position: 'fixed', inset: 0, zIndex: 9500, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,5,9,0.86)', backdropFilter: 'blur(6px)', padding: 20 }}>
+        style={{
+          position: 'fixed', inset: 0, zIndex: 9500, display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          alignItems: isMobile ? 'center' : 'center',
+          justifyContent: isMobile ? 'flex-start' : 'center',
+          overflowY: isMobile ? 'auto' : 'visible',
+          background: 'rgba(5,5,9,0.86)', backdropFilter: 'blur(6px)', padding: isMobile ? '16px 12px 24px' : 20,
+        }}>
 
-        <button onClick={() => setShowAchievements(true)} title="Achievements"
-          onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--piece-o)'; e.currentTarget.style.color = 'var(--piece-o)' }}
-          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-faint)' }}
-          style={{ position: 'absolute', top: 20, right: 20, display: 'flex', alignItems: 'center', gap: 8, padding: '9px 14px', cursor: 'pointer', background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', color: 'var(--text-faint)', fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.04em', transition: 'color 140ms, border-color 140ms' }}>
-          <Icon icon="pixelarticons:trophy" style={{ fontSize: '0.9375rem' }} />
-          Achievements
-        </button>
+        {!isMobile && (
+          <button onClick={() => setShowAchievements(true)} title="Achievements"
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--piece-o)'; e.currentTarget.style.color = 'var(--piece-o)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-faint)' }}
+            style={{ position: 'absolute', top: 20, right: 20, display: 'flex', alignItems: 'center', gap: 8, padding: '9px 14px', cursor: 'pointer', background: 'var(--ink-1000)', border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', color: 'var(--text-faint)', fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.04em', transition: 'color 140ms, border-color 140ms' }}>
+            <Icon icon="pixelarticons:trophy" style={{ fontSize: '0.9375rem' }} />
+            Achievements
+          </button>
+        )}
 
+        {isMobile ? (
+          <div style={{ width: mobileColW, maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+
+            {/* top bar: achievements / title / settings + close */}
+            <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+              <button onClick={() => setShowAchievements(true)} title="Achievements" style={mobileIconBtn}>
+                <Icon icon="pixelarticons:trophy" style={{ fontSize: '1.0625rem', color: 'var(--piece-o)' }} />
+              </button>
+              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>20-Line Sprint</div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button onClick={() => setShowSettings(true)} title="Settings" style={mobileIconBtn}>⚙</button>
+                <button onClick={onClose} title="Close" style={mobileIconBtn}>✕</button>
+              </div>
+            </div>
+
+            {/* HUD row: hold / lines left / time / next */}
+            <div style={{ display: 'flex', width: '100%', gap: 8 }}>
+              <button onClick={holdPiece} title={`Hold (${keyLabel(keybinds.hold)})`}
+                style={{ ...panel, flex: 1, minWidth: 0, padding: '8px 4px', opacity: st.canHold ? 1 : 0.45, borderColor: (st.canHold && st.hold) ? 'var(--piece-t)' : 'var(--border-strong)' }}>
+                <div style={{ ...panelHead, fontSize: '0.4375rem', marginBottom: 6 }}>Hold</div>
+                <div style={{ height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {st.hold ? <MiniPiece type={st.hold} cell={7} /> : <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', color: 'var(--text-faint)' }}>-</span>}
+                </div>
+              </button>
+              <div style={{ ...panel, flex: 1, minWidth: 0, padding: '8px 4px', textAlign: 'center' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.4375rem', letterSpacing: '0.08em', color: 'var(--text-faint)', textTransform: 'uppercase' }}>Left</div>
+                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', color: linesLeft === 0 ? 'var(--piece-s)' : 'var(--piece-i)', marginTop: 8 }}>{linesLeft}</div>
+              </div>
+              <div style={{ ...panel, flex: 1, minWidth: 0, padding: '8px 4px', textAlign: 'center' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.4375rem', letterSpacing: '0.08em', color: 'var(--text-faint)', textTransform: 'uppercase' }}>Time</div>
+                <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: 'var(--piece-o)', marginTop: 8 }}>{fmtTime(elapsed)}</div>
+              </div>
+              <div style={{ ...panel, flex: 1, minWidth: 0, padding: '8px 4px' }}>
+                <div style={{ ...panelHead, fontSize: '0.4375rem', marginBottom: 6 }}>Next</div>
+                <div style={{ height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {st.queue[0] && <MiniPiece type={st.queue[0]} cell={7} />}
+                </div>
+              </div>
+            </div>
+
+            {boardEl}
+
+            {/* on-screen touch controls, 1:1 with the DAS/ARR-driven keyboard paths */}
+            {st.status === 'playing' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <CtrlBtn icon="pixelarticons:chevron-left" onDown={() => startMoveRepeat(-1)} onUp={stopAutoRepeat} />
+                  <CtrlBtn icon="pixelarticons:chevron-down" onDown={startSoftDropRepeat} onUp={stopSoftDrop} />
+                  <CtrlBtn icon="pixelarticons:chevron-right" onDown={() => startMoveRepeat(1)} onUp={stopAutoRepeat} />
+                  <CtrlBtn icon="pixelarticons:reload" accent="var(--piece-i)" onDown={rotate} />
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <CtrlBtn label="Hold" accent="var(--piece-t)" onDown={holdPiece} />
+                  <CtrlBtn label="Hard Drop" wide accent="var(--piece-o)" onDown={hardDrop} />
+                </div>
+              </div>
+            )}
+
+            {/* LEADERBOARD — condensed, stacked below the board instead of a side panel */}
+            <div style={{ width: '100%', ...panel, padding: 14 }}>
+              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase', textAlign: 'center', paddingBottom: 10, borderBottom: '2px solid var(--border-hairline)' }}>Leaderboard</div>
+              <div style={{ maxHeight: 220, overflowY: 'auto', marginTop: 10, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {scores.map((row, i) => (
+                  <div key={i}
+                    ref={row.you ? yourRowRef : undefined}
+                    style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 8px', background: row.you ? 'color-mix(in srgb, var(--piece-i) 16%, transparent)' : 'transparent', border: row.you ? '2px solid var(--piece-i)' : '2px solid transparent', flexShrink: 0 }}>
+                    <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: i === 0 ? 'var(--piece-o)' : 'var(--text-faint)', width: 22 }}>{String(i+1).padStart(2,'0')}</span>
+                    <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: row.you ? 'var(--piece-i)' : 'var(--text-body)', flex: 1 }}>{row.name}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-strong)' }}>{fmtTime(row.ms)}</span>
+                  </div>
+                ))}
+              </div>
+              {myResult && (
+                <div style={{ borderTop: '2px solid var(--border-hairline)', marginTop: 8, paddingTop: 8 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
+                    Your rank: #{myResult.rank}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 8px', background: 'color-mix(in srgb, var(--piece-i) 16%, transparent)', border: '2px solid var(--piece-i)' }}>
+                    <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: 'var(--text-faint)', width: 22 }}>{String(myResult.rank).padStart(2,'0')}</span>
+                    <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: 'var(--piece-i)', flex: 1 }}>{myResult.name}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-strong)' }}>{fmtTime(myResult.ms)}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
         <div style={{ display: 'flex', gap: 18, alignItems: 'stretch', flexWrap: 'wrap', justifyContent: 'center' }}>
 
           {/* HOLD */}
@@ -1011,39 +1215,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
 
           {/* BOARD */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
-            <div style={{ position: 'relative', padding: 6, background: 'var(--ink-1000)', border: '4px solid var(--border-strong)', boxShadow: 'var(--shadow-soft)' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: `repeat(${COLS}, ${CELL}px)` }}>{cells}</div>
-
-              {st.status === 'ready' && !countdown && (
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 18, background: 'rgba(5,5,9,0.8)', textAlign: 'center', padding: 20 }}>
-                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1rem', color: 'var(--piece-o)', textTransform: 'uppercase', textShadow: '0 3px 0 rgba(0,0,0,0.5)' }}>20-Line Sprint</div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: 180, lineHeight: 1.6 }}>Clear 20 lines as fast as you can.</div>
-                  <Button size="md" onClick={startGame} style={{ '--b': 'var(--piece-o)', '--b-lit': 'var(--piece-o-lit)', '--b-dim': 'var(--piece-o-dim)', color: 'var(--text-on-piece)' } as React.CSSProperties}>Start</Button>
-                </div>
-              )}
-              {st.status === 'won' && !enteringInitials && (
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, background: 'rgba(5,5,9,0.86)' }}>
-                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.125rem', color: 'var(--piece-s)', textTransform: 'uppercase' }}>Finish!</div>
-                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--piece-o)' }}>{fmtTime(st.finishMs)}</div>
-                  <Button variant="success" size="sm" onClick={startGame}>Play Again</Button>
-                </div>
-              )}
-              {st.status === 'topout' && (
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, background: 'rgba(5,5,9,0.86)' }}>
-                  <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.125rem', color: 'var(--piece-o)', textTransform: 'uppercase' }}>Game Over</div>
-                  <Button size="sm" onClick={startGame} style={{ '--b': 'var(--piece-o)', '--b-lit': 'var(--piece-o-lit)', '--b-dim': 'var(--piece-o-dim)', color: 'var(--text-on-piece)' } as React.CSSProperties}>Retry</Button>
-                </div>
-              )}
-
-              {/* 3-2-1-GO restart countdown */}
-              {countdown && (
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,5,9,0.6)' }}>
-                  <span key={countdown} className="tj-countdown-num" style={{ fontFamily: 'var(--font-pixel)', fontSize: countdown === 'GO' ? '1.5rem' : '1.75rem', color: 'var(--piece-o)', textShadow: '0 3px 0 rgba(0,0,0,0.5)' }}>
-                    {countdown}
-                  </span>
-                </div>
-              )}
-            </div>
+            {boardEl}
             <div style={{ display: 'flex', gap: 10, width: COLS * CELL + 20 }}>
               <BigStat label="Lines Left" val={String(linesLeft)} color={linesLeft === 0 ? 'var(--piece-s)' : 'var(--piece-i)'} />
               <BigStat label={<>Time<br/>Elapsed</>} val={fmtTime(elapsed)} color="var(--piece-o)" boxRef={timeStatRef} />
@@ -1117,6 +1289,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
             </button>
           </div>
         </div>
+        )}
       </div>
 
       {/* Initials entry overlay */}
