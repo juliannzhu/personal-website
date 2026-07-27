@@ -54,6 +54,10 @@ const ALL_VARIANTS: { piece: Piece; shape: Shape }[] = PIECE_SEQUENCE.flatMap((p
 
 const TARGET_CELL = 20
 const GRID_GAP = 2
+// Fixed logical grid width (≈1440px canonical desktop viewport) so the pile is generated
+// once and always looks identical — screen width only changes how much of it is visible
+// (centered, cropped on narrow viewports), instead of regenerating a different layout per device.
+const FIXED_COLS = 72
 const BASE_HEIGHT = 10
 const JAG_1 = 2
 const JAG_2 = 1.3
@@ -289,7 +293,6 @@ function ensurePileCSS() {
 export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: string; kicker?: string } = {}) {
   ensurePileCSS()
   const ref = useRef<HTMLDivElement>(null)
-  const [width, setWidth] = useState(0)
   const [breakout, setBreakout] = useState({ width: 0, marginLeft: 0 })
 
   useLayoutEffect(() => {
@@ -299,7 +302,6 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
       const rect = el.getBoundingClientRect()
       const viewportWidth = document.documentElement.clientWidth
       setBreakout({ width: viewportWidth, marginLeft: -rect.left })
-      setWidth(rect.width)
     }
     measure()
     window.addEventListener('resize', measure)
@@ -308,9 +310,12 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
     return () => { window.removeEventListener('resize', measure); ro.disconnect() }
   }, [])
 
-  const cols = width > 0 ? Math.max(10, Math.round(breakout.width / TARGET_CELL)) : 10
-  const unit = breakout.width > 0 ? breakout.width / cols : TARGET_CELL
+  // Cell size and column count are both fixed (not derived from viewport width) so the
+  // generated pile is always the exact same artwork on every screen — see FIXED_COLS above.
+  const cols = FIXED_COLS
+  const unit = TARGET_CELL
   const cellSize = Math.max(1, unit - GRID_GAP)
+  const artworkWidth = cols * unit
 
   const { placed, fillers, fallingSpots, stationaryExtras, maxRow } = useMemo(() => {
     const { placed, fillers, colHeight } = layoutPile(cols)
@@ -332,7 +337,9 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
         backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)',
         backgroundSize: `${unit}px ${unit}px`,
       }}>
-        <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: maxRow * unit }}>
+        {/* fixed-width artwork, centered — narrower viewports crop its edges (via the
+            outer container's overflow:hidden) instead of ever regenerating a different pile */}
+        <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: artworkWidth, bottom: 0, height: maxRow * unit }}>
           {placed.map((p, i) => {
             const bottomRows = p.topHeight - (p.shape.h - 1)
             return (
