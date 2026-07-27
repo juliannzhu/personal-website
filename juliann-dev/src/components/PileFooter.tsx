@@ -327,6 +327,11 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
   // mostly-empty gap above a short pile, or a pile taller than its own band on a big screen.
   const pileHeight = maxRow * unit
   const footerHeight = Math.max(360, Math.min(760, pileHeight + 280))
+  // On wide screens the pile graphic itself is capped at ACCENT_COLS wide (ending right at
+  // the rightmost falling piece) instead of stretching all the way to the viewport edge —
+  // the outer breakout container stays full-width so the quote overlay's alignment with the
+  // rest of the page (which accounts for the fixed sidebar) is untouched.
+  const pileVisibleWidth = breakout.width > 0 ? Math.min(breakout.width, ACCENT_COLS * unit) : undefined
 
   return (
     <div ref={ref} style={{
@@ -337,7 +342,8 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
       {/* pile graphic — kept at its own dimmed opacity so it reads as backdrop, independent
           of the fully-opaque quote layer sitting on top of it */}
       <div style={{
-        position: 'absolute', inset: 0, background: 'var(--bg-well)', opacity: 0.8,
+        position: 'absolute', left: 0, top: 0, bottom: 0, width: pileVisibleWidth, overflow: 'hidden',
+        background: 'var(--bg-well)', opacity: 0.8,
         backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)',
         backgroundSize: `${unit}px ${unit}px`,
       }}>
