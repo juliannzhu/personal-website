@@ -197,21 +197,6 @@ function pickFallingSpots(cols: number, colHeight: number[]): { piece: Piece; sh
   })
 }
 
-// Stationary extra piece (no falling animation, no smear) — a vertical orange L parked near
-// where the green S falling piece used to sit, shifted right so part of it hangs off-screen.
-function pickExtraStationaryPieces(cols: number, colHeight: number[]): { piece: Piece; shape: Shape; col: number; restRow: number }[] {
-  const sShape = PIECE_ROTATIONS.s[0]
-  const anchorCol = Math.max(0, Math.min(Math.round(0.76 * cols), cols - sShape.w))
-  const lShape = PIECE_ROTATIONS.l[1]
-  const col = anchorCol + 1 // intentionally left unclamped so it can sit partially off-screen
-  let restRow = 0
-  for (let c = 0; c < lShape.w; c++) {
-    const cc = Math.min(col + c, cols - 1)
-    restRow = Math.max(restRow, colHeight[cc] ?? 0)
-  }
-  return [{ piece: 'l', shape: lShape, col, restRow }]
-}
-
 function renderCells(piece: Piece, shape: Shape, cellSize: number) {
   const filled = new Set(shape.cells.map(([c, r]) => `${c},${r}`))
   const cells: React.ReactNode[] = []
@@ -316,18 +301,27 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
   const unit = TARGET_CELL
   const cellSize = Math.max(1, unit - GRID_GAP)
   const artworkWidth = cols * unit
+  // Scale the whole fixed artwork down to fit narrower screens (never up past its native
+  // size) so every device shows the exact same composition, just smaller — never a cropped
+  // fragment, which was cutting off pieces and leaving mismatched-looking sparse leftovers.
+  const scale = breakout.width > 0 ? Math.min(1, breakout.width / artworkWidth) : 1
 
-  const { placed, fillers, fallingSpots, stationaryExtras, maxRow } = useMemo(() => {
+  const { placed, fillers, fallingSpots, maxRow } = useMemo(() => {
     const { placed, fillers, colHeight } = layoutPile(cols)
     const fallingSpots = pickFallingSpots(cols, colHeight)
-    const stationaryExtras = pickExtraStationaryPieces(cols, colHeight)
-    return { placed, fillers, fallingSpots, stationaryExtras, maxRow: Math.max(1, ...colHeight) }
+    return { placed, fillers, fallingSpots, maxRow: Math.max(1, ...colHeight) }
   }, [cols])
+
+  // The footer band's own height follows the scaled-down pile height (plus fixed headroom
+  // for the quote text) instead of a flat 65vh — otherwise a shrunk mobile pile would sit as
+  // a thin strip at the bottom of a tall, mostly-empty band.
+  const pileHeight = maxRow * unit * scale
+  const footerHeight = Math.max(360, Math.min(760, pileHeight + 280))
 
   return (
     <div ref={ref} style={{
       width: breakout.width || undefined, marginLeft: breakout.width ? breakout.marginLeft : undefined,
-      height: '65vh', minHeight: 420, maxHeight: 760,
+      height: footerHeight,
       borderTop: '2px solid var(--border-strong)', position: 'relative', overflow: 'hidden',
     }}>
       {/* pile graphic — kept at its own dimmed opacity so it reads as backdrop, independent
@@ -337,9 +331,12 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
         backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)',
         backgroundSize: `${unit}px ${unit}px`,
       }}>
-        {/* fixed-width artwork, centered — narrower viewports crop its edges (via the
-            outer container's overflow:hidden) instead of ever regenerating a different pile */}
-        <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: artworkWidth, bottom: 0, height: maxRow * unit }}>
+        {/* fixed-width artwork, centered and scaled to fit — narrower viewports shrink the
+            whole composition instead of ever cropping it or regenerating a different pile */}
+        <div style={{
+          position: 'absolute', left: '50%', bottom: 0, width: artworkWidth, height: maxRow * unit,
+          transform: `translateX(-50%) scale(${scale})`, transformOrigin: 'center bottom',
+        }}>
           {placed.map((p, i) => {
             const bottomRows = p.topHeight - (p.shape.h - 1)
             return (
@@ -361,10 +358,6 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
             }
             return squares
           })}
-          {stationaryExtras.map((p, i) => (
-            <PieceShape key={`extra${i}`} piece={p.piece} shape={p.shape} cellSize={cellSize}
-              style={{ left: p.col * unit, bottom: p.restRow * unit }} />
-          ))}
           {fallingSpots.map((f, i) => (
             <FallingPiece key={`fall${i}`} piece={f.piece} shape={f.shape} unit={unit} cellSize={cellSize}
               left={f.col * unit} restBottom={f.restRow * unit} delay={i * 620} smearFrom={f.smearFrom} />
