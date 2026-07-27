@@ -52,12 +52,24 @@ const ALL_VARIANTS: { piece: Piece; shape: Shape }[] = PIECE_SEQUENCE.flatMap((p
   Array.from({ length: PIECE_WEIGHT[piece] }, () => PIECE_ROTATIONS[piece].map((shape) => ({ piece, shape }))).flat()
 )
 
-const TARGET_CELL = 20
 const GRID_GAP = 2
-// Fixed logical grid width (≈1440px canonical desktop viewport) so the pile is generated
-// once and always looks identical — screen width only changes how much of it is visible
-// (centered, cropped on narrow viewports), instead of regenerating a different layout per device.
-const FIXED_COLS = 72
+// Generated once at a large, fixed column count — comfortably more than any real screen
+// needs even at the smallest block size below — and always sliced from the same left edge,
+// so every device shows a stable prefix of the exact same artwork, never a different layout.
+const MASTER_COLS = 220
+// Block (cell) size is a ratio of viewport HEIGHT, not a flat constant — this is what keeps
+// blocks a legible, "small-text-ish" size on short mobile screens instead of being squashed
+// to fit the full pattern into a narrow width. Clamped so it never gets illegibly tiny or
+// oversized on very short/tall viewports. Whatever doesn't fit within the viewport width at
+// that block size is simply cropped off the right edge (left-aligned, matching every device).
+const UNIT_HEIGHT_RATIO = 0.016
+const UNIT_MIN = 12
+const UNIT_MAX = 24
+// The falling "accent" pieces are positioned as a fraction of this reference width (≈a
+// typical laptop's worth of columns), not the full MASTER_COLS buffer — otherwise, spread
+// across the much wider master canvas, most of them would land past the visible edge on
+// anything but a very wide monitor and simply never be seen.
+const ACCENT_COLS = 72
 const BASE_HEIGHT = 10
 const JAG_1 = 2
 const JAG_2 = 1.3
@@ -278,7 +290,7 @@ function ensurePileCSS() {
 export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: string; kicker?: string } = {}) {
   ensurePileCSS()
   const ref = useRef<HTMLDivElement>(null)
-  const [breakout, setBreakout] = useState({ width: 0, marginLeft: 0 })
+  const [breakout, setBreakout] = useState({ width: 0, marginLeft: 0, viewportHeight: 0 })
 
   useLayoutEffect(() => {
     const el = ref.current
@@ -286,7 +298,7 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
     const measure = () => {
       const rect = el.getBoundingClientRect()
       const viewportWidth = document.documentElement.clientWidth
-      setBreakout({ width: viewportWidth, marginLeft: -rect.left })
+      setBreakout({ width: viewportWidth, marginLeft: -rect.left, viewportHeight: window.innerHeight })
     }
     measure()
     window.addEventListener('resize', measure)
@@ -295,27 +307,25 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
     return () => { window.removeEventListener('resize', measure); ro.disconnect() }
   }, [])
 
-  // Cell size and column count are both fixed (not derived from viewport width) so the
-  // generated pile is always the exact same artwork on every screen — see FIXED_COLS above.
-  const cols = FIXED_COLS
-  const unit = TARGET_CELL
+  // Block size follows viewport height (see UNIT_HEIGHT_RATIO above) instead of stretching
+  // to fill the viewport width — keeps blocks a legible, consistent size on every device.
+  const unit = breakout.viewportHeight > 0
+    ? Math.max(UNIT_MIN, Math.min(UNIT_MAX, breakout.viewportHeight * UNIT_HEIGHT_RATIO))
+    : UNIT_MAX
   const cellSize = Math.max(1, unit - GRID_GAP)
+  const cols = MASTER_COLS
   const artworkWidth = cols * unit
-  // Scale the whole fixed artwork down to fit narrower screens (never up past its native
-  // size) so every device shows the exact same composition, just smaller — never a cropped
-  // fragment, which was cutting off pieces and leaving mismatched-looking sparse leftovers.
-  const scale = breakout.width > 0 ? Math.min(1, breakout.width / artworkWidth) : 1
 
   const { placed, fillers, fallingSpots, maxRow } = useMemo(() => {
     const { placed, fillers, colHeight } = layoutPile(cols)
-    const fallingSpots = pickFallingSpots(cols, colHeight)
+    const fallingSpots = pickFallingSpots(ACCENT_COLS, colHeight)
     return { placed, fillers, fallingSpots, maxRow: Math.max(1, ...colHeight) }
   }, [cols])
 
-  // The footer band's own height follows the scaled-down pile height (plus fixed headroom
-  // for the quote text) instead of a flat 65vh — otherwise a shrunk mobile pile would sit as
-  // a thin strip at the bottom of a tall, mostly-empty band.
-  const pileHeight = maxRow * unit * scale
+  // The footer band's own height follows the actual pile height (plus fixed headroom for
+  // the quote text) instead of a flat 65vh — keeps it proportionate instead of leaving a
+  // mostly-empty gap above a short pile, or a pile taller than its own band on a big screen.
+  const pileHeight = maxRow * unit
   const footerHeight = Math.max(360, Math.min(760, pileHeight + 280))
 
   return (
@@ -331,12 +341,10 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
         backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)',
         backgroundSize: `${unit}px ${unit}px`,
       }}>
-        {/* fixed-width artwork, centered and scaled to fit — narrower viewports shrink the
-            whole composition instead of ever cropping it or regenerating a different pile */}
-        <div style={{
-          position: 'absolute', left: '50%', bottom: 0, width: artworkWidth, height: maxRow * unit,
-          transform: `translateX(-50%) scale(${scale})`, transformOrigin: 'center bottom',
-        }}>
+        {/* left-aligned, fixed-width artwork — narrower viewports simply crop its right
+            edge (via the outer container's overflow:hidden), always showing the same
+            left-starting prefix of the one master pattern at a legible, consistent block size */}
+        <div style={{ position: 'absolute', left: 0, bottom: 0, width: artworkWidth, height: maxRow * unit }}>
           {placed.map((p, i) => {
             const bottomRows = p.topHeight - (p.shape.h - 1)
             return (
