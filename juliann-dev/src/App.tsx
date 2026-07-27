@@ -46,7 +46,12 @@ body::before {
   .tj-hud { display: none !important; }
   .tj-socials-header { display: none !important; }
   .tj-holdbox { display: none !important; }
-  .tj-top-header { max-width: 100% !important; }
+  .tj-top-header { max-width: 100% !important; padding: 0 12px !important; gap: 8px !important; }
+
+  /* Play/Resume/Sound in the header were flowing off the right edge on phones —
+     drop them to icon-only squares so the row actually fits. */
+  .tj-navbtn-label { display: none !important; }
+  .tj-navbtn { padding: 7px !important; }
 
   /* Lock the page scroll to vertical only — any element that pokes past 100vw
      (fixed-width tiles, wide grids) no longer makes the whole page draggable

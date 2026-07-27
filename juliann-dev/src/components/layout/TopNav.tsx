@@ -48,6 +48,7 @@ function SoundToggle() {
   }
   return (
     <button
+      className="tj-navbtn"
       onClick={toggle}
       title={on ? 'Sound ON, click to mute' : 'Sound OFF, click for 8-bit audio'}
       onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-muted)'; e.currentTarget.style.color = 'var(--text-strong)' }}
@@ -70,7 +71,7 @@ function SoundToggle() {
           </svg>
         )}
       </div>
-      <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+      <span className="tj-navbtn-label" style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
         {on ? 'SFX' : 'MUTE'}
       </span>
     </button>
@@ -79,7 +80,7 @@ function SoundToggle() {
 
 function ResumeButton({ onOpen }: { onOpen: () => void }) {
   return (
-    <button onClick={onOpen}
+    <button className="tj-navbtn" onClick={onOpen}
       onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-muted)'; e.currentTarget.style.color = 'var(--text-strong)' }}
       onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-muted)' }}
       style={{
@@ -93,7 +94,7 @@ function ResumeButton({ onOpen }: { onOpen: () => void }) {
         transition: 'border-color 140ms, color 140ms',
       }}>
       <Icon icon="pixelarticons:file" style={{ fontSize: '0.875rem' }} />
-      RESUME
+      <span className="tj-navbtn-label">RESUME</span>
     </button>
   )
 }
@@ -195,6 +196,7 @@ function MobileNav({ current, onNav }: { current: Screen; onNav: (id: Screen) =>
 function PlayButton({ onPlay }: { onPlay: () => void }) {
   return (
     <button
+      className="tj-navbtn"
       onClick={onPlay}
       onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--piece-t)'; e.currentTarget.style.color = 'var(--piece-t)' }}
       onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-muted)' }}
@@ -210,7 +212,7 @@ function PlayButton({ onPlay }: { onPlay: () => void }) {
         transition: 'border-color 140ms, color 140ms',
       }}>
       <Icon icon="pixelarticons:gamepad" style={{ fontSize: '0.875rem', color: 'inherit' }} />
-      PLAY
+      <span className="tj-navbtn-label">PLAY</span>
     </button>
   )
 }
