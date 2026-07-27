@@ -43,6 +43,14 @@ body::before {
   .tj-holdbox { display: none !important; }
   .tj-top-header { max-width: 100% !important; }
 
+  /* Lock the page scroll to vertical only — any element that pokes past 100vw
+     (fixed-width tiles, wide grids) no longer makes the whole page draggable
+     sideways. Nested horizontal scrollers (quest carousel, filmstrip reel,
+     mobile nav strip) each own their own scroll container, so this doesn't
+     touch them. */
+  .tj-scrollpane { overflow-x: hidden !important; }
+  .tj-main { max-width: 100vw !important; }
+
   /* single-column grids */
   .tj-grid-3 { grid-template-columns: 1fr !important; }
   .tj-grid-2 { grid-template-columns: 1fr !important; }

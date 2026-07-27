@@ -1051,7 +1051,6 @@ const TITLE_GUTTER = 40
 const HEADER_H = 58
 const FOOTER_H = 84
 const ENGAGE_OFFSET = 90
-const TOUCH_TO_PROGRESS = 900
 const AUTO_ROTATE_MS = 4000
 const JUMP_TRANSITION_MS = 600
 const JUMP_EASING = 'cubic-bezier(0.65, 0, 0.35, 1)'
@@ -1162,7 +1161,12 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
       const atEnd = progressRef.current >= 1
       if ((atStart && dx > 0) || (atEnd && dx < 0)) { dragging = false; return }
       e.preventDefault()
-      progressRef.current = Math.min(1, Math.max(0, progressRef.current - dx / TOUCH_TO_PROGRESS))
+      // 1:1 tracking: convert the finger's pixel delta into progress using the
+      // track's actual scrollable range, not a fixed constant — otherwise the
+      // tiles move faster or slower than the finger depending on track length.
+      const track = trackRef.current
+      const maxScroll = track ? Math.max(1, track.scrollWidth - container.clientWidth) : 1
+      progressRef.current = Math.min(1, Math.max(0, progressRef.current - dx / maxScroll))
       startX = e.touches[0].clientX; startY = e.touches[0].clientY
       scheduleFrame()
     }
