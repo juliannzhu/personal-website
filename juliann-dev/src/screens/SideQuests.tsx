@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import { Card } from '../components/ds/Card'
@@ -1041,6 +1041,9 @@ function QuestDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
 // ---- Scroll-jacked horizontal carousel ----
 const TILE_W = 280
 const TILE_H = 400
+// Shorter tiles on narrow screens so the stacked title + tile + dots all fit in the visible
+// band above the footer/scroll-fade instead of pushing the dots off the bottom edge.
+const TILE_H_M = 340
 const GAP = 24
 const TITLE_W = 300
 // The carousel has one extra tile past the last quest — a "cleared" summary card
@@ -1054,6 +1057,13 @@ const ENGAGE_OFFSET = 90
 const AUTO_ROTATE_MS = 4000
 const JUMP_TRANSITION_MS = 600
 const JUMP_EASING = 'cubic-bezier(0.65, 0, 0.35, 1)'
+// At/below this container width the title stacks on top of the tiles (so it can never be
+// overlapped by them); above it, the title sits on the left with tiles focused just to its
+// right. Keyed off the *container* width, not the viewport, since the desktop sidebar eats
+// ~300px and a narrow-but-desktop container still needs the stacked layout to breathe.
+const NARROW_MAX = 760
+// Where tile 0 rests in the wide (title-on-left) layout: right after the title block.
+const DESKTOP_PAD = 24 + TITLE_W + TITLE_GUTTER
 
 function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; progressRef: React.RefObject<number> }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -1069,20 +1079,34 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
   const autoRotateOnRef = useRef(true)
   const autoIntervalRef = useRef<number | undefined>(undefined)
 
+  // Responsive layout, measured from the container width (see NARROW_MAX). `padLeft` is the
+  // track's left padding (tile 0's rest position) and `focusX` is the x where the active tile
+  // centers — all the scale/opacity/jump math keys off focusX instead of the viewport centre,
+  // so tile 0 is the focused one from the very first frame on every screen size.
+  const [isNarrow, setIsNarrow] = useState(false)
+  const [padLeft, setPadLeft] = useState(DESKTOP_PAD)
+  const isNarrowRef = useRef(false)
+  const focusXRef = useRef(DESKTOP_PAD + TILE_W / 2)
+
   const applyFrame = () => {
     const container = containerRef.current
     const track = trackRef.current
     if (!container || !track) return
     const maxScroll = Math.max(0, track.scrollWidth - container.clientWidth)
     const p = progressRef.current
-    track.style.transform = `translateY(-50%) translateX(${-p * maxScroll}px)`
+    // Narrow layout anchors the tiles to the top of their area (just below the stacked
+    // title) so a tile taller than that area can only spill downward — never up into the
+    // title text. Desktop keeps them vertically centred.
+    const ty = isNarrowRef.current ? '0' : '-50%'
+    track.style.transform = `translateY(${ty}) translateX(${-p * maxScroll}px)`
 
     // Target center in the track's own local layout coordinates (offsetLeft is a
     // static layout value untouched by the track's in-flight CSS transition) rather
     // than getBoundingClientRect (the live mid-slide paint position) — so a jump's
     // new center tile gets full scale/opacity immediately instead of lagging behind
     // until the slide animation finishes painting.
-    const targetCenter = p * maxScroll + container.clientWidth / 2
+    const focusX = focusXRef.current
+    const targetCenter = p * maxScroll + focusX
     let closestIdx = 0
     let closestDist = Infinity
     tileRefs.current.forEach((el, i) => {
@@ -1099,13 +1123,20 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
     activeIndexRef.current = closestIdx
     setActiveIndex((prev) => (prev === closestIdx ? prev : closestIdx))
 
-    // Title is only readable while the first tile is active — past that it'd sit
-    // underneath the tiles that have scrolled into its space, so it just hides.
     const title = titleRef.current
     if (title) {
-      const titleOpacity = closestIdx === 0 ? Math.max(0, 1 - p / 0.18) : 0
-      title.style.opacity = String(titleOpacity)
-      title.style.pointerEvents = titleOpacity < 0.05 ? 'none' : 'auto'
+      if (isNarrowRef.current) {
+        // Stacked on top — the tiles live below it and can never cover it, so it just
+        // stays put instead of fading.
+        title.style.opacity = '1'
+        title.style.pointerEvents = 'auto'
+      } else {
+        // Title is only readable while the first tile is active — past that it'd sit
+        // underneath the tiles that have scrolled into its space, so it fades out.
+        const titleOpacity = closestIdx === 0 ? Math.max(0, 1 - p / 0.18) : 0
+        title.style.opacity = String(titleOpacity)
+        title.style.pointerEvents = titleOpacity < 0.05 ? 'none' : 'auto'
+      }
     }
   }
 
@@ -1124,13 +1155,43 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
     }
   }
 
-  useEffect(() => { scheduleFrame() }, [])
-
-  useEffect(() => {
-    const onResize = () => scheduleFrame()
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
+  // Measure the container and pick the layout. On resize this also repaints the frame so
+  // the track transform tracks the new width.
+  useLayoutEffect(() => {
+    const measure = () => {
+      const container = containerRef.current
+      if (!container) return
+      const w = container.clientWidth
+      const narrow = w <= NARROW_MAX
+      let pl: number, fx: number
+      if (narrow) { fx = w / 2; pl = Math.max(16, fx - TILE_W / 2) }
+      else { pl = DESKTOP_PAD; fx = pl + TILE_W / 2 }
+      isNarrowRef.current = narrow
+      focusXRef.current = fx
+      setIsNarrow(narrow)
+      setPadLeft(pl)
+      scheduleFrame()
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
   }, [])
+
+  // When the layout switches (or padLeft changes), re-centre the active tile instantly on
+  // the new focus point so nothing jumps to a half-off-screen position.
+  useLayoutEffect(() => {
+    const container = containerRef.current
+    const track = trackRef.current
+    const tile = tileRefs.current[activeIndexRef.current]
+    if (container && track && tile) {
+      track.style.transition = 'none'
+      tileRefs.current.forEach((el) => { if (el) el.style.transition = 'none' })
+      const maxScroll = Math.max(1, track.scrollWidth - container.clientWidth)
+      const desiredX = (tile.offsetLeft + tile.offsetWidth / 2) - focusXRef.current
+      progressRef.current = Math.min(1, Math.max(0, desiredX / maxScroll))
+    }
+    scheduleFrame()
+  }, [padLeft, isNarrow])
 
 
   // Touch swipe fallback: horizontal drags move the carousel; vertical drags pass through.
@@ -1196,7 +1257,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
     })
     const maxScroll = Math.max(1, track.scrollWidth - container.clientWidth)
     const tileCenter = tile.offsetLeft + tile.offsetWidth / 2
-    const desiredX = tileCenter - container.clientWidth / 2
+    const desiredX = tileCenter - focusXRef.current
     progressRef.current = Math.min(1, Math.max(0, desiredX / maxScroll))
     scheduleFrame()
   }
@@ -1231,33 +1292,49 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
     }
   }, [])
 
+  const tileH = isNarrow ? TILE_H_M : TILE_H
+  // Fixed height for the narrow tile area: the tile plus its 28px top offset and a little
+  // room for the focused tile's scale growth, so the dots row that follows sits right under
+  // the tile (not pinned to the bottom of a flex-1 filler).
+  const narrowTrackH = TILE_H_M + 46
+
   return (
-    <div ref={containerRef} className="tj-quest-carousel" style={{ position: 'relative', height: `calc(100vh - ${HEADER_H + FOOTER_H}px)`, overflow: 'hidden' }}>
-      {/* height matches TILE_H and centers its content with flex, so the title block's
-          vertical center lines up exactly with the tile cards' vertical center regardless
-          of how many lines the copy wraps to. */}
-      <div ref={titleRef} style={{
+    <div ref={containerRef} className="tj-quest-carousel" style={{
+      position: 'relative', height: `calc(100vh - ${HEADER_H + FOOTER_H}px)`, overflow: 'hidden',
+      ...(isNarrow ? { display: 'flex', flexDirection: 'column' } : null),
+    }}>
+      {/* Desktop: title floats on the left, vertically centred, and fades as you scroll past
+          the first tile. Narrow: it stacks on top as a static header so tiles can't overlap it. */}
+      <div ref={titleRef} style={isNarrow ? {
+        flexShrink: 0, zIndex: 1, width: '100%', maxWidth: 520, margin: '0 auto', padding: '20px 16px 6px', textAlign: 'center',
+      } : {
         position: 'absolute', left: 24, top: '50%', transform: 'translateY(-50%)', width: TITLE_W, height: TILE_H, zIndex: 1,
         display: 'flex', flexDirection: 'column', justifyContent: 'center', transition: 'opacity 240ms',
       }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-j)' }}>{'// Beyond the code'}</div>
         <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Side Quests</h2>
-        <p style={{ fontSize: '1rem', color: 'var(--text-muted)', lineHeight: 1.6, marginTop: 16 }}>
-          Every developer needs a break.<br></br>
-          This space is dedicated to the passion <br></br>
-          projects, creative experiments, <br></br>
-          and random pieces that make up <br></br>
-          my life outside the terminal. <br></br>
-          Use the arrows to explore.
+        <p style={{ fontSize: '1rem', color: 'var(--text-muted)', lineHeight: 1.6, marginTop: 16, ...(isNarrow ? { maxWidth: 440, margin: '12px auto 0' } : null) }}>
+          {isNarrow
+            ? 'Passion projects and creative experiments from my life outside the terminal. Use the arrows to explore.'
+            : 'Every developer needs a break. This space is dedicated to the passion projects, creative experiments, and random pieces that make up my life outside the terminal. Use the arrows to explore.'}
         </p>
       </div>
 
-      <div ref={trackRef} style={{ position: 'absolute', top: '50%', left: 0, transform: 'translateY(-50%)', display: 'flex', gap: GAP, paddingLeft: 24 + TITLE_W + TITLE_GUTTER, paddingRight: '50vw', willChange: 'transform' }}>
+      {/* On narrow screens this wrapper is a fixed-height band that holds the tiles (anchored to
+          its top so they never rise into the title); overflow:hidden clips the focused tile's
+          scale growth, and because it isn't a flex-1 filler the dots row sits directly beneath it
+          rather than at the bottom of the carousel. On desktop it collapses (display:contents) so
+          the track positions against the container as before. */}
+      <div style={isNarrow ? { position: 'relative', flexShrink: 0, height: narrowTrackH, overflow: 'hidden' } : { display: 'contents' }}>
+      {/* 28px top offset on narrow: ~12px of it is the visible gap below the title, the
+          other ~16px absorbs the focused tile's scale(1.08) growing its top edge upward so
+          the accent bar can't reach back into the title text. */}
+      <div ref={trackRef} style={{ position: 'absolute', top: isNarrow ? 28 : '50%', left: 0, transform: isNarrow ? 'translateY(0)' : 'translateY(-50%)', display: 'flex', gap: GAP, paddingLeft: padLeft, paddingRight: '50vw', willChange: 'transform' }}>
         {QUESTS.map((q, i) => {
           const coverSrc = q.cover ?? q.images[0]
           return (
           <div key={q.id} ref={(el) => { tileRefs.current[i] = el }} className="tj-quest-card" onClick={() => onOpen(q.id)}
-            style={{ width: TILE_W, height: TILE_H, flexShrink: 0 }}>
+            style={{ width: TILE_W, height: tileH, flexShrink: 0 }}>
             <Card accent={q.piece} accentBar style={{ display: 'flex', flexDirection: 'column', height: '100%', userSelect: 'none' }}>
               <div className="tj-quest-media">
                 {coverSrc && <img src={coverSrc} alt={q.title} className="tj-quest-img" />}
@@ -1282,7 +1359,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
 
         {/* Final "cleared" tile — not a real quest, just a loop-back summary card */}
         <div ref={(el) => { tileRefs.current[QUESTS.length] = el }}
-          style={{ width: TILE_W, height: TILE_H, flexShrink: 0 }}>
+          style={{ width: TILE_W, height: tileH, flexShrink: 0 }}>
           <Card accent="s" accentBar style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 18, height: '100%', userSelect: 'none', padding: '32px 24px' }}>
             <Tetromino piece="s" size={13} bob />
             <div>
@@ -1296,23 +1373,6 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
             </Button>
           </Card>
         </div>
-      </div>
-
-      <div ref={dotsRef} style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 8, zIndex: 2 }}>
-        {QUESTS.map((q, i) => (
-          <button key={q.id} onClick={() => { stopAutoRotate(); jumpTo(i) }} aria-label={`Go to ${q.title}`}
-            style={{
-              width: i === activeIndex ? 20 : 7, height: 7, borderRadius: 4, padding: 0, border: 'none', cursor: 'pointer',
-              background: i === activeIndex ? `var(--piece-${q.piece})` : 'var(--border-strong)',
-              transition: 'width 200ms, background 200ms',
-            }} />
-        ))}
-        <button onClick={() => { stopAutoRotate(); jumpTo(QUESTS.length) }} aria-label="Go to quests cleared"
-          style={{
-            width: activeIndex === QUESTS.length ? 20 : 7, height: 7, borderRadius: 4, padding: 0, border: 'none', cursor: 'pointer',
-            background: activeIndex === QUESTS.length ? 'var(--piece-s)' : 'var(--border-strong)',
-            transition: 'width 200ms, background 200ms',
-          }} />
       </div>
 
       {activeIndex > 0 && (
@@ -1331,6 +1391,29 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
           <Icon icon="pixelarticons:chevron-right" />
         </IconButton>
       )}
+      </div>
+
+      {/* Dots live outside the tile wrapper: on narrow screens they're a static flex row that
+          claims its own space below the tiles (so a tall tile can never sit under them); on
+          desktop they float at the bottom of the carousel as before. */}
+      <div ref={dotsRef} style={isNarrow
+        ? { flexShrink: 0, display: 'flex', justifyContent: 'center', gap: 8, padding: '14px 0 6px', zIndex: 2 }
+        : { position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 8, zIndex: 2 }}>
+        {QUESTS.map((q, i) => (
+          <button key={q.id} onClick={() => { stopAutoRotate(); jumpTo(i) }} aria-label={`Go to ${q.title}`}
+            style={{
+              width: i === activeIndex ? 20 : 7, height: 7, borderRadius: 4, padding: 0, border: 'none', cursor: 'pointer',
+              background: i === activeIndex ? `var(--piece-${q.piece})` : 'var(--border-strong)',
+              transition: 'width 200ms, background 200ms',
+            }} />
+        ))}
+        <button onClick={() => { stopAutoRotate(); jumpTo(QUESTS.length) }} aria-label="Go to quests cleared"
+          style={{
+            width: activeIndex === QUESTS.length ? 20 : 7, height: 7, borderRadius: 4, padding: 0, border: 'none', cursor: 'pointer',
+            background: activeIndex === QUESTS.length ? 'var(--piece-s)' : 'var(--border-strong)',
+            transition: 'width 200ms, background 200ms',
+          }} />
+      </div>
     </div>
   )
 }
