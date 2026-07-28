@@ -16,6 +16,22 @@ const CSS = `
 .tj-resume-contact a { color:var(--text-muted); text-decoration:none; transition:color 140ms; }
 .tj-resume-contact a:hover { color:var(--text-strong); }
 .tj-resume-close:hover { color:var(--text-strong) !important; border-color:var(--text-muted) !important; }
+
+/* On phones the right-aligned date/location column gets cramped and wraps awkwardly.
+   Drop it below the role instead, left-aligned on one line as "date · location". */
+@media (max-width: 720px) {
+  .tj-resume-entry-head { flex-direction: column; gap: 8px; }
+  .tj-resume-meta {
+    text-align: left !important;
+    margin-left: 19px;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px;
+  }
+  .tj-resume-loc { margin-top: 0 !important; }
+  .tj-resume-loc::before { content: "·"; margin-right: 8px; color: var(--text-faint); }
+  /* Education title has no tetromino, so its title sits flush-left — align its
+     date/location line to match, instead of the 19px experience-entry indent. */
+  .tj-resume-meta-flush { margin-left: 0 !important; }
+}
 `
 let injected = false
 function ensureCSS() {
@@ -44,7 +60,7 @@ function Bullets({ items, piece }: { items: string[]; piece: Piece }) {
 
 function EntryHeader({ title, sub, role, location, date, piece }: { title: string; sub?: string; role: string; location: string; date: string; piece: Piece }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+    <div className="tj-resume-entry-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
           <Tetromino piece={piece} size={9} />
@@ -53,9 +69,11 @@ function EntryHeader({ title, sub, role, location, date, piece }: { title: strin
         {sub && <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: 4, marginLeft: 19 }}>{sub}</div>}
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: `var(--piece-${piece})`, marginTop: 6, marginLeft: 19 }}>{role}</div>
       </div>
-      <div style={{ textAlign: 'right', flexShrink: 0 }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>{date}</div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)', marginTop: 2 }}>{location}</div>
+      {/* Desktop: right-aligned date-over-location column. Mobile: this reflows to a single
+          left-aligned "date · location" line under the role (see the media query in CSS). */}
+      <div className="tj-resume-meta" style={{ textAlign: 'right', flexShrink: 0 }}>
+        <div className="tj-resume-date" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>{date}</div>
+        <div className="tj-resume-loc" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)', marginTop: 2 }}>{location}</div>
       </div>
     </div>
   )
@@ -192,15 +210,15 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
         <section style={{ marginBottom: 44 }}>
           <Kicker piece="o">Education</Kicker>
           <Card accent="o" accentBar>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+            <div className="tj-resume-entry-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
               <div>
                 <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.8125rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>University of Waterloo</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: 8 }}>BCS, Honours Computer Science with Co-operative Program</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--piece-o)', marginTop: 8 }}>President Scholarship of Distinction</div>
               </div>
-              <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Sep 2025 - Present</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)', marginTop: 2 }}>Waterloo, ON</div>
+              <div className="tj-resume-meta tj-resume-meta-flush" style={{ textAlign: 'right', flexShrink: 0 }}>
+                <div className="tj-resume-date" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Sep 2025 - Present</div>
+                <div className="tj-resume-loc" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)', marginTop: 2 }}>Waterloo, ON</div>
               </div>
             </div>
           </Card>

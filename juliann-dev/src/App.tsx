@@ -69,10 +69,12 @@ body::before {
   .tj-stats-grid { grid-template-columns: 1fr 1fr !important; }
 
   /* Decorative 3D pieces are positioned for the wide desktop gutter — on a phone the
-     About T piece lands off the right edge, so pull it up and left into view, and nudge
-     the Projects S piece up a little. (margin, not transform, so the float animation's
-     own transform isn't clobbered.) */
-  .tj-float-about-t { top: 40px !important; left: 170px !important; }
+     About T piece lands off the right edge, so pull it into view but keep it clear of the
+     full-width "About Me" title (which ends ~240px): sit it up in the right corner, past
+     the text, letting its right edge peek off-screen like the falling-field pieces do.
+     Nudge the Projects S piece up a little. (margin, not transform, so the float
+     animation's own transform isn't clobbered.) */
+  .tj-float-about-t { top: 8px !important; left: 244px !important; }
   .tj-float-projects-s { margin-top: -44px !important; }
 
   /* hero padding so it clears the mobile nav */
