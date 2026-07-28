@@ -68,6 +68,13 @@ body::before {
   .tj-contact-grid { grid-template-columns: 1fr !important; }
   .tj-stats-grid { grid-template-columns: 1fr 1fr !important; }
 
+  /* Decorative 3D pieces are positioned for the wide desktop gutter — on a phone the
+     About T piece lands off the right edge, so pull it up and left into view, and nudge
+     the Projects S piece up a little. (margin, not transform, so the float animation's
+     own transform isn't clobbered.) */
+  .tj-float-about-t { top: 40px !important; left: 170px !important; }
+  .tj-float-projects-s { margin-top: -44px !important; }
+
   /* hero padding so it clears the mobile nav */
   .tj-hero-section { padding-top: 24px !important; }
 

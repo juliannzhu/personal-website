@@ -396,6 +396,7 @@ export function Projects({ resetSignal }: { resetSignal?: number } = {}) {
           <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Build Log</h2>
         </div>
         <ScrollTetromino3D
+          className="tj-float-projects-s"
           piece="s"
           size={60}
           baseRotateY={180}

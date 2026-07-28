@@ -187,6 +187,7 @@ export function About() {
       {/* Floated in the gutter between the two grid columns, level with the "About"
           heading above the Juliann Zhu / Skill Meter row. */}
       <ScrollTetromino3D
+        className="tj-float-about-t"
         piece="t"
         size={54}
         baseRotateX={-20}
