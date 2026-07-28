@@ -1060,7 +1060,6 @@ const CAROUSEL_LENGTH = QUESTS.length + 1
 const TITLE_GUTTER = 40
 const HEADER_H = 58
 const FOOTER_H = 84
-const ENGAGE_OFFSET = 90
 const AUTO_ROTATE_MS = 4000
 const JUMP_TRANSITION_MS = 600
 const JUMP_EASING = 'cubic-bezier(0.65, 0, 0.35, 1)'
@@ -1072,18 +1071,19 @@ const NARROW_MAX = 760
 // Where tile 0 rests in the wide (title-on-left) layout: right after the title block.
 const DESKTOP_PAD = 24 + TITLE_W + TITLE_GUTTER
 
-function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; progressRef: React.RefObject<number> }) {
+function QuestCarousel({ onOpen, progressRef, savedIndexRef, autoStoppedRef }: { onOpen: (id: string) => void; progressRef: React.RefObject<number>; savedIndexRef: React.RefObject<number>; autoStoppedRef: React.RefObject<boolean> }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
   const dotsRef = useRef<HTMLDivElement>(null)
   const tileRefs = useRef<(HTMLDivElement | null)[]>([])
   const rafRef = useRef(0)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const activeIndexRef = useRef(0)
+  // Restore the tile we were last on (survives quest-detail remounts via the parent).
+  const [activeIndex, setActiveIndex] = useState(savedIndexRef.current)
+  const activeIndexRef = useRef(savedIndexRef.current)
   // Auto-rotate stays on until the user actually drives the carousel themselves
-  // (arrow, dot, or swipe) — once that happens it's off for good, not just paused.
-  const autoRotateOnRef = useRef(true)
+  // (arrow, dot, or swipe) — once that happens it's off for good (persisted across remounts).
+  const autoRotateOnRef = useRef(!autoStoppedRef.current)
   const autoIntervalRef = useRef<number | undefined>(undefined)
 
   // Responsive layout, measured from the container width (see NARROW_MAX). `padLeft` is the
@@ -1128,6 +1128,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
       if (dist < closestDist) { closestDist = dist; closestIdx = i }
     })
     activeIndexRef.current = closestIdx
+    savedIndexRef.current = closestIdx
     setActiveIndex((prev) => (prev === closestIdx ? prev : closestIdx))
 
     const title = titleRef.current
@@ -1156,6 +1157,7 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
   // user has driven the carousel themselves, auto-rotate stops for good.
   const stopAutoRotate = () => {
     autoRotateOnRef.current = false
+    autoStoppedRef.current = true
     if (autoIntervalRef.current !== undefined) {
       window.clearInterval(autoIntervalRef.current)
       autoIntervalRef.current = undefined
@@ -1207,17 +1209,29 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
     if (!container) return
     let startX = 0, startY = 0, dragging = false, horizontal = false
     const onStart = (e: TouchEvent) => {
-      const rectTop = container.getBoundingClientRect().top
-      if (rectTop > ENGAGE_OFFSET || rectTop < -ENGAGE_OFFSET) return
+      // Don't hijack taps that land on the dots row (they're their own controls).
       const dots = dotsRef.current
       if (dots && e.touches[0].clientY >= dots.getBoundingClientRect().top) return
       startX = e.touches[0].clientX; startY = e.touches[0].clientY
       dragging = true; horizontal = false
-      // A dragging finger should track 1:1 with zero lag — only jumpTo (arrows,
-      // dots, auto-rotate) gets the eased slide.
+      // A dragging finger should track 1:1 with zero lag — only jumpTo (arrows, dots,
+      // auto-rotate) gets the eased slide. If a jump is still animating when the finger
+      // lands, adopt the live on-screen position first so the drag picks up smoothly from
+      // where the tiles actually are instead of snapping to the jump's target.
       const track = trackRef.current
-      if (track) track.style.transition = 'none'
+      if (track) {
+        const tf = getComputedStyle(track).transform
+        if (tf && tf !== 'none') {
+          try {
+            const liveX = new DOMMatrixReadOnly(tf).m41
+            const maxScroll = Math.max(1, track.scrollWidth - container.clientWidth)
+            progressRef.current = Math.min(1, Math.max(0, -liveX / maxScroll))
+          } catch { /* transform not parseable — keep current progress */ }
+        }
+        track.style.transition = 'none'
+      }
       tileRefs.current.forEach((el) => { if (el) el.style.transition = 'none' })
+      applyFrame()
     }
     const onMove = (e: TouchEvent) => {
       if (!dragging) return
@@ -1429,10 +1443,16 @@ function QuestCarousel({ onOpen, progressRef }: { onOpen: (id: string) => void; 
 export function SideQuests({ resetSignal }: { resetSignal?: number } = {}) {
   ensureCSS()
   const [openId, setOpenId] = useState<string | null>(null)
-  // Lives in the parent (not inside QuestCarousel) so it survives the carousel
-  // unmounting while a quest detail page is open, letting scroll position pick
-  // back up where it left off instead of resetting to the first tile.
+  // Both live in the parent (not inside QuestCarousel) so they survive the carousel
+  // unmounting while a quest detail page is open — the carousel restores this scroll
+  // position on remount instead of snapping back to the first tile. progressRef is the
+  // fine-grained scroll offset; savedIndexRef is the tile the carousel re-centres on.
   const progressRef = useRef(0)
+  const savedIndexRef = useRef(0)
+  // Once the user has driven the carousel (swipe/arrow/dot), auto-rotate stays off across
+  // remounts too — otherwise returning from a quest detail would let it drift off the tile
+  // they left on.
+  const autoStoppedRef = useRef(false)
 
   // Bumped by App.tsx when "Quests" is clicked again while already on this section —
   // closes whatever quest detail is open so the full tile grid is visible again.
@@ -1460,5 +1480,5 @@ export function SideQuests({ resetSignal }: { resetSignal?: number } = {}) {
     return <QuestDetail quest={quest} onBack={() => setOpenId(null)} />
   }
 
-  return <QuestCarousel onOpen={setOpenId} progressRef={progressRef} />
+  return <QuestCarousel onOpen={setOpenId} progressRef={progressRef} savedIndexRef={savedIndexRef} autoStoppedRef={autoStoppedRef} />
 }
