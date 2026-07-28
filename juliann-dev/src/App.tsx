@@ -164,8 +164,11 @@ export default function App() {
   }, [])
 
   // Footer height: 2px border + 6px rainbow + ~78px copyright row (28px padding each side) = ~86px
+  // 100dvh (not 100vh) so the shell tracks the mobile browser's dynamic chrome — with 100vh
+  // the fixed footer sits below the true visible bottom as the toolbar retracts, letting page
+  // content peek out beneath it.
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <div style={{ height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <FallingField />
       <TopNav current={activeSection} onNav={go} onPlay={() => setGameOpen(true)} onResume={() => setResumeOpen(true)} />
       <HoldBox ref={holdBoxRef} onPlay={() => setGameOpen(true)} />

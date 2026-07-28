@@ -249,7 +249,7 @@ export function TopNav({ current, onNav, onPlay, onResume }: { current: Screen; 
 const PIECES = ['i', 'o', 't', 's', 'z', 'j', 'l'] as const
 export function FixedFooter({ onNav }: { onNav: (id: Screen) => void }) {
   return (
-    <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 200, borderTop: '2px solid var(--border-strong)', background: 'color-mix(in srgb, var(--bg-page) 95%, transparent)', backdropFilter: 'blur(8px)' }}>
+    <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 200, borderTop: '2px solid var(--border-strong)', background: 'color-mix(in srgb, var(--bg-page) 95%, transparent)', backdropFilter: 'blur(8px)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div style={{ display: 'flex', height: 6 }}>
         {PIECES.map((p) => <div key={p} style={{ flex: 1, background: `var(--piece-${p})` }} />)}
       </div>
