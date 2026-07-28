@@ -405,7 +405,11 @@ const QUESTS: QuestCard[] = [
     sub: 'Quality time is my love language. My dog is a Shiba Inu named Pompom and he is a menace.',
     tags: ['Friends', 'Shiba Inu', 'Pompom', 'Quality Time'],
     placeholder: '🐾',
-    images: Array.from({ length: 97 }, (_, i) => i + 1).filter((n) => n !== 40).map((n) => Q(`people/people-${n}.jpg`)),
+    // Numbers absent from public/assets/quests/people/ (removed photos, plus 22 which moved
+    // to the photography quest). Keep this list in sync when photos are added/removed there.
+    images: Array.from({ length: 97 }, (_, i) => i + 1)
+      .filter((n) => ![1, 7, 11, 15, 22, 24, 33, 35, 40, 47, 49, 56, 72, 74, 77, 78].includes(n))
+      .map((n) => Q(`people/people-${n}.jpg`)),
     cover: Q('people/people-38.jpg'),
     layout: 'polaroid',
   },
@@ -428,7 +432,7 @@ const QUESTS: QuestCard[] = [
     sub: 'Candid shots, travel photos, and life through a lens. Instagram: @juliann.zhu',
     tags: ['Candid', 'Travel', 'Film'],
     placeholder: '📷',
-    images: Array.from({ length: 40 }, (_, i) => Q(`photography/photography-${i + 1}.jpg`)),
+    images: Array.from({ length: 41 }, (_, i) => Q(`photography/photography-${i + 1}.jpg`)),
     layout: 'marquee',
     marqueeHeight: 'calc(100vh - 260px)',
   },
@@ -439,7 +443,10 @@ const QUESTS: QuestCard[] = [
     sub: 'A month of hands-on STEM and entrepreneurship, and way too many late-night talks with people who now feel like lifelong friends.',
     tags: ['STEM', 'Entrepreneurship', 'Summer Program'],
     placeholder: '🎓',
-    images: Array.from({ length: 55 }, (_, i) => Q(`shad/shad-${i + 1}.jpg`)),
+    // Numbers absent from public/assets/quests/shad/ after cleanup.
+    images: Array.from({ length: 55 }, (_, i) => i + 1)
+      .filter((n) => ![27, 35, 46].includes(n))
+      .map((n) => Q(`shad/shad-${n}.jpg`)),
     cover: Q('shad/shad-7.jpg'),
     layout: 'polaroid',
     videos: videosFor('shad', 4),

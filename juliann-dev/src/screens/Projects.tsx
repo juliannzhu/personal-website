@@ -10,8 +10,10 @@ import { ScrollTetromino3D } from '../components/ScrollTetromino3D'
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 type Cat = 'all' | 'web' | 'ai' | 'systems' | 'research'
 
-// images live in /public/assets/build-log/<ProjectName>/ — add screenshots and list them in each project's `images` array
-type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; github?: string; devpost?: string; images?: string[] }
+// images live in /public/assets/build-log/<ProjectName>/ — add screenshots and list them in each
+// project's `images` array. An entry may be a plain URL or `{ src, caption }` to caption that slide.
+type ProjectImage = string | { src: string; caption?: string }
+type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; github?: string; devpost?: string; images?: ProjectImage[] }
 
 // images live in /public/assets/build-log/<folder>/
 const P = (folder: string, file: string) => `/assets/build-log/${folder}/${file}`
@@ -88,6 +90,7 @@ const PROJECTS: Project[] = [
       P('tetris-website', 'ideation-03.png'),
       P('tetris-website', 'ideation-04.png'),
       P('tetris-website', 'ideation-05.png'),
+      { src: P('tetris-website', 'old-radar-chart.png'), caption: 'old radar chart design' },
     ],
   },
   {
@@ -252,7 +255,7 @@ function MediaSlot({ src, index }: { src?: string; index: number }) {
 const CAROUSEL_TRANSITION_MS = 600
 const CAROUSEL_EASING = 'cubic-bezier(0.65, 0, 0.35, 1)'
 
-function ProjectCarousel({ images, c }: { images: string[]; c: string }) {
+function ProjectCarousel({ images, c }: { images: { src: string; caption?: string }[]; c: string }) {
   const [index, setIndex] = useState(0)
   const goPrev = () => setIndex((i) => Math.max(0, i - 1))
   const goNext = () => setIndex((i) => Math.min(images.length - 1, i + 1))
@@ -265,10 +268,20 @@ function ProjectCarousel({ images, c }: { images: string[]; c: string }) {
           transform: `translateX(-${index * 100}%)`,
           transition: `transform ${CAROUSEL_TRANSITION_MS}ms ${CAROUSEL_EASING}`,
         }}>
-          {images.map((src, i) => (
-            <img key={i} src={src} alt="" style={{ width: '100%', height: '100%', flexShrink: 0, objectFit: 'contain' }} />
+          {images.map((im, i) => (
+            <img key={i} src={im.src} alt={im.caption ?? ''} style={{ width: '100%', height: '100%', flexShrink: 0, objectFit: 'contain' }} />
           ))}
         </div>
+
+        {images[index]?.caption && (
+          <div style={{
+            position: 'absolute', left: 0, right: 0, bottom: 0, padding: '10px 14px',
+            background: 'linear-gradient(to top, rgba(5,5,9,0.82), transparent)',
+            fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center',
+          }}>
+            {'// '}{images[index].caption}
+          </div>
+        )}
 
         {index > 0 && (
           <IconButton size="md" variant="ghost" label="Previous photo" onClick={goPrev}
@@ -306,7 +319,8 @@ function ProjectCarousel({ images, c }: { images: string[]; c: string }) {
 
 function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
   const c = `var(--piece-${p.piece})`
-  const images = p.images ?? []
+  // Normalize plain-URL and { src, caption } entries into one shape for the carousel.
+  const images = (p.images ?? []).map((im) => (typeof im === 'string' ? { src: im } : im))
   const topRef = useRef<HTMLDivElement>(null)
   // Opening a project from partway down the grid would otherwise land on its detail
   // page still scrolled to that position — snap the scroll stack back to the top of it.
@@ -334,7 +348,7 @@ function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
         <>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             {Array.from({ length: 5 }).map((_, i) => (
-              <MediaSlot key={i} src={images[i]} index={i} />
+              <MediaSlot key={i} src={images[i]?.src} index={i} />
             ))}
           </div>
 
