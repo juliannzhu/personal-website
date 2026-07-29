@@ -692,7 +692,10 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
   const [, force] = useState(0)
   const [, setClock] = useState(0)
   const rerender = useCallback(() => force(n => n + 1), [])
-  const [scores, setScores] = useState<ScoreEntry[]>(loadScores)
+  // When a live API is configured, the server is the sole source of truth, so
+  // start empty and let the mount effect fill it (avoids flashing the local
+  // seed data / stale localStorage). Only fall back to loadScores offline.
+  const [scores, setScores] = useState<ScoreEntry[]>(() => LEADERBOARD_API ? [] : loadScores())
   const [myResult, setMyResult] = useState<{ name: string; ms: number; rank: number } | null>(null)
   const [settings, setSettings] = useState<GameSettings>(loadSettings)
   const [keybinds, setKeybinds] = useState<KeyBinds>(loadKeybinds)
@@ -957,9 +960,11 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     return () => { window.removeEventListener('keydown', onKeyDown); window.removeEventListener('keyup', onKeyUp) }
   }, [keybinds, showSettings, enteringInitials, countdown, settings, move, rotate, hardDrop, holdPiece, startGame, startMoveRepeat, startSoftDropRepeat, runCountdown, onClose])
 
-  // On mount, try to load live scores if an API is configured
+  // On mount, load live scores if an API is configured. Trust the server even
+  // when it returns an empty board, so a freshly wiped leaderboard shows empty
+  // instead of falling back to the stale seed data.
   useEffect(() => {
-    fetchLiveScores().then(live => { if (live?.length) setScores(live) })
+    fetchLiveScores().then(live => { if (live) setScores(live) })
   }, [])
 
   // Auto-scroll leaderboard to user's row whenever it changes
@@ -984,18 +989,26 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
   const handleSubmitInitials = async () => {
     const name = initials.trim() || 'AAA'
     const s = g.current
-    const { list, rank } = saveScore(name, s.finishMs)
     const trimmed = name.trim().toUpperCase().slice(0, 3) || 'AAA'
-    setScores(list)
-    setMyResult({ name: trimmed, ms: s.finishMs, rank })
-    recordRank(rank, s.finishMs)
-    // If live API configured, post and refresh
-    const liveRank = await postLiveScore(trimmed, s.finishMs)
-    if (liveRank !== null) {
-      setMyResult(prev => prev ? { ...prev, rank: liveRank } : prev)
-      recordRank(liveRank, s.finishMs)
-      fetchLiveScores().then(live => { if (live?.length) setScores(live) })
+
+    if (LEADERBOARD_API) {
+      // Live mode: the server owns the board. Post, then refresh straight from
+      // the server so no local seed data ever flashes into view.
+      const liveRank = await postLiveScore(trimmed, s.finishMs)
+      const live = await fetchLiveScores()
+      if (live) setScores(live.map(r => r.name === trimmed && r.ms === s.finishMs ? { ...r, you: true } : r))
+      if (liveRank !== null) {
+        setMyResult({ name: trimmed, ms: s.finishMs, rank: liveRank })
+        recordRank(liveRank, s.finishMs)
+      }
+    } else {
+      // Offline mode: fall back to the localStorage leaderboard.
+      const { list, rank } = saveScore(name, s.finishMs)
+      setScores(list)
+      setMyResult({ name: trimmed, ms: s.finishMs, rank })
+      recordRank(rank, s.finishMs)
     }
+
     s.saved = true; setEnteringInitials(false); rerender()
   }
 
