@@ -183,28 +183,40 @@ function layoutPile(cols: number): { placed: PlacedPiece[]; fillers: Filler[]; c
 }
 
 // Explicit, hand-picked falling pieces (not derived from the pile's cycling sequence) so each
-// one has a stable identity to tweak — position is a fraction of the total width (stable across
-// screen sizes), with an optional colOffset to nudge a specific piece left/right by N squares.
-type FallingSlotDef = { piece: Piece; shape: Shape; xFraction: number; colOffset?: number; smearFrom?: 'center' | 'bottom' }
+// one has a stable identity to tweak. Each piece is pinned to a FIXED absolute pile column, so its
+// placement is identical on every screen size — it lands on the exact same pile blocks everywhere.
+// On narrow screens the right-most pieces are simply cropped off, never shifted inward. To nudge a
+// piece, change its `col` by whole blocks.
+type FallingSlotDef = { piece: Piece; shape: Shape; col: number; smearFrom?: 'center' | 'bottom' }
 const FALLING_SLOTS: FallingSlotDef[] = [
-  { piece: 'i', shape: PIECE_ROTATIONS.i[1], xFraction: 0.04, colOffset: 0 }, // leftmost, shifted right
-  { piece: 'o', shape: PIECE_ROTATIONS.o[0], xFraction: 0.22, colOffset: 1 }, // shifted left
-  { piece: 't', shape: PIECE_ROTATIONS.t[0], xFraction: 0.40, colOffset: -2 }, // middle slot: was a red Z, now a T
-  { piece: 'j', shape: PIECE_ROTATIONS.j[3], xFraction: 0.58, smearFrom: 'bottom' }, // was green S, now a purple J, rotated one step CCW from spawn; smear from its bottom
-  { piece: 'i', shape: PIECE_ROTATIONS.i[1], xFraction: 0.76, colOffset: -2 }, // was a red Z, now a vertical I piece
-  { piece: 't', shape: PIECE_ROTATIONS.t[0], xFraction: 0.94 }, // rightmost slot: was a red Z, now a T with its 3-wide side facing down
+  { piece: 'i', shape: PIECE_ROTATIONS.i[1], col: 3 },
+  { piece: 'o', shape: PIECE_ROTATIONS.o[0], col: 17 },
+  { piece: 't', shape: PIECE_ROTATIONS.t[0], col: 27 },
+  { piece: 'z', shape: PIECE_ROTATIONS.z[1], col: 47, smearFrom: 'bottom' },
+  { piece: 's', shape: PIECE_ROTATIONS.s[1], col: 62 },
+  { piece: 'l', shape: PIECE_ROTATIONS.l[1], col: 80 },
 ]
 
 // A handful of columns get a piece that endlessly re-falls into place, aligned to the exact
 // same grid as the stationary pile — its rest position is precisely where it would actually
 // land if it were a real placement, so it visibly touches the top of the highest block there
 // before fading out and repeating.
-function pickFallingSpots(cols: number, colHeight: number[]): { piece: Piece; shape: Shape; col: number; restRow: number; smearFrom: 'center' | 'bottom' }[] {
-  return FALLING_SLOTS.map(({ piece, shape, xFraction, colOffset = 0, smearFrom = 'center' }) => {
-    let col = Math.round(xFraction * cols) + colOffset
-    col = Math.max(0, Math.min(col, cols - shape.w))
+function pickFallingSpots(colHeight: number[]): { piece: Piece; shape: Shape; col: number; restRow: number; smearFrom: 'center' | 'bottom' }[] {
+  return FALLING_SLOTS.map(({ piece, shape, col: fixedCol, smearFrom = 'center' }) => {
+    // Fixed absolute column, clamped only to the master grid so a narrow screen crops the piece
+    // rather than pulling it inward — this is what keeps every piece's placement screen-independent.
+    const col = Math.max(0, Math.min(fixedCol, colHeight.length - shape.w))
+    // Rest on each column's underside (the empty rows below its lowest block) so a piece with an
+    // uneven bottom, like the S, actually touches the pile instead of resting on its tallest
+    // column and floating a block above. Flat-bottomed pieces (I/O/T/J) are unaffected.
+    const { colMaxRow } = colProfile(shape)
     let restRow = 0
-    for (let c = 0; c < shape.w; c++) restRow = Math.max(restRow, colHeight[col + c])
+    for (let c = 0; c < shape.w; c++) {
+      if (colMaxRow[c] === -Infinity) continue
+      const underside = (shape.h - 1) - colMaxRow[c]
+      restRow = Math.max(restRow, colHeight[col + c] - underside)
+    }
+    restRow = Math.max(0, restRow)
     return { piece, shape, col, restRow, smearFrom }
   })
 }
@@ -307,31 +319,40 @@ export function PileFooter({ quote, kicker = '// words i play by' }: { quote?: s
     return () => { window.removeEventListener('resize', measure); ro.disconnect() }
   }, [])
 
-  // Block size follows viewport height (see UNIT_HEIGHT_RATIO above) instead of stretching
-  // to fill the viewport width — keeps blocks a legible, consistent size on every device.
+  // Desktop = wider than the app's 720px mobile breakpoint. Everything below is gated on this
+  // so mobile (which already looks right) is left completely unchanged.
+  const isWide = breakout.width >= 721
+
+  // Block size follows viewport height (see UNIT_HEIGHT_RATIO above) so blocks stay legible on
+  // short screens. On desktop we scale up so the pile reads at a comfortable size on a large
+  // monitor instead of a grid of tiny squares.
+  const ratio = isWide ? 0.021 : UNIT_HEIGHT_RATIO
+  const maxUnit = isWide ? 30 : UNIT_MAX
   const unit = breakout.viewportHeight > 0
-    ? Math.max(UNIT_MIN, Math.min(UNIT_MAX, breakout.viewportHeight * UNIT_HEIGHT_RATIO))
+    ? Math.max(UNIT_MIN, Math.min(maxUnit, breakout.viewportHeight * ratio))
     : UNIT_MAX
   const cellSize = Math.max(1, unit - GRID_GAP)
   const cols = MASTER_COLS
   const artworkWidth = cols * unit
 
-  const { placed, fillers, fallingSpots, maxRow } = useMemo(() => {
+  const { placed, fillers, colHeight, maxRow } = useMemo(() => {
     const { placed, fillers, colHeight } = layoutPile(cols)
-    const fallingSpots = pickFallingSpots(ACCENT_COLS, colHeight)
-    return { placed, fillers, fallingSpots, maxRow: Math.max(1, ...colHeight) }
+    return { placed, fillers, colHeight, maxRow: Math.max(1, ...colHeight) }
   }, [cols])
+
+  // Falling pieces are pinned to fixed absolute pile columns (see FALLING_SLOTS), so their
+  // placement is identical on every screen size and never drifts with the viewport width.
+  const fallingSpots = useMemo(() => pickFallingSpots(colHeight), [colHeight])
 
   // The footer band's own height follows the actual pile height (plus fixed headroom for
   // the quote text) instead of a flat 65vh — keeps it proportionate instead of leaving a
   // mostly-empty gap above a short pile, or a pile taller than its own band on a big screen.
   const pileHeight = maxRow * unit
   const footerHeight = Math.max(360, Math.min(760, pileHeight + 280))
-  // On wide screens the pile graphic itself is capped at ACCENT_COLS wide (ending right at
-  // the rightmost falling piece) instead of stretching all the way to the viewport edge —
-  // the outer breakout container stays full-width so the quote overlay's alignment with the
-  // rest of the page (which accounts for the fixed sidebar) is untouched.
-  const pileVisibleWidth = breakout.width > 0 ? Math.min(breakout.width, ACCENT_COLS * unit) : undefined
+  // The pile fills the full footer width; the fixed-width master artwork is cropped by the
+  // container's overflow. On mobile the viewport is already narrower than the old ACCENT_COLS
+  // cap, so this leaves mobile unchanged while letting the pile span the screen on desktop.
+  const pileVisibleWidth = breakout.width || undefined
 
   return (
     <div ref={ref} style={{
