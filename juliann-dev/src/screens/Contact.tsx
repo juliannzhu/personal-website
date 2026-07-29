@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { Icon } from '@iconify/react'
 import { Card } from '../components/ds/Card'
 import { Input } from '../components/ds/Input'
@@ -21,6 +21,34 @@ const LINKS: { label: string; handle: string; icon: string; piece: Piece; href: 
 
 export function Contact() {
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [form, setForm] = useState({ name: '', email: '', message: '', company: '' })
+
+  const update = (key: keyof typeof form) =>
+    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setForm((f) => ({ ...f, [key]: e.target.value }))
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    setSending(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) throw new Error()
+      setSent(true)
+      setForm({ name: '', email: '', message: '', company: '' })
+    } catch {
+      setError('Something went wrong. Please email me directly.')
+    } finally {
+      setSending(false)
+    }
+  }
+
   return (
     <>
       <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px' }}>
@@ -53,15 +81,22 @@ export function Contact() {
               <div style={{ marginTop: 20 }}><Button variant="ghost" size="sm" onClick={() => setSent(false)}>Send Another</Button></div>
             </div>
           ) : (
-            <form onSubmit={(e) => { e.preventDefault(); setSent(true) }} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <form onSubmit={handleSubmit} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-                <Input label="Name" placeholder="Your name" required />
-                <Input label="Email" type="email" placeholder="you@email.com" required />
+                <Input label="Name" name="name" value={form.name} onChange={update('name')} placeholder="Your name" required />
+                <Input label="Email" name="email" type="email" value={form.email} onChange={update('email')} placeholder="you@email.com" required />
               </div>
               <div style={{ marginBottom: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <Textarea label="Message" placeholder="What are we building?" required style={{ flex: 1, minHeight: 120 }} />
+                <Textarea label="Message" name="message" value={form.message} onChange={update('message')} placeholder="What are we building?" required style={{ flex: 1, minHeight: 120 }} />
               </div>
-              <Button variant="success" type="submit" block>Send Message</Button>
+              {/* Honeypot: hidden from real users; bots that fill it get silently dropped server-side */}
+              <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true"
+                value={form.company} onChange={update('company')}
+                style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} />
+              {error && (
+                <p style={{ color: 'var(--piece-z)', fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', margin: '0 0 12px' }}>{error}</p>
+              )}
+              <Button variant="success" type="submit" block disabled={sending}>{sending ? 'Sending...' : 'Send Message'}</Button>
             </form>
           )}
         </Card>

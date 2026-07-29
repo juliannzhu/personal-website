@@ -15,7 +15,8 @@
     "@upstash/redis": "^1.38.0",
     "framer-motion": "^12.16.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "resend": "^6.18.1"
   },
   "devDependencies": {
     "@types/react": "^19.1.8",
