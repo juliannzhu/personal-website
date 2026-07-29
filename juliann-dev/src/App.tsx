@@ -66,7 +66,7 @@ body::before {
   .tj-grid-2 { grid-template-columns: 1fr !important; }
   .tj-about-grid { grid-template-columns: 1fr !important; }
   .tj-contact-grid { grid-template-columns: 1fr !important; }
-  .tj-stats-grid { grid-template-columns: 1fr 1fr !important; }
+  .tj-stats-grid { grid-template-columns: 1fr !important; }
 
   /* Decorative 3D pieces are positioned for the wide desktop gutter — on a phone the
      About T piece lands off the right edge, so pull it into view but keep it clear of the
