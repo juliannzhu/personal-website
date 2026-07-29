@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 980" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1140" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#8a8aa6" />
@@ -8,104 +8,143 @@
     </marker>
   </defs>
 
-  <rect x="0" y="0" width="1600" height="980" fill="#0a0a12" />
+  <rect x="0" y="0" width="1600" height="1140" fill="#0a0a12" />
 
   <!-- decorative piece -->
   <g fill="#3cf000">
-    <rect x="1478" y="60" width="26" height="26" />
-    <rect x="1504" y="60" width="26" height="26" />
-    <rect x="1452" y="86" width="26" height="26" />
-    <rect x="1478" y="86" width="26" height="26" />
+    <rect x="1478" y="56" width="26" height="26" />
+    <rect x="1504" y="56" width="26" height="26" />
+    <rect x="1452" y="82" width="26" height="26" />
+    <rect x="1478" y="82" width="26" height="26" />
   </g>
 
   <!-- header -->
   <text x="60" y="76" fill="#00f0f0" font-size="17" letter-spacing="3">// SYSTEM FLOW</text>
   <text x="60" y="118" fill="#ffffff" font-size="42" font-weight="800" letter-spacing="2" font-family="Arial, Helvetica, sans-serif">ARCHITECTURE</text>
-  <text x="60" y="150" fill="#8a8aa6" font-size="16">Static SPA, built and deployed through Vercel. No custom backend.</text>
+  <text x="60" y="150" fill="#8a8aa6" font-size="16">React SPA on Vercel, plus a serverless leaderboard API backed by Redis.</text>
 
-  <!-- ===== Row 1: pipeline ===== -->
-  <!-- Developer -->
-  <rect x="60" y="200" width="280" height="130" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
-  <rect x="60" y="200" width="280" height="6" fill="#ff9f1c" />
+  <!-- ===== Row 1: build + deploy pipeline ===== -->
+  <!-- 01 Developer -->
+  <rect x="60" y="200" width="340" height="140" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="60" y="200" width="340" height="6" fill="#ff9f1c" />
   <text x="86" y="240" fill="#ff9f1c" font-size="14" letter-spacing="2">01</text>
-  <text x="86" y="268" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="1">DEVELOPER</text>
-  <text x="86" y="296" fill="#8a8aa6" font-size="14">git push origin main</text>
+  <text x="86" y="270" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="1">DEVELOPER</text>
+  <text x="86" y="300" fill="#8a8aa6" font-size="14">git push origin main</text>
 
-  <!-- GitHub -->
-  <rect x="420" y="200" width="280" height="130" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
-  <rect x="420" y="200" width="280" height="6" fill="#00f0f0" />
-  <text x="446" y="240" fill="#00f0f0" font-size="14" letter-spacing="2">02</text>
-  <text x="446" y="268" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="1">GITHUB</text>
-  <text x="446" y="296" fill="#8a8aa6" font-size="14">juliannzhu/personal-website</text>
+  <!-- 02 GitHub -->
+  <rect x="450" y="200" width="340" height="140" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="450" y="200" width="340" height="6" fill="#00f0f0" />
+  <text x="476" y="240" fill="#00f0f0" font-size="14" letter-spacing="2">02</text>
+  <text x="476" y="270" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="1">GITHUB</text>
+  <text x="476" y="300" fill="#8a8aa6" font-size="14">juliannzhu/personal-website</text>
 
-  <!-- Vercel -->
-  <rect x="780" y="200" width="280" height="130" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
-  <rect x="780" y="200" width="280" height="6" fill="#f5d800" />
-  <text x="806" y="240" fill="#f5d800" font-size="14" letter-spacing="2">03</text>
-  <text x="806" y="268" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="1">VERCEL</text>
-  <text x="806" y="292" fill="#8a8aa6" font-size="14">tsc -b &amp;&amp; vite build</text>
-  <text x="806" y="312" fill="#8a8aa6" font-size="14">auto-deploy · global CDN</text>
+  <!-- 03 Vercel -->
+  <rect x="840" y="200" width="340" height="140" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="840" y="200" width="340" height="6" fill="#f5d800" />
+  <text x="866" y="240" fill="#f5d800" font-size="14" letter-spacing="2">03</text>
+  <text x="866" y="270" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="1">VERCEL</text>
+  <text x="866" y="298" fill="#8a8aa6" font-size="14">tsc -b &amp;&amp; vite build</text>
+  <text x="866" y="320" fill="#8a8aa6" font-size="14">auto-deploy · global CDN</text>
 
-  <line x1="340" y1="265" x2="412" y2="265" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
-  <line x1="700" y1="265" x2="772" y2="265" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <!-- pipeline arrows (horizontal) -->
+  <line x1="400" y1="270" x2="450" y2="270" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <line x1="790" y1="270" x2="840" y2="270" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
 
-  <!-- Vercel -> Browser -->
-  <line x1="920" y1="330" x2="700" y2="404" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
-  <text x="950" y="345" fill="#8a8aa6" font-size="13">serves static build</text>
+  <!-- deploy: Vercel -> Browser (vertical) -->
+  <line x1="1010" y1="340" x2="1010" y2="430" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <text x="1024" y="392" fill="#8a8aa6" font-size="13">deploys SPA</text>
 
-  <!-- ===== Row 2: Browser ===== -->
-  <rect x="60" y="410" width="1000" height="160" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
-  <rect x="60" y="410" width="1000" height="6" fill="#3cf000" />
-  <text x="86" y="450" fill="#3cf000" font-size="14" letter-spacing="2">04</text>
-  <text x="86" y="478" fill="#ffffff" font-size="24" font-weight="700" letter-spacing="1">BROWSER · CLIENT</text>
-  <text x="86" y="508" fill="#8a8aa6" font-size="15">React 19 + Vite 6 + TypeScript (strict), rendered entirely client-side</text>
-  <text x="86" y="530" fill="#8a8aa6" font-size="15">CSS custom-property design tokens · Framer Motion · Iconify</text>
-  <text x="86" y="552" fill="#5c5c78" font-size="14">No server-side rendering, no API layer</text>
+  <!-- deploy: Vercel -> Serverless (orthogonal elbow, no diagonal) -->
+  <polyline points="1180,270 1420,270 1420,430" fill="none" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <text x="1196" y="262" fill="#8a8aa6" font-size="13">deploys API fn</text>
 
-  <!-- ===== Row 3: sub-systems ===== -->
-  <line x1="260" y1="570" x2="260" y2="650" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
-  <line x1="680" y1="570" x2="680" y2="650" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
-  <line x1="980" y1="570" x2="980" y2="650" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <!-- ===== Row 2: browser client (left) + serverless fn (right) ===== -->
+  <!-- 04 Browser -->
+  <rect x="60" y="430" width="1120" height="150" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="60" y="430" width="1120" height="6" fill="#3cf000" />
+  <text x="86" y="470" fill="#3cf000" font-size="14" letter-spacing="2">04</text>
+  <text x="86" y="498" fill="#ffffff" font-size="24" font-weight="700" letter-spacing="1">BROWSER · CLIENT</text>
+  <text x="86" y="528" fill="#8a8aa6" font-size="15">React 19 + Vite 6 + TypeScript (strict), rendered entirely client-side</text>
+  <text x="86" y="550" fill="#8a8aa6" font-size="15">CSS custom-property design tokens · Iconify icons · client-side routing, no SSR</text>
+  <text x="86" y="572" fill="#5c5c78" font-size="14">Calls the leaderboard API over fetch; everything else runs in the browser</text>
 
-  <!-- Local state -->
-  <rect x="60" y="660" width="400" height="160" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
-  <rect x="60" y="660" width="400" height="6" fill="#b14cff" />
-  <text x="86" y="698" fill="#b14cff" font-size="18" font-weight="700" letter-spacing="1">REACT STATE</text>
-  <text x="86" y="726" fill="#8a8aa6" font-size="14">useState / useRef</text>
-  <text x="86" y="748" fill="#8a8aa6" font-size="14">nav, game loop, UI, animation</text>
-  <text x="86" y="770" fill="#5c5c78" font-size="13">in-memory, resets on reload</text>
+  <!-- 05 Serverless function -->
+  <rect x="1280" y="430" width="280" height="150" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="1280" y="430" width="280" height="6" fill="#f5d800" />
+  <text x="1306" y="470" fill="#f5d800" font-size="14" letter-spacing="2">05</text>
+  <text x="1306" y="498" fill="#ffffff" font-size="19" font-weight="700" letter-spacing="1">SERVERLESS FN</text>
+  <text x="1306" y="526" fill="#8a8aa6" font-size="14">/api/scores</text>
+  <text x="1306" y="548" fill="#8a8aa6" font-size="14">GET top 20 · POST score</text>
+  <text x="1306" y="570" fill="#5c5c78" font-size="13">Vercel Function (Node)</text>
+
+  <!-- browser <-> serverless (horizontal, two-way) -->
+  <line x1="1180" y1="505" x2="1280" y2="505" stroke="#8a8aa6" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+  <text x="1230" y="496" fill="#8a8aa6" font-size="12" text-anchor="middle">GET / POST</text>
+  <text x="1230" y="524" fill="#5c5c78" font-size="12" text-anchor="middle">scores</text>
+
+  <!-- serverless -> redis (vertical) -->
+  <line x1="1420" y1="580" x2="1420" y2="660" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <text x="1434" y="628" fill="#8a8aa6" font-size="12">ZADD / ZRANGE</text>
+
+  <!-- browser -> subsystems (vertical) -->
+  <line x1="230" y1="580" x2="230" y2="660" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <line x1="620" y1="580" x2="620" y2="660" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <line x1="1010" y1="580" x2="1010" y2="660" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+
+  <!-- ===== Row 3: client subsystems (left) + redis (right) ===== -->
+  <!-- React state -->
+  <rect x="60" y="660" width="340" height="150" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="60" y="660" width="340" height="6" fill="#b14cff" />
+  <text x="86" y="700" fill="#b14cff" font-size="18" font-weight="700" letter-spacing="1">REACT STATE</text>
+  <text x="86" y="728" fill="#8a8aa6" font-size="14">useState / useRef</text>
+  <text x="86" y="750" fill="#8a8aa6" font-size="14">nav · game loop · UI · animation</text>
+  <text x="86" y="772" fill="#5c5c78" font-size="13">in-memory, resets on reload</text>
 
   <!-- LocalStorage -->
-  <rect x="480" y="660" width="400" height="160" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
-  <rect x="480" y="660" width="400" height="6" fill="#3d6bff" />
-  <text x="506" y="698" fill="#3d6bff" font-size="18" font-weight="700" letter-spacing="1">LOCALSTORAGE</text>
-  <text x="506" y="726" fill="#8a8aa6" font-size="14">settings · keybinds</text>
-  <text x="506" y="748" fill="#8a8aa6" font-size="14">achievements · leaderboard scores</text>
-  <text x="506" y="770" fill="#5c5c78" font-size="13">persisted per-browser, no account system</text>
+  <rect x="450" y="660" width="340" height="150" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="450" y="660" width="340" height="6" fill="#3d6bff" />
+  <text x="476" y="700" fill="#3d6bff" font-size="18" font-weight="700" letter-spacing="1">LOCALSTORAGE</text>
+  <text x="476" y="728" fill="#8a8aa6" font-size="14">settings · keybinds</text>
+  <text x="476" y="750" fill="#8a8aa6" font-size="14">achievements</text>
+  <text x="476" y="772" fill="#5c5c78" font-size="13">leaderboard: offline fallback only</text>
 
   <!-- Web Audio -->
-  <rect x="900" y="660" width="160" height="160" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
-  <rect x="900" y="660" width="160" height="6" fill="#ff3b3b" />
-  <text x="926" y="698" fill="#ff3b3b" font-size="16" font-weight="700" letter-spacing="1">WEB</text>
-  <text x="926" y="718" fill="#ff3b3b" font-size="16" font-weight="700" letter-spacing="1">AUDIO</text>
-  <text x="926" y="746" fill="#8a8aa6" font-size="13">synthesized</text>
-  <text x="926" y="764" fill="#8a8aa6" font-size="13">8-bit SFX</text>
-  <text x="926" y="782" fill="#5c5c78" font-size="12">no audio files</text>
+  <rect x="840" y="660" width="340" height="150" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="840" y="660" width="340" height="6" fill="#ff3b3b" />
+  <text x="866" y="700" fill="#ff3b3b" font-size="18" font-weight="700" letter-spacing="1">WEB AUDIO</text>
+  <text x="866" y="728" fill="#8a8aa6" font-size="14">synthesized 8-bit SFX</text>
+  <text x="866" y="750" fill="#8a8aa6" font-size="14">Korobeiniki melody</text>
+  <text x="866" y="772" fill="#5c5c78" font-size="13">no audio files</text>
 
-  <!-- Contact form, planned -->
-  <rect x="1120" y="410" width="420" height="410" fill="none" stroke="#ff9f1c" stroke-width="2" stroke-dasharray="8 6" />
-  <text x="1146" y="450" fill="#ff9f1c" font-size="14" letter-spacing="2">PLANNED</text>
-  <text x="1146" y="478" fill="#ffffff" font-size="22" font-weight="700" letter-spacing="1">CONTACT FORM</text>
-  <text x="1146" y="510" fill="#8a8aa6" font-size="15">Currently stubbed:</text>
-  <text x="1146" y="532" fill="#8a8aa6" font-size="15">setSent(true), no request sent</text>
-  <text x="1146" y="572" fill="#8a8aa6" font-size="15">Next step: wire submit to</text>
-  <text x="1146" y="594" fill="#ffffff" font-size="16" font-weight="700">Resend</text>
-  <text x="1218" y="594" fill="#5c5c78" font-size="15">or</text>
-  <text x="1246" y="594" fill="#ffffff" font-size="16" font-weight="700">Formspree</text>
-  <text x="1146" y="626" fill="#5c5c78" font-size="13">(hosted email APIs, no server to run)</text>
+  <!-- 06 Upstash Redis -->
+  <rect x="1280" y="660" width="280" height="150" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="1280" y="660" width="280" height="6" fill="#ff9f1c" />
+  <text x="1306" y="698" fill="#ff9f1c" font-size="14" letter-spacing="2">06</text>
+  <text x="1306" y="724" fill="#ffffff" font-size="18" font-weight="700" letter-spacing="1">UPSTASH REDIS</text>
+  <text x="1306" y="750" fill="#8a8aa6" font-size="13">sorted set: tetris:sprint</text>
+  <text x="1306" y="772" fill="#8a8aa6" font-size="13">score = ms · top 20 kept</text>
+  <text x="1306" y="792" fill="#5c5c78" font-size="12">shared by every visitor</text>
 
-  <line x1="1060" y1="490" x2="1112" y2="490" stroke="#ff9f1c" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrow-o)" />
+  <!-- ===== Bottom band ===== -->
+  <line x1="60" y1="852" x2="1560" y2="852" stroke="#3b3b5c" stroke-width="1" stroke-dasharray="4 6" />
+
+  <!-- Roadmap: contact form (planned) -->
+  <text x="60" y="884" fill="#00f0f0" font-size="14" letter-spacing="2">// ROADMAP</text>
+  <rect x="60" y="898" width="700" height="140" fill="none" stroke="#ff9f1c" stroke-width="2" stroke-dasharray="8 6" />
+  <text x="86" y="934" fill="#ff9f1c" font-size="14" letter-spacing="2">PLANNED</text>
+  <text x="86" y="962" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="1">CONTACT FORM</text>
+  <text x="86" y="992" fill="#8a8aa6" font-size="14">Currently stubbed: setSent(true), no request sent</text>
+  <text x="86" y="1014" fill="#8a8aa6" font-size="14">Next: wire submit to Resend or Formspree (hosted email, no server)</text>
+
+  <!-- What's new: live leaderboard -->
+  <text x="800" y="884" fill="#00f0f0" font-size="14" letter-spacing="2">// WHAT'S NEW</text>
+  <rect x="800" y="898" width="760" height="140" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="800" y="898" width="760" height="6" fill="#3cf000" />
+  <text x="826" y="934" fill="#3cf000" font-size="14" letter-spacing="2">RECENTLY ADDED</text>
+  <text x="826" y="962" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="1">LIVE LEADERBOARD</text>
+  <text x="826" y="992" fill="#8a8aa6" font-size="14">Sprint times persist in Upstash Redis through /api/scores,</text>
+  <text x="826" y="1014" fill="#8a8aa6" font-size="14">a Vercel serverless function, and are shared across every visitor.</text>
 
   <!-- footer -->
-  <text x="60" y="920" fill="#5c5c78" font-size="14">// Fully static site. All state lives client-side; the only planned server call is the contact form.</text>
+  <text x="60" y="1100" fill="#5c5c78" font-size="14">// React SPA on Vercel. The one server-side piece is the leaderboard API: a Vercel Function backed by Upstash Redis.</text>
 </svg>
