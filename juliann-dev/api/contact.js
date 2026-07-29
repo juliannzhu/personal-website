@@ -1,7 +1,5 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 // Where contact messages are delivered. Without a verified custom domain, Resend
 // only permits sending to the account owner's address, so this must match the
 // email the Resend account was created with. Overridable via env var.
@@ -31,6 +29,13 @@ export default async function handler(req, res) {
     if (!name || !isEmail(email) || message.length < 2) {
       return res.status(400).json({ error: 'invalid submission' })
     }
+
+    // Construct the client here (not at module load) so a missing key returns a
+    // clean, diagnosable error instead of crashing the whole function on import.
+    if (!process.env.RESEND_API_KEY) {
+      return res.status(500).json({ error: 'email not configured' })
+    }
+    const resend = new Resend(process.env.RESEND_API_KEY)
 
     const { error } = await resend.emails.send({
       from: FROM,
