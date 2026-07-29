@@ -10,11 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "framer-motion": "^12.16.0",
+    "@iconify-json/pixelarticons": "^1.2.1",
     "@iconify/react": "^5.2.1",
-    "@iconify-json/pixelarticons": "^1.2.1"
+    "@upstash/redis": "^1.38.0",
+    "framer-motion": "^12.16.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@types/react": "^19.1.8",

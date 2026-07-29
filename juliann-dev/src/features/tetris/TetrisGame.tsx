@@ -86,7 +86,7 @@ const SCORES_KEY = 'tj-tetris-sprint'
 // Expected API contract:
 //   GET  {LEADERBOARD_API}/scores           -> ScoreEntry[]  (top 20, sorted by ms asc)
 //   POST {LEADERBOARD_API}/scores  { name, ms } -> { rank: number }
-const LEADERBOARD_API = ''
+const LEADERBOARD_API = '/api'
 
 const DEFAULT_SCORES: ScoreEntry[] = [
   { name: 'DAN', ms: 19540 },
