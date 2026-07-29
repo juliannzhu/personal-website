@@ -30,15 +30,15 @@ const PROJECTS: Project[] = [
     github: 'https://github.com/Emily3226/CaneOS',
     devpost: 'https://devpost.com/software/caneos',
     images: [
-      P('CaneOS', 'app-screens.jpg'),
-      P('CaneOS', 'device-test.jpg'),
-      P('CaneOS', 'architecture.png'),
-      P('CaneOS', 'hackathons-10.jpg'),
-      P('CaneOS', 'hackathons-9.jpg'),
-      P('CaneOS', 'hackathons-8.jpg'),
-      P('CaneOS', 'IMG_7749.jpg'),
-      P('CaneOS', 'hackathons-6.jpg'),
-      P('CaneOS', 'hackathons-5.jpg'),
+      { src: P('CaneOS', 'app-screens.jpg'), caption: 'the companion app: home, settings, emergency SOS, and hazard history' },
+      { src: P('CaneOS', 'device-test.jpg'), caption: 'blindfolded test run of the clip-on cane' },
+      { src: P('CaneOS', 'architecture.png'), caption: 'system architecture: sensors to Gemini vision to speech' },
+      { src: P('CaneOS', 'hackathons-10.jpg'), caption: 'the team at Hack the 6ix' },
+      { src: P('CaneOS', 'hackathons-9.jpg'), caption: 'the ToF sensor electronics and hardware' },
+      { src: P('CaneOS', 'hackathons-8.jpg'), caption: 'late-night team selfie at our workstation' },
+      { src: P('CaneOS', 'IMG_7749.jpg'), caption: 'Hack the 6ix, where we built it' },
+      { src: P('CaneOS', 'hackathons-6.jpg'), caption: 'QNX hardware workshop' },
+      { src: P('CaneOS', 'hackathons-5.jpg'), caption: 'hackathon swag and stickers' },
     ],
   },
   {
@@ -52,12 +52,12 @@ const PROJECTS: Project[] = [
     github: 'https://github.com/ErinGu0/TrulyHer',
     devpost: 'https://devpost.com/software/trulyher',
     images: [
-      P('TrulyHer', 'app-screens-1.jpg'),
-      P('TrulyHer', 'app-screens-2.jpg'),
-      P('TrulyHer', 'app-screens-3.jpg'),
-      P('TrulyHer', 'app-screens-4.jpg'),
-      P('TrulyHer', 'hackathons-11.jpg'),
-      P('TrulyHer', 'hackathons-12.jpg'),
+      { src: P('TrulyHer', 'app-screens-1.jpg'), caption: 'voice journaling: reflect, save, and get support' },
+      { src: P('TrulyHer', 'app-screens-2.jpg'), caption: 'affirmation tasks, the emotion cloud, and mood journey' },
+      { src: P('TrulyHer', 'app-screens-3.jpg'), caption: 'history, badges, and personal insights' },
+      { src: P('TrulyHer', 'app-screens-4.jpg'), caption: 'AI-generated insights: strengths, patterns, and growth areas' },
+      { src: P('TrulyHer', 'hackathons-11.jpg'), caption: 'our photo strip from TechNova 2025' },
+      { src: P('TrulyHer', 'hackathons-12.jpg'), caption: 'TechNova swag and stickers' },
     ],
   },
   {
@@ -69,9 +69,9 @@ const PROJECTS: Project[] = [
     cat: 'research',
     year: '2026',
     images: [
-      P('LLM-Security-Research', 'paper-fade.png'),
-      P('LLM-Security-Research', 'usenix-flat.png'),
-      P('LLM-Security-Research', 'cancwic-crop.jpg'),
+      { src: P('LLM-Security-Research', 'paper-fade.png'), caption: 'paper preview' },
+      { src: P('LLM-Security-Research', 'usenix-flat.png'), caption: 'aiming for the USENIX SOUPS symposium' },
+      { src: P('LLM-Security-Research', 'cancwic-crop.jpg'), caption: 'presenting at CAN-CWiC 2026, University of Waterloo' },
     ],
   },
   {
@@ -84,12 +84,12 @@ const PROJECTS: Project[] = [
     year: '2026',
     github: 'https://github.com/juliannzhu/personal-website',
     images: [
-      P('tetris-website', 'architecture.svg'),
-      P('tetris-website', 'ideation-01.png'),
-      P('tetris-website', 'ideation-02.png'),
-      P('tetris-website', 'ideation-03.png'),
-      P('tetris-website', 'ideation-04.png'),
-      P('tetris-website', 'ideation-05.png'),
+      { src: P('tetris-website', 'architecture.svg'), caption: 'system architecture: how the site is built and deployed' },
+      { src: P('tetris-website', 'ideation-01.png'), caption: 'layout explorations for the quote block' },
+      { src: P('tetris-website', 'ideation-02.png'), caption: 'quote section layout options' },
+      { src: P('tetris-website', 'ideation-03.png'), caption: 'hero and block-animation options' },
+      { src: P('tetris-website', 'ideation-04.png'), caption: 'an early build of the Side Quests section' },
+      { src: P('tetris-website', 'ideation-05.png'), caption: 'end-tile options for the Side Quests carousel' },
       { src: P('tetris-website', 'old-radar-chart.png'), caption: 'old radar chart design' },
     ],
   },
@@ -104,13 +104,13 @@ const PROJECTS: Project[] = [
     github: 'https://github.com/girish316/HackTheHill',
     devpost: 'https://devpost.com/software/neuralearn',
     images: [
-      P('NeuraLearn', 'app-screenshot-01.png'),
-      P('NeuraLearn', 'app-screenshot-02.png'),
-      P('NeuraLearn', 'app-screenshot-03.png'),
-      P('NeuraLearn', 'hackathons-1.jpg'),
-      P('NeuraLearn', 'hackathons-2.jpg'),
-      P('NeuraLearn', 'hackathons-3.jpg'),
-      P('NeuraLearn', 'hackathons-4.jpg'),
+      { src: P('NeuraLearn', 'app-screenshot-01.png'), caption: 'the sign-up screen' },
+      { src: P('NeuraLearn', 'app-screenshot-02.png'), caption: 'writing a note, then generating a quiz from it' },
+      { src: P('NeuraLearn', 'app-screenshot-03.png'), caption: 'the saved notes dashboard' },
+      { src: P('NeuraLearn', 'hackathons-1.jpg'), caption: 'opening ceremony at Hack the Hill II' },
+      { src: P('NeuraLearn', 'hackathons-2.jpg'), caption: 'Hack the Hill swag' },
+      { src: P('NeuraLearn', 'hackathons-3.jpg'), caption: 'the hardware lab at the hackathon' },
+      { src: P('NeuraLearn', 'hackathons-4.jpg'), caption: 'Hack the Hill photo strip' },
     ],
   },
   {
@@ -123,10 +123,10 @@ const PROJECTS: Project[] = [
     year: 'Jun 2024',
     link: '/geomap/map.html',
     images: [
-      P('Geomap', 'geomap-01.png'),
-      P('Geomap', 'geomap-02.png'),
-      P('Geomap', 'geomap-03.png'),
-      P('Geomap', 'geomap-04.png'),
+      { src: P('Geomap', 'geomap-01.png'), caption: 'the Geomap landing screen' },
+      { src: P('Geomap', 'geomap-02.png'), caption: 'case studies mapped by IB Geography topic' },
+      { src: P('Geomap', 'geomap-03.png'), caption: 'a case-study page with data and sources' },
+      { src: P('Geomap', 'geomap-04.png'), caption: 'a presentation slide reflecting on the build' },
     ],
   },
   {
@@ -138,14 +138,14 @@ const PROJECTS: Project[] = [
     cat: 'research',
     year: 'Jul 2024',
     images: [
-      P('Charg-E', '209BF43A-1FE5-4546-B40B-D4043B7CA15E.JPG'),
-      P('Charg-E', '3684E1A4-2A4F-4FB0-8EDF-CD23A309169D.JPG'),
-      P('Charg-E', '46BE028A-E739-4648-82B2-907358B43BC2.JPG'),
-      P('Charg-E', '5CAF3E2E-E9EB-4463-AB94-39CE17B5715D.JPG'),
-      P('Charg-E', 'IMG_9164.jpg'),
-      P('Charg-E', 'IMG_9595.jpg'),
-      P('Charg-E', 'IMG_9850.jpg'),
-      P('Charg-E', 'IMG_9852.jpg'),
+      { src: P('Charg-E', '209BF43A-1FE5-4546-B40B-D4043B7CA15E.JPG'), caption: 'our SHAD design team' },
+      { src: P('Charg-E', '3684E1A4-2A4F-4FB0-8EDF-CD23A309169D.JPG'), caption: 'presenting Charg-E: Driving the Future' },
+      { src: P('Charg-E', '46BE028A-E739-4648-82B2-907358B43BC2.JPG'), caption: 'Team Red after the final pitch' },
+      { src: P('Charg-E', '5CAF3E2E-E9EB-4463-AB94-39CE17B5715D.JPG'), caption: 'award day with the cohort' },
+      { src: P('Charg-E', 'IMG_9164.jpg'), caption: 'prototyping the circuit on an Arduino breadboard' },
+      { src: P('Charg-E', 'IMG_9595.jpg'), caption: 'building the amplifier circuit in the lab' },
+      { src: P('Charg-E', 'IMG_9852.jpg'), caption: 'the team at the SHAD program' },
+      { src: P('Charg-E', 'IMG_9850.jpg'), caption: 'trade offer mode' },
     ],
   },
   {
@@ -273,16 +273,6 @@ function ProjectCarousel({ images, c }: { images: { src: string; caption?: strin
           ))}
         </div>
 
-        {images[index]?.caption && (
-          <div style={{
-            position: 'absolute', left: 0, right: 0, bottom: 0, padding: '10px 14px',
-            background: 'linear-gradient(to top, rgba(5,5,9,0.82), transparent)',
-            fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center',
-          }}>
-            {'// '}{images[index].caption}
-          </div>
-        )}
-
         {index > 0 && (
           <IconButton size="md" variant="ghost" label="Previous photo" onClick={goPrev}
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-strong)'; e.currentTarget.style.background = 'rgba(5,5,9,0.85)' }}
@@ -300,6 +290,13 @@ function ProjectCarousel({ images, c }: { images: { src: string; caption?: strin
           </IconButton>
         )}
       </div>
+
+      {/* Caption row below the image: centered, mono, muted. */}
+      {images[index]?.caption && (
+        <div style={{ marginTop: 10, fontFamily: 'var(--font-mono)', fontSize: '0.875rem', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.5 }}>
+          {images[index].caption}
+        </div>
+      )}
 
       {images.length > 1 && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 14 }}>
