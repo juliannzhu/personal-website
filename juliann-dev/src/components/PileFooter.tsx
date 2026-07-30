@@ -192,9 +192,9 @@ const FALLING_SLOTS: FallingSlotDef[] = [
   { piece: 'i', shape: PIECE_ROTATIONS.i[1], col: 3 },
   { piece: 'o', shape: PIECE_ROTATIONS.o[0], col: 17 },
   { piece: 't', shape: PIECE_ROTATIONS.t[0], col: 27 },
-  { piece: 'z', shape: PIECE_ROTATIONS.z[1], col: 47, smearFrom: 'bottom' },
+  { piece: 'z', shape: PIECE_ROTATIONS.z[1], col: 47, smearFrom: 'center' },
   { piece: 's', shape: PIECE_ROTATIONS.s[1], col: 62 },
-  { piece: 'l', shape: PIECE_ROTATIONS.l[1], col: 80 },
+  { piece: 'l', shape: PIECE_ROTATIONS.l[1], col: 80, smearFrom: 'bottom' },
 ]
 
 // A handful of columns get a piece that endlessly re-falls into place, aligned to the exact
