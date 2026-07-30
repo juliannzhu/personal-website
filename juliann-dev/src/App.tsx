@@ -30,6 +30,7 @@ body::before {
 /* ---- desktop: push content left of sidebar ---- */
 @media (min-width: 721px) {
   .tj-main { padding-right: 300px; }
+  .tj-footer-inset { padding-right: 300px; }
   .tj-mobile-nav { display: none !important; }
   .tj-hero-wrap { padding-left: 248px; }
 }
