@@ -389,13 +389,17 @@ const QUESTS: QuestCard[] = [
     placeholder: '♠️',
     images: [Q('poker/poker-1.jpg'), Q('poker/poker-3.jpg'), Q('poker/poker-4.jpg'), Q('poker/poker-5.jpg'), Q('poker/poker-7.jpg')],
     cover: Q('poker/poker-6.jpg'),
-    layout: 'filmstrip',
-    filmstripHero: { src: Q('poker/poker-6.jpg'), caption: 'I was the pocket 10s' },
-    filmstripFeatures: [
+    layout: 'bento',
+    gallery: [
+      { src: Q('poker/poker-6.jpg'), caption: 'I was the pocket 10s' },
       { src: Q('poker/poker-8.jpg'), caption: 'University of Waterloo Poker Studies Club tournament' },
       { src: Q('poker/poker-2.jpg') },
+      { src: Q('poker/poker-1.jpg') },
+      { src: Q('poker/poker-3.jpg') },
+      { src: Q('poker/poker-4.jpg') },
+      { src: Q('poker/poker-5.jpg') },
+      { src: Q('poker/poker-7.jpg'), caption: 'a huge run at Waterloo' },
     ],
-    filmstripReelCaptions: { [Q('poker/poker-7.jpg')]: 'a huge run at Waterloo' },
     videos: videosFor('poker', 4),
   },
   {
@@ -460,11 +464,17 @@ const QUESTS: QuestCard[] = [
     placeholder: '🎗️',
     images: Array.from({ length: 6 }, (_, i) => Q(`relay/relay-${[2, 3, 5, 6, 7, 9][i]}.jpg`)),
     cover: Q('relay/relay-4.jpg'),
-    layout: 'filmstrip',
-    filmstripHero: { src: Q('relay/relay-1.jpg'), caption: 'Bake sale fundraiser' },
-    filmstripFeatures: [
+    layout: 'bento',
+    gallery: [
+      { src: Q('relay/relay-1.jpg'), caption: 'Bake sale fundraiser' },
       { src: Q('relay/relay-4.jpg'), caption: 'Merivale Relay for Life Event 2024' },
       { src: Q('relay/relay-8.jpg') },
+      { src: Q('relay/relay-2.jpg') },
+      { src: Q('relay/relay-3.jpg') },
+      { src: Q('relay/relay-5.jpg') },
+      { src: Q('relay/relay-6.jpg') },
+      { src: Q('relay/relay-7.jpg') },
+      { src: Q('relay/relay-9.jpg') },
     ],
   },
   {
@@ -520,26 +530,31 @@ const CSS = `
 }
 .tj-quest-detail { animation: tj-slide-in-left 240ms var(--ease-snap) both; }
 
-/* ---- Bento collage ---- */
+/* ---- Bento collage: CSS-column masonry ----
+   Photos flow into fixed-width columns at their natural aspect ratio, so nothing is ever
+   cropped and the column COUNT scales with the available width (more columns on a wide
+   screen, fewer on a narrow one) while each photo stays the same size. Masonry packs by
+   height, so there are no leftover gaps — the collage reads the same on every screen. */
 .tj-bento-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-auto-rows: 150px;
-  grid-auto-flow: dense;
-  gap: 10px;
+  column-width: 220px;
+  column-gap: 12px;
   margin-bottom: 8px;
 }
 @media (max-width: 720px) {
-  .tj-bento-grid { grid-template-columns: repeat(3, 1fr); }
+  .tj-bento-grid { column-width: auto; column-count: 2; }
 }
 .tj-bento-tile {
   position: relative;
-  display: flex; flex-direction: column;
+  display: block;
+  width: 100%;
+  break-inside: avoid;
+  margin: 0 0 12px;
   border-radius: var(--radius-1);
   overflow: hidden;
   background: var(--bg-well);
+  padding: 0; border: none; text-align: left; /* reset for <button> video tiles */
 }
-.tj-bento-img { width: 100%; flex: 1; min-height: 0; object-fit: cover; display: block; }
+.tj-bento-img { width: 100%; height: auto; display: block; }
 .tj-bento-number {
   position: absolute; top: 6px; left: 6px; z-index: 2;
   min-width: 20px; height: 20px; padding: 0 4px; border-radius: 4px;
@@ -548,11 +563,19 @@ const CSS = `
   font-family: var(--font-mono); font-size:0.6875rem; font-weight: 600;
 }
 .tj-bento-caption {
-  flex-shrink: 0; padding: 6px 10px 6px 0; min-height: 20px;
+  padding: 6px 10px; min-height: 20px;
   font-family: var(--font-mono); font-size:0.6875rem; color: var(--text-muted);
   background: var(--bg-well); border-top: 2px dashed var(--border-hairline);
 }
 .tj-bento-caption-placeholder { color: var(--text-faint); font-style: italic; }
+/* video clip tiles mixed into the collage */
+.tj-bento-video { cursor: pointer; }
+.tj-bento-play {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(10,10,18,0.34); color: #fff; font-size: 2.25rem;
+  transition: background 160ms;
+}
+.tj-bento-video:hover .tj-bento-play { background: rgba(10,10,18,0.12); }
 
 /* ---- Filmstrip reel ---- */
 .tj-filmstrip-sprockets {
@@ -946,6 +969,20 @@ const BENTO_SPAN: Record<MediaSize, { col: number; row: number }> = {
 function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }) {
   const c = `var(--piece-${quest.piece})`
   const photos = quest.gallery ?? []
+  const videos = quest.videos ?? []
+  const [openVideo, setOpenVideo] = useState<number | null>(null)
+
+  // Interleave the video clips evenly through the photos so they spread across the masonry
+  // columns instead of clumping at the end.
+  type Item = { kind: 'photo'; photo: BentoPhoto; n: number } | { kind: 'video'; vi: number }
+  const items: Item[] = []
+  const step = videos.length ? Math.max(1, Math.floor(photos.length / (videos.length + 1))) : 0
+  let vi = 0
+  photos.forEach((photo, i) => {
+    items.push({ kind: 'photo', photo, n: photo.number ?? i + 1 })
+    if (step && vi < videos.length && (i + 1) % step === 0) { items.push({ kind: 'video', vi }); vi++ }
+  })
+  while (vi < videos.length) { items.push({ kind: 'video', vi }); vi++ }
 
   return (
     <section className="tj-quest-detail" style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 72px' }}>
@@ -953,24 +990,32 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
       <QuestDetailHeader quest={quest} c={c} />
 
       <div className="tj-bento-grid">
-        {photos.map((p, i) => {
-          const span = BENTO_SPAN[p.size ?? 'sm']
-          return (
-            <div key={i} className="tj-bento-tile" style={{ gridColumn: `span ${span.col}`, gridRow: `span ${span.row}` }}>
-              <span className="tj-bento-number" style={{ borderColor: c, color: c }}>{p.number ?? i + 1}</span>
-              <img src={p.src} alt="" loading="lazy" className="tj-bento-img" style={{ objectFit: p.fit ?? 'cover' }} />
-              {p.caption !== undefined && (
-                <div className="tj-bento-caption">
-                  {p.caption ? <>{'// '}{p.caption}</> : <span className="tj-bento-caption-placeholder">Add a caption…</span>}
-                </div>
-              )}
-            </div>
-          )
-        })}
+        {items.map((item, i) => item.kind === 'photo' ? (
+          <div key={`p${i}`} className="tj-bento-tile">
+            <span className="tj-bento-number" style={{ borderColor: c, color: c }}>{item.n}</span>
+            <img src={item.photo.src} alt="" loading="lazy" className="tj-bento-img" />
+            {item.photo.caption !== undefined && (
+              <div className="tj-bento-caption">
+                {item.photo.caption ? <>{'// '}{item.photo.caption}</> : <span className="tj-bento-caption-placeholder">Add a caption…</span>}
+              </div>
+            )}
+          </div>
+        ) : (
+          <button key={`v${i}`} type="button" className="tj-bento-tile tj-bento-video" onClick={() => setOpenVideo(item.vi)} aria-label={`Play video ${item.vi + 1}`}>
+            <img src={videos[item.vi].poster} alt="" loading="lazy" className="tj-bento-img" />
+            <span className="tj-bento-play">▶</span>
+          </button>
+        ))}
       </div>
 
-      <StockNote text={'// Numbers match the order in the gallery array in SideQuests.tsx — reassign `size` (hero/wide/tall/sm) or add a `caption` to any photo there'} />
-      <VideoStrip videos={quest.videos} />
+      {openVideo !== null && createPortal(
+        <div onClick={() => setOpenVideo(null)} style={{ position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(5,5,9,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
+          <video src={videos[openVideo].src} controls autoPlay style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: 4 }} onClick={(e) => e.stopPropagation()} />
+          <button onClick={() => setOpenVideo(null)} aria-label="Close video" style={{ position: 'absolute', top: 24, right: 32, width: 40, height: 40, borderRadius: 4, background: 'var(--bg-well)', border: '2px solid var(--border-strong)', color: 'var(--text-strong)', fontSize: '1.125rem', cursor: 'pointer' }}>✕</button>
+        </div>,
+        document.body
+      )}
+
       <BackButton c={c} onBack={onBack} style={{ marginTop: 40 }} />
     </section>
   )
