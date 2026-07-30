@@ -256,19 +256,21 @@ export function FixedFooter({ onNav }: { onNav: (id: Screen) => void }) {
       {/* tj-footer-inset reserves the same 300px right gutter as .tj-main on desktop, so the copyright
           row's centered 1080 column lines up with the left edge of the page's content panels. */}
       <div className="tj-footer-inset">
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '28px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '28px 24px' }}>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)' }}>
             © 2026 JULIANN · BUILT ONE BLOCK AT A TIME
           </span>
-          <button
-            onClick={() => onNav('home')}
-            onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-strong)' }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-faint)' }}
-            style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', background: 'none', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.08em', transition: 'color 140ms' }}>
-            Back to top
-          </button>
         </div>
       </div>
+      {/* Back to top is pinned to the far-right edge of the viewport (outside the content gutter),
+          vertically centered on the copyright row. */}
+      <button
+        onClick={() => onNav('home')}
+        onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-strong)' }}
+        onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-faint)' }}
+        style={{ position: 'absolute', right: 24, top: 6, bottom: 0, display: 'flex', alignItems: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', background: 'none', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.08em', transition: 'color 140ms' }}>
+        Back to top
+      </button>
     </div>
   )
 }
