@@ -8,15 +8,12 @@ import { IconButton } from '../components/ds/IconButton'
 import { Button } from '../components/ds/Button'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
-type DetailLayout = 'bento' | 'marquee' | 'polaroid' | 'filmstrip'
-type MediaSize = 'xl' | 'hero' | 'wide' | 'tall' | 'sm'
+type DetailLayout = 'bento' | 'marquee' | 'polaroid'
 // `number` is the badge shown on the tile — defaults to array position, but can be
 // pinned explicitly so photos can be reordered (grouped, moved to the front/back to
 // square off the bottom edge, etc.) without relabeling every caption reference to it.
-// `fit: 'contain'` shows the whole photo uncropped (letterboxed inside its tile) —
-// default is 'cover', which fills the tile and crops to match its aspect ratio.
-interface BentoPhoto { src: string; size?: MediaSize; caption?: string; number?: number; fit?: 'cover' | 'contain' }
-interface QuestVideo { src: string; poster: string }
+interface BentoPhoto { src: string; caption?: string; number?: number }
+interface QuestVideo { src: string; poster: string; caption?: string }
 
 interface QuestCard {
   id: string
@@ -31,17 +28,10 @@ interface QuestCard {
   // shift polaroid #N badges away from matching filenames)
   cover?: string
   layout?: DetailLayout
-  // only used when layout === 'bento' — numbered, size-tagged photos for the collage
+  // only used when layout === 'bento' — numbered photos for the collage
   gallery?: BentoPhoto[]
   // clickable video clips shown below the main gallery, opened in a lightbox
   videos?: QuestVideo[]
-  // filmstrip only — overrides images[0] as the big hero frame, with its own caption
-  filmstripHero?: { src: string; caption?: string; fit?: 'cover' | 'contain' }
-  // filmstrip only — extra large photos shown in a row between the hero and the reel,
-  // excluded from the reel itself
-  filmstripFeatures?: { src: string; caption?: string }[]
-  // filmstrip only — captions for individual reel frames, keyed by image src
-  filmstripReelCaptions?: Record<string, string>
   // marquee only — overrides the default column height (any valid CSS height value)
   marqueeHeight?: string
   // polaroid only — 'square' (default) crops every photo to a square print; 'native'
@@ -58,245 +48,238 @@ const Q = (id: string) => `/assets/quests/${id}`
 
 // Video clips live alongside their folder's photos as <prefix>-video-N.m4v with a
 // matching <prefix>-video-N-poster.jpg thumbnail (generated from the video's first frame).
-const videosFor = (prefix: string, count: number): QuestVideo[] =>
-  Array.from({ length: count }, (_, i) => ({
-    src: Q(`${prefix}/${prefix}-video-${i + 1}.m4v`),
-    poster: Q(`${prefix}/${prefix}-video-${i + 1}-poster.jpg`),
+// `nums` is either a count (1..N) or an explicit list of clip numbers — the latter lets a
+// quest skip a removed clip (e.g. poker keeps 1, 2, 4 after 3 was deleted).
+const videosFor = (prefix: string, nums: number | number[], captions: Record<number, string> = {}): QuestVideo[] =>
+  (typeof nums === 'number' ? Array.from({ length: nums }, (_, i) => i + 1) : nums).map((n) => ({
+    src: Q(`${prefix}/${prefix}-video-${n}.m4v`),
+    poster: Q(`${prefix}/${prefix}-video-${n}-poster.jpg`),
+    caption: captions[n],
   }))
 
-// numbered 1-43 to match the photo numbers so captions/sizes are easy to reassign later —
+// numbered 1-43 to match the photo numbers so captions are easy to reassign later —
 // 1 is the cover photo (volleyballcoverphoto), also used as the tile thumbnail
 const VOLLEYBALL_GALLERY: BentoPhoto[] = [
-  { src: Q('volleyball/volleyball-1.jpg'), size: 'hero', caption: 'Merivale High School Senior Girls Volleyball Team 2025' },
-  { src: Q('volleyball/volleyball-2.jpg'), size: 'wide' },
-  { src: Q('volleyball/volleyball-3.jpg'), size: 'wide' },
-  { src: Q('volleyball/volleyball-4.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-5.jpg'), size: 'wide' },
-  { src: Q('volleyball/volleyball-6.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-7.jpg'), size: 'wide', caption: 'Team bonding after a beach tournament' },
-  { src: Q('volleyball/volleyball-8.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-9.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-10.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-11.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-12.jpg'), size: 'wide' },
-  { src: Q('volleyball/volleyball-13.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-14.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-15.jpg'), size: 'wide', caption: "Waterloo SERVE All Women's Tournament 2026" },
-  { src: Q('volleyball/volleyball-16.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-17.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-18.jpg'), size: 'wide' },
-  { src: Q('volleyball/volleyball-19.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-20.jpg'), size: 'wide' },
-  { src: Q('volleyball/volleyball-21.jpg'), size: 'tall' },
-  { src: Q('volleyball/volleyball-22.jpg'), size: 'wide' },
-  { src: Q('volleyball/volleyball-23.jpg'), size: 'wide' },
-  { src: Q('volleyball/volleyball-24.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-25.jpg'), size: 'tall' },
-  { src: Q('volleyball/volleyball-26.jpg'), size: 'hero', caption: 'Beach volleyball in Cuba' },
-  { src: Q('volleyball/volleyball-27.jpg'), size: 'wide' },
-  { src: Q('volleyball/volleyball-28.jpg'), size: 'tall', caption: 'Marauders Cup Champions' },
-  { src: Q('volleyball/volleyball-29.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-30.jpg'), size: 'hero', caption: '16U Fusion Volleyball Competitive Team' },
-  { src: Q('volleyball/volleyball-31.jpg'), size: 'tall' },
-  { src: Q('volleyball/volleyball-32.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-33.jpg'), size: 'wide' },
-  { src: Q('volleyball/volleyball-34.jpg'), size: 'hero', caption: 'Post win celebration' },
-  { src: Q('volleyball/volleyball-35.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-36.jpg'), size: 'wide', caption: 'Marauders Cup 2026 Finalists' },
-  { src: Q('volleyball/volleyball-37.jpg'), size: 'sm', caption: '4x Marauders Cup Champions' },
-  { src: Q('volleyball/volleyball-38.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-39.jpg'), size: 'sm' },
-  { src: Q('volleyball/volleyball-40.jpg'), size: 'tall', caption: 'STANK 2025' },
-  { src: Q('volleyball/volleyball-41.jpg'), size: 'tall' },
-  { src: Q('volleyball/volleyball-42.jpg'), size: 'hero' },
-  { src: Q('volleyball/volleyball-43.jpg'), size: 'wide' },
-  { src: Q('volleyball/volleyball-44.jpg'), size: 'wide', caption: 'Bomu Volleyball' },
-  { src: Q('volleyball/volleyball-45.jpg'), size: 'wide', caption: 'Waterloo SERVE 3Peas Tournament 2026' },
+  { src: Q('volleyball/volleyball-1.jpg'), caption: 'Merivale High School Senior Girls Volleyball Team 2025' },
+  { src: Q('volleyball/volleyball-2.jpg') },
+  { src: Q('volleyball/volleyball-3.jpg') },
+  { src: Q('volleyball/volleyball-4.jpg') },
+  { src: Q('volleyball/volleyball-5.jpg') },
+  { src: Q('volleyball/volleyball-6.jpg') },
+  { src: Q('volleyball/volleyball-7.jpg'), caption: 'Team bonding after a beach tournament' },
+  { src: Q('volleyball/volleyball-8.jpg') },
+  { src: Q('volleyball/volleyball-9.jpg') },
+  { src: Q('volleyball/volleyball-10.jpg') },
+  { src: Q('volleyball/volleyball-11.jpg') },
+  { src: Q('volleyball/volleyball-12.jpg') },
+  { src: Q('volleyball/volleyball-13.jpg') },
+  { src: Q('volleyball/volleyball-14.jpg') },
+  { src: Q('volleyball/volleyball-15.jpg'), caption: "Waterloo SERVE All Women's Tournament 2026" },
+  { src: Q('volleyball/volleyball-16.jpg') },
+  { src: Q('volleyball/volleyball-17.jpg') },
+  { src: Q('volleyball/volleyball-18.jpg') },
+  { src: Q('volleyball/volleyball-19.jpg') },
+  { src: Q('volleyball/volleyball-20.jpg') },
+  { src: Q('volleyball/volleyball-21.jpg') },
+  { src: Q('volleyball/volleyball-22.jpg'), caption: 'Last high school game' },
+  { src: Q('volleyball/volleyball-23.jpg') },
+  { src: Q('volleyball/volleyball-24.jpg') },
+  { src: Q('volleyball/volleyball-25.jpg') },
+  { src: Q('volleyball/volleyball-26.jpg'), caption: 'Beach volleyball in Cuba' },
+  { src: Q('volleyball/volleyball-27.jpg') },
+  { src: Q('volleyball/volleyball-28.jpg'), caption: 'Marauders Cup Champions' },
+  { src: Q('volleyball/volleyball-29.jpg') },
+  { src: Q('volleyball/volleyball-30.jpg'), caption: '16U Fusion Volleyball Competitive Team' },
+  { src: Q('volleyball/volleyball-31.jpg') },
+  { src: Q('volleyball/volleyball-32.jpg') },
+  { src: Q('volleyball/volleyball-33.jpg') },
+  { src: Q('volleyball/volleyball-34.jpg'), caption: 'Post win celebration' },
+  { src: Q('volleyball/volleyball-35.jpg') },
+  { src: Q('volleyball/volleyball-36.jpg'), caption: 'Marauders Cup 2026 Finalists' },
+  { src: Q('volleyball/volleyball-37.jpg'), caption: '4x Marauders Cup Champions' },
+  { src: Q('volleyball/volleyball-38.jpg') },
+  { src: Q('volleyball/volleyball-39.jpg') },
+  { src: Q('volleyball/volleyball-40.jpg'), caption: 'STANK 2025' },
+  { src: Q('volleyball/volleyball-41.jpg') },
+  { src: Q('volleyball/volleyball-42.jpg') },
+  { src: Q('volleyball/volleyball-43.jpg') },
+  { src: Q('volleyball/volleyball-44.jpg'), caption: 'Bomu Volleyball' },
+  { src: Q('volleyball/volleyball-45.jpg'), caption: 'Waterloo SERVE 3Peas Tournament 2026' },
 ]
 
-// Photos 8, 10, 12, 16, 19 are the only ones allowed to crop — they're what keeps the
-// bottom of the collage flat. Everything else uses `fit: 'contain'` so it's resized to
-// fit its tile without cropping.
 const ART_GALLERY: BentoPhoto[] = [
-  { src: Q('art/art-1.jpg'), size: 'wide', number: 1, caption: 'IB English Poster', fit: 'contain' },
-  { src: Q('art/art-2.jpg'), size: 'sm', number: 2, fit: 'contain' },
-  { src: Q('art/art-3.jpg'), size: 'wide', number: 3, caption: 'Clay crafts', fit: 'contain' },
-  { src: Q('art/art-4.jpg'), size: 'tall', number: 4, fit: 'contain' },
-  { src: Q('art/art-9.jpg'), size: 'wide', number: 9, caption: 'Clay crafts after the oven', fit: 'contain' },
-  { src: Q('art/art-5.jpg'), size: 'wide', number: 5, caption: 'Chinese New Year whiteboard art', fit: 'contain' },
-  { src: Q('art/art-6.jpg'), size: 'sm', number: 6, fit: 'contain' },
-  { src: Q('art/art-7.jpg'), size: 'tall', number: 7, fit: 'contain' },
-  { src: Q('art/art-8.jpg'), size: 'sm', number: 8 },
-  { src: Q('art/art-10.jpg'), size: 'tall', number: 10 },
-  { src: Q('art/art-11.jpg'), size: 'hero', number: 11, fit: 'contain' },
-  { src: Q('art/art-12.jpg'), size: 'tall', number: 12 },
-  { src: Q('art/art-13.jpg'), size: 'tall', number: 13, fit: 'contain' },
-  { src: Q('art/art-14.jpg'), size: 'wide', number: 14, fit: 'contain' },
-  { src: Q('art/art-15.jpg'), size: 'wide', number: 15, caption: "Valentine's Day paper bouquet", fit: 'contain' },
-  { src: Q('art/art-16.jpg'), size: 'tall', number: 16 },
-  { src: Q('art/art-17.jpg'), size: 'wide', number: 17, fit: 'contain' },
-  { src: Q('art/art-18.jpg'), size: 'sm', number: 18, fit: 'contain' },
-  { src: Q('art/art-19.jpg'), size: 'wide', number: 19 },
-  { src: Q('art/art-20.jpg'), size: 'tall', number: 20, caption: '3D wooden puzzle piano build', fit: 'contain' },
-  { src: Q('art/art-21.jpg'), size: 'tall', number: 21, fit: 'contain' },
-  { src: Q('art/art-22.jpg'), size: 'tall', number: 22, fit: 'contain' },
+  { src: Q('art/art-1.jpg'), number: 1, caption: 'IB English Poster' },
+  { src: Q('art/art-2.jpg'), number: 2 },
+  { src: Q('art/art-3.jpg'), number: 3, caption: 'Clay crafts' },
+  { src: Q('art/art-4.jpg'), number: 4 },
+  { src: Q('art/art-9.jpg'), number: 9, caption: 'Clay crafts after the oven' },
+  { src: Q('art/art-5.jpg'), number: 5, caption: 'Chinese New Year whiteboard art' },
+  { src: Q('art/art-6.jpg'), number: 6 },
+  { src: Q('art/art-7.jpg'), number: 7 },
+  { src: Q('art/art-8.jpg'), number: 8, caption: 'IB art technique practice' },
+  { src: Q('art/art-10.jpg'), number: 10 },
+  { src: Q('art/art-11.jpg'), number: 11 },
+  { src: Q('art/art-12.jpg'), number: 12 },
+  { src: Q('art/art-14.jpg'), number: 14 },
+  { src: Q('art/art-15.jpg'), number: 15, caption: "Valentine's Day paper bouquet" },
+  { src: Q('art/art-16.jpg'), number: 16, caption: 'Painting tote bags in Waterloo' },
+  { src: Q('art/art-17.jpg'), number: 17 },
+  { src: Q('art/art-18.jpg'), number: 18 },
+  { src: Q('art/art-19.jpg'), number: 19, caption: 'Homemade stamps for Halloween 2025' },
+  { src: Q('art/art-20.jpg'), number: 20, caption: '3D wooden puzzle piano build' },
+  { src: Q('art/art-21.jpg'), number: 21 },
+  { src: Q('art/art-22.jpg'), number: 22 },
 ]
 
-// Sized so the 6-column grid fills exactly 3 rows with no leftover gaps:
-// row 1-2 = hero(2x2) + tall(1x2) + tall(1x2) + wide(2x1) top / wide(2x1) bottom,
-// row 3 = wide(2x1) + wide(2x1) + sm(1x1) + sm(1x1).
 const BAKING_GALLERY: BentoPhoto[] = [
-  { src: Q('baking/baking-2.jpg'), size: 'hero', number: 2 },
-  { src: Q('baking/baking-3.jpg'), size: 'tall', number: 3, caption: 'Canada Day Brunch' },
-  { src: Q('baking/baking-4.jpg'), size: 'tall', number: 4, caption: 'Post strawberry picking meal' },
-  { src: Q('baking/baking-8.jpg'), size: 'wide', number: 8, caption: 'Baking cookies at Waterloo' },
-  { src: Q('baking/baking-9.jpg'), size: 'wide', number: 9, caption: 'Embroidery crafts and cookies' },
-  { src: Q('baking/baking-5.jpg'), size: 'wide', number: 5 },
-  { src: Q('baking/baking-7.jpg'), size: 'wide', number: 7 },
-  { src: Q('baking/baking-1.jpg'), size: 'sm', number: 1 },
-  { src: Q('baking/baking-6.jpg'), size: 'sm', number: 6 },
+  { src: Q('baking/baking-2.jpg'), number: 2 },
+  { src: Q('baking/baking-3.jpg'), number: 3, caption: 'Canada Day Brunch' },
+  { src: Q('baking/baking-4.jpg'), number: 4, caption: 'Post strawberry picking meal' },
+  { src: Q('baking/baking-8.jpg'), number: 8, caption: 'Baking cookies at Waterloo' },
+  { src: Q('baking/baking-9.jpg'), number: 9, caption: 'Embroidery crafts and cookies' },
+  { src: Q('baking/baking-5.jpg'), number: 5 },
+  { src: Q('baking/baking-7.jpg'), number: 7 },
+  { src: Q('baking/baking-1.jpg'), number: 1 },
+  { src: Q('baking/baking-6.jpg'), number: 6 },
 ]
 
 const MODELLING_GALLERY: BentoPhoto[] = [
-  { src: Q('modelling/modelling-1.jpg'), size: 'hero', number: 1, caption: "Birthday photoshoot in China 2025" },
-  { src: Q('modelling/modelling-69.jpg'), size: 'hero', number: 69 },
-  { src: Q('modelling/modelling-70.jpg'), size: 'tall', number: 70 },
-  { src: Q('modelling/modelling-72.jpg'), size: 'hero', number: 72, fit: 'contain' },
-  { src: Q('modelling/modelling-73.jpg'), size: 'tall', number: 73 },
-  { src: Q('modelling/modelling-74.jpg'), size: 'hero', number: 74 },
-  { src: Q('modelling/modelling-71.jpg'), size: 'tall', number: 71, fit: 'contain' },
-  { src: Q('modelling/modelling-2.jpg'), size: 'hero', number: 2 },
-  { src: Q('modelling/modelling-3.jpg'), size: 'tall', number: 3 },
-  { src: Q('modelling/modelling-4.jpg'), size: 'hero', number: 4 },
-  { src: Q('modelling/modelling-5.jpg'), size: 'tall', number: 5 },
-  { src: Q('modelling/modelling-6.jpg'), size: 'hero', number: 6 },
-  { src: Q('modelling/modelling-7.jpg'), size: 'tall', number: 7, fit: 'contain' },
-  { src: Q('modelling/modelling-8.jpg'), size: 'tall', number: 8 },
-  { src: Q('modelling/modelling-9.jpg'), size: 'tall', number: 9 },
-  { src: Q('modelling/modelling-10.jpg'), size: 'tall', number: 10, fit: 'contain' },
-  { src: Q('modelling/modelling-11.jpg'), size: 'hero', number: 11 },
-  { src: Q('modelling/modelling-12.jpg'), size: 'hero', number: 12 },
-  { src: Q('modelling/modelling-13.jpg'), size: 'tall', number: 13, fit: 'contain' },
-  { src: Q('modelling/modelling-14.jpg'), size: 'tall', number: 14 },
-  { src: Q('modelling/modelling-15.jpg'), size: 'hero', number: 15, fit: 'contain' },
-  { src: Q('modelling/modelling-16.jpg'), size: 'tall', number: 16 },
-  { src: Q('modelling/modelling-17.jpg'), size: 'wide', number: 17, fit: 'contain' },
-  { src: Q('modelling/modelling-18.jpg'), size: 'wide', number: 18 },
-  { src: Q('modelling/modelling-19.jpg'), size: 'wide', number: 19 },
-  { src: Q('modelling/modelling-20.jpg'), size: 'hero', number: 20, caption: "Fashion for Change Photoshoot 2025" },
-  { src: Q('modelling/modelling-21.jpg'), size: 'wide', number: 21 },
-  { src: Q('modelling/modelling-22.jpg'), size: 'wide', number: 22 },
-  { src: Q('modelling/modelling-23.jpg'), size: 'wide', number: 23 },
-  { src: Q('modelling/modelling-24.jpg'), size: 'wide', number: 24, fit: 'contain' },
-  { src: Q('modelling/modelling-25.jpg'), size: 'hero', number: 25, fit: 'contain' },
-  { src: Q('modelling/modelling-26.jpg'), size: 'wide', number: 26, fit: 'contain' },
-  { src: Q('modelling/modelling-27.jpg'), size: 'wide', number: 27, fit: 'contain' },
-  { src: Q('modelling/modelling-28.jpg'), size: 'wide', number: 28, fit: 'contain' },
-  { src: Q('modelling/modelling-29.jpg'), size: 'tall', number: 29, fit: 'contain' },
-  { src: Q('modelling/modelling-30.jpg'), size: 'wide', number: 30 },
-  { src: Q('modelling/modelling-31.jpg'), size: 'tall', number: 31 },
-  { src: Q('modelling/modelling-75.jpg'), size: 'tall', number: 75, caption: "Japan House in Illinois" },
-  { src: Q('modelling/modelling-32.jpg'), size: 'wide', number: 32 },
-  { src: Q('modelling/modelling-33.jpg'), size: 'tall', number: 33 },
-  { src: Q('modelling/modelling-34.jpg'), size: 'tall', number: 34 },
-  { src: Q('modelling/modelling-35.jpg'), size: 'tall', number: 35 },
-  { src: Q('modelling/modelling-37.jpg'), size: 'wide', number: 37 },
-  { src: Q('modelling/modelling-38.jpg'), size: 'wide', number: 38 },
-  { src: Q('modelling/modelling-39.jpg'), size: 'wide', number: 39 },
-  { src: Q('modelling/modelling-40.jpg'), size: 'tall', number: 40 },
-  { src: Q('modelling/modelling-41.jpg'), size: 'tall', number: 41 },
-  { src: Q('modelling/modelling-42.jpg'), size: 'wide', number: 42 },
-  { src: Q('modelling/modelling-43.jpg'), size: 'tall', number: 43 },
-  { src: Q('modelling/modelling-44.jpg'), size: 'wide', number: 44, fit: 'contain' },
-  { src: Q('modelling/modelling-45.jpg'), size: 'wide', number: 45 },
-  { src: Q('modelling/modelling-47.jpg'), size: 'tall', number: 47 },
-  { src: Q('modelling/modelling-48.jpg'), size: 'wide', number: 48 },
-  { src: Q('modelling/modelling-49.jpg'), size: 'wide', number: 49, caption: "Prom photoshoot" },
-  { src: Q('modelling/modelling-50.jpg'), size: 'hero', number: 50, caption: "The Louvre in Paris" },
-  { src: Q('modelling/modelling-51.jpg'), size: 'tall', number: 51 },
-  { src: Q('modelling/modelling-52.jpg'), size: 'tall', number: 52 },
-  { src: Q('modelling/modelling-53.jpg'), size: 'tall', number: 53 },
-  { src: Q('modelling/modelling-54.jpg'), size: 'tall', number: 54 },
-  { src: Q('modelling/modelling-55.jpg'), size: 'wide', number: 55, fit: 'contain' },
-  { src: Q('modelling/modelling-56.jpg'), size: 'wide', number: 56, fit: 'contain' },
-  { src: Q('modelling/modelling-57.jpg'), size: 'tall', number: 57 },
-  { src: Q('modelling/modelling-59.jpg'), size: 'wide', number: 59, fit: 'contain' },
-  { src: Q('modelling/modelling-60.jpg'), size: 'hero', number: 60, caption: "China photoshoot makeup" },
-  { src: Q('modelling/modelling-61.jpg'), size: 'tall', number: 61 },
-  { src: Q('modelling/modelling-62.jpg'), size: 'tall', number: 62 },
-  { src: Q('modelling/modelling-63.jpg'), size: 'wide', number: 63 },
-  { src: Q('modelling/modelling-64.jpg'), size: 'tall', number: 64 },
-  { src: Q('modelling/modelling-65.jpg'), size: 'wide', number: 65 },
-  { src: Q('modelling/modelling-66.jpg'), size: 'tall', number: 66 },
-  { src: Q('modelling/modelling-67.jpg'), size: 'tall', number: 67 },
-  { src: Q('modelling/modelling-36.jpg'), size: 'sm', number: 36, caption: "Recreating poses in Paris" },
-  { src: Q('modelling/modelling-46.jpg'), size: 'sm', number: 46 },
-  { src: Q('modelling/modelling-58.jpg'), size: 'sm', number: 58 },
-  { src: Q('modelling/modelling-68.jpg'), size: 'sm', number: 68 },
+  { src: Q('modelling/modelling-1.jpg'), number: 1, caption: "Birthday photoshoot in China 2025" },
+  { src: Q('modelling/modelling-69.jpg'), number: 69 },
+  { src: Q('modelling/modelling-70.jpg'), number: 70 },
+  { src: Q('modelling/modelling-72.jpg'), number: 72 },
+  { src: Q('modelling/modelling-73.jpg'), number: 73 },
+  { src: Q('modelling/modelling-74.jpg'), number: 74 },
+  { src: Q('modelling/modelling-71.jpg'), number: 71 },
+  { src: Q('modelling/modelling-2.jpg'), number: 2 },
+  { src: Q('modelling/modelling-3.jpg'), number: 3 },
+  { src: Q('modelling/modelling-4.jpg'), number: 4 },
+  { src: Q('modelling/modelling-5.jpg'), number: 5 },
+  { src: Q('modelling/modelling-6.jpg'), number: 6 },
+  { src: Q('modelling/modelling-7.jpg'), number: 7 },
+  { src: Q('modelling/modelling-8.jpg'), number: 8 },
+  { src: Q('modelling/modelling-9.jpg'), number: 9 },
+  { src: Q('modelling/modelling-10.jpg'), number: 10 },
+  { src: Q('modelling/modelling-11.jpg'), number: 11 },
+  { src: Q('modelling/modelling-12.jpg'), number: 12 },
+  { src: Q('modelling/modelling-13.jpg'), number: 13 },
+  { src: Q('modelling/modelling-14.jpg'), number: 14 },
+  { src: Q('modelling/modelling-15.jpg'), number: 15 },
+  { src: Q('modelling/modelling-16.jpg'), number: 16, caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-17.jpg'), number: 17, caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-18.jpg'), number: 18, caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-19.jpg'), number: 19, caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-20.jpg'), number: 20, caption: "Fashion for Change Photoshoot 2025 · 📸 @dr.k.bear" },
+  { src: Q('modelling/modelling-21.jpg'), number: 21, caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-22.jpg'), number: 22, caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-23.jpg'), number: 23, caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-24.jpg'), number: 24, caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-25.jpg'), number: 25, caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-26.jpg'), number: 26, caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-27.jpg'), number: 27, caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-28.jpg'), number: 28, caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-29.jpg'), number: 29, caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-30.jpg'), number: 30, caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-31.jpg'), number: 31, caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-75.jpg'), number: 75, caption: "Japan House in Illinois" },
+  { src: Q('modelling/modelling-32.jpg'), number: 32, caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-33.jpg'), number: 33, caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-34.jpg'), number: 34, caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-35.jpg'), number: 35, caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-37.jpg'), number: 37 },
+  { src: Q('modelling/modelling-38.jpg'), number: 38 },
+  { src: Q('modelling/modelling-39.jpg'), number: 39 },
+  { src: Q('modelling/modelling-40.jpg'), number: 40 },
+  { src: Q('modelling/modelling-41.jpg'), number: 41 },
+  { src: Q('modelling/modelling-42.jpg'), number: 42 },
+  { src: Q('modelling/modelling-43.jpg'), number: 43 },
+  { src: Q('modelling/modelling-44.jpg'), number: 44 },
+  { src: Q('modelling/modelling-45.jpg'), number: 45 },
+  { src: Q('modelling/modelling-47.jpg'), number: 47 },
+  { src: Q('modelling/modelling-48.jpg'), number: 48 },
+  { src: Q('modelling/modelling-49.jpg'), number: 49, caption: "Prom photoshoot" },
+  { src: Q('modelling/modelling-50.jpg'), number: 50, caption: "The Louvre in Paris" },
+  { src: Q('modelling/modelling-51.jpg'), number: 51 },
+  { src: Q('modelling/modelling-52.jpg'), number: 52 },
+  { src: Q('modelling/modelling-53.jpg'), number: 53 },
+  { src: Q('modelling/modelling-54.jpg'), number: 54 },
+  { src: Q('modelling/modelling-55.jpg'), number: 55 },
+  { src: Q('modelling/modelling-56.jpg'), number: 56 },
+  { src: Q('modelling/modelling-57.jpg'), number: 57 },
+  { src: Q('modelling/modelling-59.jpg'), number: 59 },
+  { src: Q('modelling/modelling-60.jpg'), number: 60, caption: "China photoshoot makeup" },
+  { src: Q('modelling/modelling-61.jpg'), number: 61 },
+  { src: Q('modelling/modelling-62.jpg'), number: 62 },
+  { src: Q('modelling/modelling-63.jpg'), number: 63 },
+  { src: Q('modelling/modelling-64.jpg'), number: 64 },
+  { src: Q('modelling/modelling-65.jpg'), number: 65 },
+  { src: Q('modelling/modelling-66.jpg'), number: 66 },
+  { src: Q('modelling/modelling-67.jpg'), number: 67, caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-36.jpg'), number: 36, caption: "Recreating poses in Paris" },
+  { src: Q('modelling/modelling-46.jpg'), number: 46 },
+  { src: Q('modelling/modelling-58.jpg'), number: 58 },
+  { src: Q('modelling/modelling-68.jpg'), number: 68 },
 ]
 
 
 const ROBOTICS_GALLERY: BentoPhoto[] = [
-  { src: Q('robotics/robotics-1.jpg'), size: 'hero', number: 1, caption: "DCMP 2025" },
-  { src: Q('robotics/robotics-2.jpg'), size: 'wide', number: 2 },
-  { src: Q('robotics/robotics-3.jpg'), size: 'hero', number: 3, caption: "Garage sale sign for good luck" },
-  { src: Q('robotics/robotics-4.jpg'), size: 'wide', number: 4 },
-  { src: Q('robotics/robotics-5.jpg'), size: 'hero', number: 5, caption: "Cheering on 8729" },
-  { src: Q('robotics/robotics-6.jpg'), size: 'wide', number: 6 },
-  { src: Q('robotics/robotics-7.jpg'), size: 'wide', number: 7, caption: "Spark Youth Robotics pins" },
-  { src: Q('robotics/robotics-8.jpg'), size: 'wide', number: 8 },
-  { src: Q('robotics/robotics-9.jpg'), size: 'tall', number: 9, caption: "Built the coral reef game pieces" },
-  { src: Q('robotics/robotics-12.jpg'), size: 'wide', number: 12 },
-  { src: Q('robotics/robotics-14.jpg'), size: 'wide', number: 14 },
-  { src: Q('robotics/robotics-15.jpg'), size: 'wide', number: 15 },
-  { src: Q('robotics/robotics-16.jpg'), size: 'wide', number: 16 },
-  { src: Q('robotics/robotics-17.jpg'), size: 'hero', number: 17 },
-  { src: Q('robotics/robotics-18.jpg'), size: 'hero', number: 18 },
-  { src: Q('robotics/robotics-19.jpg'), size: 'hero', number: 19 },
-  { src: Q('robotics/robotics-20.jpg'), size: 'hero', number: 20 },
-  { src: Q('robotics/robotics-22.jpg'), size: 'wide', number: 22 },
-  { src: Q('robotics/robotics-23.jpg'), size: 'tall', number: 23 },
-  { src: Q('robotics/robotics-24.jpg'), size: 'wide', number: 24 },
-  { src: Q('robotics/robotics-21.jpg'), size: 'sm', number: 21, caption: "KCSSC Demo 2024" },
-  { src: Q('robotics/robotics-11.jpg'), size: 'sm', number: 11 },
-  { src: Q('robotics/robotics-13.jpg'), size: 'wide', number: 13 },
-  { src: Q('robotics/robotics-10.jpg'), size: 'wide', number: 10 },
+  { src: Q('robotics/robotics-1.jpg'), number: 1, caption: "DCMP 2025" },
+  { src: Q('robotics/robotics-2.jpg'), number: 2 },
+  { src: Q('robotics/robotics-3.jpg'), number: 3, caption: "Garage sale sign for good luck" },
+  { src: Q('robotics/robotics-4.jpg'), number: 4 },
+  { src: Q('robotics/robotics-5.jpg'), number: 5, caption: "Cheering on 8729" },
+  { src: Q('robotics/robotics-6.jpg'), number: 6 },
+  { src: Q('robotics/robotics-7.jpg'), number: 7, caption: "Spark Youth Robotics pins" },
+  { src: Q('robotics/robotics-8.jpg'), number: 8 },
+  { src: Q('robotics/robotics-9.jpg'), number: 9, caption: "Built the coral reef game pieces" },
+  { src: Q('robotics/robotics-12.jpg'), number: 12 },
+  { src: Q('robotics/robotics-14.jpg'), number: 14 },
+  { src: Q('robotics/robotics-15.jpg'), number: 15 },
+  { src: Q('robotics/robotics-16.jpg'), number: 16 },
+  { src: Q('robotics/robotics-17.jpg'), number: 17 },
+  { src: Q('robotics/robotics-18.jpg'), number: 18 },
+  { src: Q('robotics/robotics-19.jpg'), number: 19 },
+  { src: Q('robotics/robotics-20.jpg'), number: 20 },
+  { src: Q('robotics/robotics-22.jpg'), number: 22 },
+  { src: Q('robotics/robotics-23.jpg'), number: 23 },
+  { src: Q('robotics/robotics-24.jpg'), number: 24 },
+  { src: Q('robotics/robotics-21.jpg'), number: 21, caption: "KCSSC Demo 2024" },
+  { src: Q('robotics/robotics-11.jpg'), number: 11 },
+  { src: Q('robotics/robotics-13.jpg'), number: 13 },
+  { src: Q('robotics/robotics-10.jpg'), number: 10 },
 ]
 
 const LEGO_GALLERY: BentoPhoto[] = [
-  { src: Q('lego/lego-1.jpg'), size: 'wide' },
-  { src: Q('lego/lego-2.jpg'), size: 'wide' },
-  { src: Q('lego/lego-3.jpg'), size: 'wide' },
-  { src: Q('lego/lego-4.jpg'), size: 'wide' },
-  { src: Q('lego/lego-5.jpg'), size: 'wide' },
-  { src: Q('lego/lego-6.jpg'), size: 'hero', caption: 'Hard at work building' },
-  { src: Q('lego/lego-7.jpg'), size: 'wide', caption: 'Final Presentations' },
-  { src: Q('lego/lego-8.jpg'), size: 'wide', caption: 'Our team' },
-  { src: Q('lego/lego-9.jpg'), size: 'wide' },
-  { src: Q('lego/lego-10.jpg'), size: 'wide' },
-  { src: Q('lego/lego-11.jpg'), size: 'wide' },
+  { src: Q('lego/lego-1.jpg') },
+  { src: Q('lego/lego-2.jpg') },
+  { src: Q('lego/lego-3.jpg') },
+  { src: Q('lego/lego-4.jpg') },
+  { src: Q('lego/lego-5.jpg') },
+  { src: Q('lego/lego-6.jpg'), caption: 'Hard at work building' },
+  { src: Q('lego/lego-7.jpg'), caption: 'Final Presentations' },
+  { src: Q('lego/lego-8.jpg'), caption: 'Our team' },
+  { src: Q('lego/lego-9.jpg') },
+  { src: Q('lego/lego-10.jpg') },
+  { src: Q('lego/lego-11.jpg') },
 ]
 
 const MUSIC_GALLERY: BentoPhoto[] = [
-  { src: Q('music/music-2.jpg'), size: 'hero', number: 2 },
-  { src: Q('music/music-1.jpg'), size: 'wide', number: 1 },
-  { src: Q('music/music-3.jpg'), size: 'sm', number: 3 },
-  { src: Q('music/music-4.jpg'), size: 'wide', number: 4, caption: 'Oscar Peterson statue in Ottawa' },
-  { src: Q('music/music-5.jpg'), size: 'wide', number: 5, caption: 'Piano before prom' },
+  { src: Q('music/music-2.jpg'), number: 2, caption: 'Performing at Taikang retirement center' },
+  { src: Q('music/music-1.jpg'), number: 1 },
+  { src: Q('music/music-3.jpg'), number: 3 },
+  { src: Q('music/music-4.jpg'), number: 4, caption: 'Oscar Peterson statue in Ottawa' },
+  { src: Q('music/music-5.jpg'), number: 5, caption: 'Piano before prom' },
 ]
 
-// Only photos 3, 4, 5 are allowed to crop — everything else is `fit: 'contain'`.
-// Sizes fill the 6-column grid exactly flat over 3 rows: xl(3x2) + three tall(1x2)
-// fill rows 1-2, two wide(2x1) + two sm(1x1) fill row 3.
 const POOL_GALLERY: BentoPhoto[] = [
-  { src: Q('pool/pool-6.jpg'), size: 'xl', number: 6, fit: 'contain' },
-  { src: Q('pool/pool-1.jpg'), size: 'tall', number: 1, fit: 'contain' },
-  { src: Q('pool/pool-2.jpg'), size: 'tall', number: 2, fit: 'contain' },
-  { src: Q('pool/pool-7.jpg'), size: 'tall', number: 7, fit: 'contain' },
-  { src: Q('pool/pool-3.jpg'), size: 'wide', number: 3 },
-  { src: Q('pool/pool-4.jpg'), size: 'wide', number: 4 },
-  { src: Q('pool/pool-5.jpg'), size: 'sm', number: 5 },
-  { src: Q('pool/pool-8.jpg'), size: 'sm', number: 8, fit: 'contain' },
+  { src: Q('pool/pool-6.jpg'), number: 6 },
+  { src: Q('pool/pool-1.jpg'), number: 1, caption: 'Teamwork' },
+  { src: Q('pool/pool-2.jpg'), number: 2 },
+  { src: Q('pool/pool-7.jpg'), number: 7 },
+  { src: Q('pool/pool-3.jpg'), number: 3 },
+  { src: Q('pool/pool-4.jpg'), number: 4 },
+  { src: Q('pool/pool-5.jpg'), number: 5 },
+  { src: Q('pool/pool-8.jpg'), number: 8 },
 ]
 
 const QUESTS: QuestCard[] = [
@@ -334,7 +317,7 @@ const QUESTS: QuestCard[] = [
     images: [Q('pool/pool-2.jpg')],
     layout: 'bento',
     gallery: POOL_GALLERY,
-    videos: videosFor('pool', 1),
+    videos: videosFor('pool', 1, { 1: 'A trickshot' }),
   },
   {
     id: 'baking',
@@ -396,11 +379,11 @@ const QUESTS: QuestCard[] = [
       { src: Q('poker/poker-2.jpg') },
       { src: Q('poker/poker-1.jpg') },
       { src: Q('poker/poker-3.jpg') },
-      { src: Q('poker/poker-4.jpg') },
+      { src: Q('poker/poker-4.jpg'), caption: 'Sequence Holdings Poker Tournament' },
       { src: Q('poker/poker-5.jpg') },
       { src: Q('poker/poker-7.jpg'), caption: 'a huge run at Waterloo' },
     ],
-    videos: videosFor('poker', 4),
+    videos: videosFor('poker', [1, 2, 4]),
   },
   {
     id: 'people',
@@ -427,7 +410,7 @@ const QUESTS: QuestCard[] = [
     images: [ROBOTICS_GALLERY[0].src],
     layout: 'bento',
     gallery: ROBOTICS_GALLERY,
-    videos: videosFor('robotics', 1),
+    videos: videosFor('robotics', 1, { 1: 'World record set in Canada' }),
   },
   {
     id: 'photography',
@@ -530,68 +513,44 @@ const CSS = `
 }
 .tj-quest-detail { animation: tj-slide-in-left 240ms var(--ease-snap) both; }
 
-/* ---- Bento collage: CSS-column masonry ----
-   Photos flow into fixed-width columns at their natural aspect ratio, so nothing is ever
-   cropped and the column COUNT scales with the available width (more columns on a wide
-   screen, fewer on a narrow one) while each photo stays the same size. Masonry packs by
-   height, so there are no leftover gaps — the collage reads the same on every screen. */
-.tj-bento-grid {
-  column-width: 220px;
-  column-gap: 12px;
-  margin-bottom: 8px;
-}
-@media (max-width: 720px) {
-  .tj-bento-grid { column-width: auto; column-count: 2; }
-}
+/* ---- Bento collage: justified rows ----
+   Photos are packed into full-width rows that all share a height, each photo scaled by its
+   own aspect ratio, so nothing is cropped and the top, bottom and sides all stay flat. The
+   per-tile widths/heights are computed in JS from each image's measured aspect ratio. */
 .tj-bento-tile {
   position: relative;
-  display: block;
-  width: 100%;
-  break-inside: avoid;
-  margin: 0 0 12px;
-  border-radius: var(--radius-1);
   overflow: hidden;
+  border-radius: var(--radius-1);
   background: var(--bg-well);
   padding: 0; border: none; text-align: left; /* reset for <button> video tiles */
 }
-.tj-bento-img { width: 100%; height: auto; display: block; }
+/* tile is sized to the photo's exact aspect ratio, so cover never actually crops — it just
+   soaks up sub-pixel rounding instead of leaving hairline letterbox gaps */
+.tj-bento-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .tj-bento-number {
-  position: absolute; top: 6px; left: 6px; z-index: 2;
+  position: absolute; top: 6px; left: 6px; z-index: 3;
   min-width: 20px; height: 20px; padding: 0 4px; border-radius: 4px;
   background: rgba(10,10,18,0.72); border: 1.5px solid;
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-mono); font-size:0.6875rem; font-weight: 600;
 }
+/* caption overlays the bottom of the photo so every tile stays exactly image-height, which
+   is what keeps the rows aligned — a caption bar below would make captioned tiles taller */
 .tj-bento-caption {
-  padding: 6px 10px; min-height: 20px;
-  font-family: var(--font-mono); font-size:0.6875rem; color: var(--text-muted);
-  background: var(--bg-well); border-top: 2px dashed var(--border-hairline);
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  padding: 18px 10px 7px;
+  font-family: var(--font-mono); font-size:0.6875rem; color: #f3ede0;
+  background: linear-gradient(to top, rgba(10,10,18,0.85), rgba(10,10,18,0));
+  pointer-events: none;
 }
-.tj-bento-caption-placeholder { color: var(--text-faint); font-style: italic; }
 /* video clip tiles mixed into the collage */
 .tj-bento-video { cursor: pointer; }
 .tj-bento-play {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center;
   background: rgba(10,10,18,0.34); color: #fff; font-size: 2.25rem;
   transition: background 160ms;
 }
 .tj-bento-video:hover .tj-bento-play { background: rgba(10,10,18,0.12); }
-
-/* ---- Filmstrip reel ---- */
-.tj-filmstrip-sprockets {
-  height: 10px;
-  background-image: repeating-linear-gradient(to right, var(--border-strong) 0 6px, transparent 6px 16px);
-  opacity: 0.5;
-}
-.tj-filmstrip-reel {
-  display: flex; gap: 12px; padding: 12px 2px;
-  overflow-x: auto; scroll-snap-type: x mandatory;
-}
-.tj-filmstrip-frame {
-  flex: 0 0 220px; aspect-ratio: 4/3; scroll-snap-align: center;
-  border: 3px solid var(--border-strong); border-radius: var(--radius-1);
-  overflow: hidden;
-}
 `
 
 let cssInjected = false
@@ -889,81 +848,28 @@ function PolaroidDetail({ quest, onBack }: { quest: QuestCard; onBack: () => voi
   )
 }
 
-// ---- Filmstrip: one hero frame + a snapping horizontal reel ----
-function FilmstripCaption({ text }: { text?: string }) {
-  if (!text) return null
-  return (
-    <div style={{ padding: '6px 10px', fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)', background: 'var(--bg-well)', border: '2px solid var(--border-hairline)', borderTop: 'none', borderBottomLeftRadius: 'var(--radius-1)', borderBottomRightRadius: 'var(--radius-1)' }}>
-      {'// '}{text}
-    </div>
-  )
-}
-
-function FilmstripDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }) {
-  const c = `var(--piece-${quest.piece})`
-  const heroSrc = quest.filmstripHero?.src ?? quest.images[0]
-  const features = quest.filmstripFeatures ?? []
-  // images[0] can double as the tile cover even when it's really the hero/a feature —
-  // filter those back out here so the reel never shows the same photo twice.
-  const excluded = new Set([quest.filmstripHero?.src, ...features.map((f) => f.src)])
-  const reel = (quest.filmstripHero ? quest.images : quest.images.slice(1)).filter((src) => !excluded.has(src))
-
-  return (
-    <section className="tj-quest-detail" style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 72px' }}>
-      <BackButton c={c} onBack={onBack} style={{ marginBottom: 32 }} />
-      <QuestDetailHeader quest={quest} c={c} />
-
-      {heroSrc && (
-        <div style={{ marginBottom: features.length ? 12 : 4 }}>
-          <div style={{ aspectRatio: '16/9', borderRadius: quest.filmstripHero?.caption ? '2px 2px 0 0' : 'var(--radius-1)', overflow: 'hidden', border: '2px solid var(--border-strong)', background: 'var(--bg-well)' }}>
-            <img src={heroSrc} alt="" style={{ width: '100%', height: '100%', objectFit: quest.filmstripHero?.fit ?? 'cover' }} />
-          </div>
-          <FilmstripCaption text={quest.filmstripHero?.caption} />
-        </div>
-      )}
-
-      {features.length > 0 && (
-        <div style={{ display: 'flex', gap: 12, marginBottom: 4 }}>
-          {features.map((f, i) => (
-            <div key={i} style={{ flex: 1 }}>
-              <div style={{ aspectRatio: '4/3', borderRadius: f.caption ? '2px 2px 0 0' : 'var(--radius-1)', overflow: 'hidden', border: '2px solid var(--border-strong)' }}>
-                <img src={f.src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-              <FilmstripCaption text={f.caption} />
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="tj-filmstrip-sprockets" />
-      <div className="tj-filmstrip-reel">
-        {reel.map((src, i) => {
-          const caption = quest.filmstripReelCaptions?.[src]
-          return (
-            <div key={i} style={{ flex: '0 0 220px' }}>
-              <div className="tj-filmstrip-frame" style={caption ? { borderRadius: '2px 2px 0 0' } : undefined}>
-                <img src={src} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-              <FilmstripCaption text={caption} />
-            </div>
-          )
-        })}
-      </div>
-      <div className="tj-filmstrip-sprockets" />
-
-      <VideoStrip videos={quest.videos} />
-      <BackButton c={c} onBack={onBack} style={{ marginTop: 40 }} />
-    </section>
-  )
-}
-
-// ---- Bento: numbered collage tiles, sized hero/wide/tall/sm, captions on select tiles ----
-const BENTO_SPAN: Record<MediaSize, { col: number; row: number }> = {
-  xl: { col: 3, row: 2 },
-  hero: { col: 2, row: 2 },
-  wide: { col: 2, row: 1 },
-  tall: { col: 1, row: 2 },
-  sm: { col: 1, row: 1 },
+// ---- Bento: numbered collage tiles in justified rows, captions overlaid on select tiles ----
+// Justified-rows packing (Flickr / Google-Photos style): greedily fill each row until the
+// height needed to span the full width drops to the target, so every row is full-width and
+// its photos share a height — nothing is cropped, and the top, bottom and sides stay flat.
+function justifyRows(ratios: number[], containerW: number, targetH: number, gap: number) {
+  const rows: { index: number; w: number; h: number }[][] = []
+  const push = (idx: number[], h: number) => rows.push(idx.map((i) => ({ index: i, w: h * ratios[i], h })))
+  let row: number[] = []
+  let sumR = 0
+  for (let i = 0; i < ratios.length; i++) {
+    row.push(i); sumR += ratios[i]
+    // height at which this many photos exactly span the available width
+    const h = (containerW - gap * (row.length - 1)) / sumR
+    if (h <= targetH) { push(row, h); row = []; sumR = 0 }
+  }
+  if (row.length) {
+    // trailing row: fill the width if that keeps a sane height, otherwise leave the photos
+    // at the target height and left-align them (avoids blowing up one or two leftovers)
+    const hFill = (containerW - gap * (row.length - 1)) / sumR
+    push(row, hFill <= targetH * 1.5 ? hFill : targetH)
+  }
+  return rows
 }
 
 function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }) {
@@ -972,17 +878,8 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
   const videos = quest.videos ?? []
   const [openVideo, setOpenVideo] = useState<number | null>(null)
 
-  // Hold the collage hidden until its images have loaded (or a short fallback elapses), then
-  // fade it in. CSS-column masonry reflows as each image's height arrives, which otherwise
-  // reads as the photos flashing/jumping around before the layout settles.
-  const totalMedia = photos.length + videos.length
-  const [ready, setReady] = useState(false)
-  const loadedRef = useRef(0)
-  const onMediaLoad = () => { loadedRef.current += 1; if (loadedRef.current >= totalMedia) setReady(true) }
-  useEffect(() => { const t = setTimeout(() => setReady(true), 600); return () => clearTimeout(t) }, [])
-
-  // Interleave the video clips evenly through the photos so they spread across the masonry
-  // columns instead of clumping at the end.
+  // Interleave the video clips evenly through the photos so they spread across the rows
+  // instead of clumping at the end.
   type Item = { kind: 'photo'; photo: BentoPhoto; n: number } | { kind: 'video'; vi: number }
   const items: Item[] = []
   const step = videos.length ? Math.max(1, Math.floor(photos.length / (videos.length + 1))) : 0
@@ -993,27 +890,69 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
   })
   while (vi < videos.length) { items.push({ kind: 'video', vi }); vi++ }
 
+  // Justified rows need every tile's aspect ratio up front. Measure each image as it loads
+  // (guessing 3:2 until then), recompute the packing on each new ratio while the collage is
+  // held hidden, then fade it in once everything is measured (or a fallback elapses).
+  // Measuring before revealing is what stops the rows from reflowing on screen.
+  const GAP = 12
+  const total = items.length
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [containerW, setContainerW] = useState(0)
+  const ratioRef = useRef<number[]>([])
+  if (ratioRef.current.length !== total) ratioRef.current = new Array(total).fill(0)
+  const loadedRef = useRef(0)
+  const [ready, setReady] = useState(false)
+  const [, bump] = useState(0)
+
+  const onMeasure = (i: number, w: number, h: number) => {
+    if (ratioRef.current[i] !== 0) return
+    ratioRef.current[i] = h > 0 ? w / h : 1.5
+    loadedRef.current += 1
+    if (loadedRef.current >= total) setReady(true)
+    bump((t) => t + 1)
+  }
+  useEffect(() => { const t = setTimeout(() => setReady(true), 1200); return () => clearTimeout(t) }, [])
+  useLayoutEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const measure = () => setContainerW(el.clientWidth)
+    measure()
+    const ro = new ResizeObserver(measure); ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  const ratios = items.map((_, i) => ratioRef.current[i] || 1.5)
+  const targetH = containerW > 0 && containerW < 560 ? 150 : 220
+  const rows = containerW > 0 ? justifyRows(ratios, containerW, targetH, GAP) : []
+
   return (
     <section className="tj-quest-detail" style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 72px' }}>
       <BackButton c={c} onBack={onBack} style={{ marginBottom: 32 }} />
       <QuestDetailHeader quest={quest} c={c} />
 
-      <div className="tj-bento-grid" style={{ opacity: ready ? 1 : 0, transition: 'opacity 260ms ease' }}>
-        {items.map((item, i) => item.kind === 'photo' ? (
-          <div key={`p${i}`} className="tj-bento-tile">
-            <span className="tj-bento-number" style={{ borderColor: c, color: c }}>{item.n}</span>
-            <img src={item.photo.src} alt="" loading="lazy" className="tj-bento-img" onLoad={onMediaLoad} onError={onMediaLoad} />
-            {item.photo.caption !== undefined && (
-              <div className="tj-bento-caption">
-                {item.photo.caption ? <>{'// '}{item.photo.caption}</> : <span className="tj-bento-caption-placeholder">Add a caption…</span>}
-              </div>
-            )}
+      <div ref={containerRef} style={{ opacity: ready ? 1 : 0, transition: 'opacity 260ms ease' }}>
+        {rows.map((row, ri) => (
+          <div key={ri} style={{ display: 'flex', gap: GAP, marginBottom: GAP }}>
+            {row.map(({ index, w, h }) => {
+              const item = items[index]
+              return item.kind === 'photo' ? (
+                <div key={index} className="tj-bento-tile" style={{ width: w, height: h, flex: '0 0 auto' }}>
+                  <span className="tj-bento-number" style={{ borderColor: c, color: c }}>{item.n}</span>
+                  <img src={item.photo.src} alt="" className="tj-bento-img"
+                    onLoad={(e) => onMeasure(index, e.currentTarget.naturalWidth, e.currentTarget.naturalHeight)} onError={() => onMeasure(index, 3, 2)} />
+                  {item.photo.caption && <div className="tj-bento-caption">{'// '}{item.photo.caption}</div>}
+                </div>
+              ) : (
+                <button key={index} type="button" className="tj-bento-tile tj-bento-video" style={{ width: w, height: h, flex: '0 0 auto' }}
+                  onClick={() => setOpenVideo(item.vi)} aria-label={`Play video ${item.vi + 1}`}>
+                  <img src={videos[item.vi].poster} alt="" className="tj-bento-img"
+                    onLoad={(e) => onMeasure(index, e.currentTarget.naturalWidth, e.currentTarget.naturalHeight)} onError={() => onMeasure(index, 3, 2)} />
+                  <span className="tj-bento-play">▶</span>
+                  {videos[item.vi].caption && <div className="tj-bento-caption">{'// '}{videos[item.vi].caption}</div>}
+                </button>
+              )
+            })}
           </div>
-        ) : (
-          <button key={`v${i}`} type="button" className="tj-bento-tile tj-bento-video" onClick={() => setOpenVideo(item.vi)} aria-label={`Play video ${item.vi + 1}`}>
-            <img src={videos[item.vi].poster} alt="" loading="lazy" className="tj-bento-img" onLoad={onMediaLoad} onError={onMediaLoad} />
-            <span className="tj-bento-play">▶</span>
-          </button>
         ))}
       </div>
 
@@ -1062,7 +1001,6 @@ function QuestDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
   if (quest.layout === 'bento') return <BentoDetail quest={quest} onBack={onBack} />
   if (quest.layout === 'marquee') return <MarqueeDetail quest={quest} onBack={onBack} />
   if (quest.layout === 'polaroid') return <PolaroidDetail quest={quest} onBack={onBack} />
-  if (quest.layout === 'filmstrip') return <FilmstripDetail quest={quest} onBack={onBack} />
   const c = `var(--piece-${quest.piece})`
   return (
     <section className="tj-quest-detail" style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 72px' }}>
@@ -1514,7 +1452,7 @@ export function SideQuests({ resetSignal }: { resetSignal?: number } = {}) {
 
   // Opening a quest from partway down the carousel would otherwise land on its detail
   // page still scrolled to that position — snap back to the top of it. All QuestDetail
-  // layout variants (bento/marquee/polaroid/filmstrip/default) share this class.
+  // layout variants (bento/marquee/polaroid/default) share this class.
   useEffect(() => {
     if (openId) document.querySelector('.tj-quest-detail')?.scrollIntoView({ block: 'start' })
   }, [openId])
