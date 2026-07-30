@@ -972,6 +972,15 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
   const videos = quest.videos ?? []
   const [openVideo, setOpenVideo] = useState<number | null>(null)
 
+  // Hold the collage hidden until its images have loaded (or a short fallback elapses), then
+  // fade it in. CSS-column masonry reflows as each image's height arrives, which otherwise
+  // reads as the photos flashing/jumping around before the layout settles.
+  const totalMedia = photos.length + videos.length
+  const [ready, setReady] = useState(false)
+  const loadedRef = useRef(0)
+  const onMediaLoad = () => { loadedRef.current += 1; if (loadedRef.current >= totalMedia) setReady(true) }
+  useEffect(() => { const t = setTimeout(() => setReady(true), 600); return () => clearTimeout(t) }, [])
+
   // Interleave the video clips evenly through the photos so they spread across the masonry
   // columns instead of clumping at the end.
   type Item = { kind: 'photo'; photo: BentoPhoto; n: number } | { kind: 'video'; vi: number }
@@ -989,11 +998,11 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
       <BackButton c={c} onBack={onBack} style={{ marginBottom: 32 }} />
       <QuestDetailHeader quest={quest} c={c} />
 
-      <div className="tj-bento-grid">
+      <div className="tj-bento-grid" style={{ opacity: ready ? 1 : 0, transition: 'opacity 260ms ease' }}>
         {items.map((item, i) => item.kind === 'photo' ? (
           <div key={`p${i}`} className="tj-bento-tile">
             <span className="tj-bento-number" style={{ borderColor: c, color: c }}>{item.n}</span>
-            <img src={item.photo.src} alt="" loading="lazy" className="tj-bento-img" />
+            <img src={item.photo.src} alt="" loading="lazy" className="tj-bento-img" onLoad={onMediaLoad} onError={onMediaLoad} />
             {item.photo.caption !== undefined && (
               <div className="tj-bento-caption">
                 {item.photo.caption ? <>{'// '}{item.photo.caption}</> : <span className="tj-bento-caption-placeholder">Add a caption…</span>}
@@ -1002,7 +1011,7 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
           </div>
         ) : (
           <button key={`v${i}`} type="button" className="tj-bento-tile tj-bento-video" onClick={() => setOpenVideo(item.vi)} aria-label={`Play video ${item.vi + 1}`}>
-            <img src={videos[item.vi].poster} alt="" loading="lazy" className="tj-bento-img" />
+            <img src={videos[item.vi].poster} alt="" loading="lazy" className="tj-bento-img" onLoad={onMediaLoad} onError={onMediaLoad} />
             <span className="tj-bento-play">▶</span>
           </button>
         ))}
