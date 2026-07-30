@@ -9,10 +9,7 @@ import { Button } from '../components/ds/Button'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 type DetailLayout = 'bento' | 'marquee' | 'polaroid'
-// `number` is the badge shown on the tile — defaults to array position, but can be
-// pinned explicitly so photos can be reordered (grouped, moved to the front/back to
-// square off the bottom edge, etc.) without relabeling every caption reference to it.
-interface BentoPhoto { src: string; caption?: string; number?: number }
+interface BentoPhoto { src: string; caption?: string }
 interface QuestVideo { src: string; poster: string; caption?: string }
 
 interface QuestCard {
@@ -28,7 +25,7 @@ interface QuestCard {
   // shift polaroid #N badges away from matching filenames)
   cover?: string
   layout?: DetailLayout
-  // only used when layout === 'bento' — numbered photos for the collage
+  // only used when layout === 'bento' — the photos for the collage
   gallery?: BentoPhoto[]
   // clickable video clips shown below the main gallery, opened in a lightbox
   videos?: QuestVideo[]
@@ -57,8 +54,7 @@ const videosFor = (prefix: string, nums: number | number[], captions: Record<num
     caption: captions[n],
   }))
 
-// numbered 1-43 to match the photo numbers so captions are easy to reassign later —
-// 1 is the cover photo (volleyballcoverphoto), also used as the tile thumbnail
+// volleyball-1 is the cover photo (volleyballcoverphoto), also used as the tile thumbnail
 const VOLLEYBALL_GALLERY: BentoPhoto[] = [
   { src: Q('volleyball/volleyball-1.jpg'), caption: 'Merivale High School Senior Girls Volleyball Team 2025' },
   { src: Q('volleyball/volleyball-2.jpg') },
@@ -108,143 +104,143 @@ const VOLLEYBALL_GALLERY: BentoPhoto[] = [
 ]
 
 const ART_GALLERY: BentoPhoto[] = [
-  { src: Q('art/art-1.jpg'), number: 1, caption: 'IB English Poster' },
-  { src: Q('art/art-2.jpg'), number: 2 },
-  { src: Q('art/art-3.jpg'), number: 3, caption: 'Clay crafts' },
-  { src: Q('art/art-4.jpg'), number: 4 },
-  { src: Q('art/art-9.jpg'), number: 9, caption: 'Clay crafts after the oven' },
-  { src: Q('art/art-5.jpg'), number: 5, caption: 'Chinese New Year whiteboard art' },
-  { src: Q('art/art-6.jpg'), number: 6 },
-  { src: Q('art/art-7.jpg'), number: 7 },
-  { src: Q('art/art-8.jpg'), number: 8, caption: 'IB art technique practice' },
-  { src: Q('art/art-10.jpg'), number: 10 },
-  { src: Q('art/art-11.jpg'), number: 11 },
-  { src: Q('art/art-12.jpg'), number: 12 },
-  { src: Q('art/art-14.jpg'), number: 14 },
-  { src: Q('art/art-15.jpg'), number: 15, caption: "Valentine's Day paper bouquet" },
-  { src: Q('art/art-16.jpg'), number: 16, caption: 'Painting tote bags in Waterloo' },
-  { src: Q('art/art-17.jpg'), number: 17 },
-  { src: Q('art/art-18.jpg'), number: 18 },
-  { src: Q('art/art-19.jpg'), number: 19, caption: 'Homemade stamps for Halloween 2025' },
-  { src: Q('art/art-20.jpg'), number: 20, caption: '3D wooden puzzle piano build' },
-  { src: Q('art/art-21.jpg'), number: 21 },
-  { src: Q('art/art-22.jpg'), number: 22 },
+  { src: Q('art/art-1.jpg'), caption: 'IB English Poster' },
+  { src: Q('art/art-2.jpg') },
+  { src: Q('art/art-3.jpg'), caption: 'Clay crafts' },
+  { src: Q('art/art-4.jpg') },
+  { src: Q('art/art-9.jpg'), caption: 'Clay crafts after the oven' },
+  { src: Q('art/art-5.jpg'), caption: 'Chinese New Year whiteboard art' },
+  { src: Q('art/art-6.jpg') },
+  { src: Q('art/art-7.jpg') },
+  { src: Q('art/art-8.jpg'), caption: 'IB art technique practice' },
+  { src: Q('art/art-10.jpg') },
+  { src: Q('art/art-11.jpg') },
+  { src: Q('art/art-12.jpg') },
+  { src: Q('art/art-14.jpg') },
+  { src: Q('art/art-15.jpg'), caption: "Valentine's Day paper bouquet" },
+  { src: Q('art/art-16.jpg'), caption: 'Painting tote bags in Waterloo' },
+  { src: Q('art/art-17.jpg') },
+  { src: Q('art/art-18.jpg') },
+  { src: Q('art/art-19.jpg'), caption: 'Homemade stamps for Halloween 2025' },
+  { src: Q('art/art-20.jpg'), caption: '3D wooden puzzle piano build' },
+  { src: Q('art/art-21.jpg') },
+  { src: Q('art/art-22.jpg') },
 ]
 
 const BAKING_GALLERY: BentoPhoto[] = [
-  { src: Q('baking/baking-2.jpg'), number: 2 },
-  { src: Q('baking/baking-3.jpg'), number: 3, caption: 'Canada Day Brunch' },
-  { src: Q('baking/baking-4.jpg'), number: 4, caption: 'Post strawberry picking meal' },
-  { src: Q('baking/baking-8.jpg'), number: 8, caption: 'Baking cookies at Waterloo' },
-  { src: Q('baking/baking-9.jpg'), number: 9, caption: 'Embroidery crafts and cookies' },
-  { src: Q('baking/baking-5.jpg'), number: 5 },
-  { src: Q('baking/baking-7.jpg'), number: 7 },
-  { src: Q('baking/baking-1.jpg'), number: 1 },
-  { src: Q('baking/baking-6.jpg'), number: 6 },
+  { src: Q('baking/baking-2.jpg') },
+  { src: Q('baking/baking-3.jpg'), caption: 'Canada Day Brunch' },
+  { src: Q('baking/baking-4.jpg'), caption: 'Post strawberry picking meal' },
+  { src: Q('baking/baking-8.jpg'), caption: 'Baking cookies at Waterloo' },
+  { src: Q('baking/baking-9.jpg'), caption: 'Embroidery crafts and cookies' },
+  { src: Q('baking/baking-5.jpg') },
+  { src: Q('baking/baking-7.jpg') },
+  { src: Q('baking/baking-1.jpg') },
+  { src: Q('baking/baking-6.jpg') },
 ]
 
 const MODELLING_GALLERY: BentoPhoto[] = [
-  { src: Q('modelling/modelling-1.jpg'), number: 1, caption: "Birthday photoshoot in China 2025" },
-  { src: Q('modelling/modelling-69.jpg'), number: 69 },
-  { src: Q('modelling/modelling-70.jpg'), number: 70 },
-  { src: Q('modelling/modelling-72.jpg'), number: 72 },
-  { src: Q('modelling/modelling-73.jpg'), number: 73 },
-  { src: Q('modelling/modelling-74.jpg'), number: 74 },
-  { src: Q('modelling/modelling-71.jpg'), number: 71 },
-  { src: Q('modelling/modelling-2.jpg'), number: 2 },
-  { src: Q('modelling/modelling-3.jpg'), number: 3 },
-  { src: Q('modelling/modelling-4.jpg'), number: 4 },
-  { src: Q('modelling/modelling-5.jpg'), number: 5 },
-  { src: Q('modelling/modelling-6.jpg'), number: 6 },
-  { src: Q('modelling/modelling-7.jpg'), number: 7 },
-  { src: Q('modelling/modelling-8.jpg'), number: 8 },
-  { src: Q('modelling/modelling-9.jpg'), number: 9 },
-  { src: Q('modelling/modelling-10.jpg'), number: 10 },
-  { src: Q('modelling/modelling-11.jpg'), number: 11 },
-  { src: Q('modelling/modelling-12.jpg'), number: 12 },
-  { src: Q('modelling/modelling-13.jpg'), number: 13 },
-  { src: Q('modelling/modelling-14.jpg'), number: 14 },
-  { src: Q('modelling/modelling-15.jpg'), number: 15 },
-  { src: Q('modelling/modelling-16.jpg'), number: 16, caption: '📸 @dr.k.bear' },
-  { src: Q('modelling/modelling-17.jpg'), number: 17, caption: '📸 @dr.k.bear' },
-  { src: Q('modelling/modelling-18.jpg'), number: 18, caption: '📸 @dr.k.bear' },
-  { src: Q('modelling/modelling-19.jpg'), number: 19, caption: '📸 @dr.k.bear' },
-  { src: Q('modelling/modelling-20.jpg'), number: 20, caption: "Fashion for Change Photoshoot 2025 · 📸 @dr.k.bear" },
-  { src: Q('modelling/modelling-21.jpg'), number: 21, caption: '📸 @dr.k.bear' },
-  { src: Q('modelling/modelling-22.jpg'), number: 22, caption: '📸 @dr.k.bear' },
-  { src: Q('modelling/modelling-23.jpg'), number: 23, caption: '📸 @dr.k.bear' },
-  { src: Q('modelling/modelling-24.jpg'), number: 24, caption: '📸 @dr.k.bear' },
-  { src: Q('modelling/modelling-25.jpg'), number: 25, caption: '📸 @dr.k.bear' },
-  { src: Q('modelling/modelling-26.jpg'), number: 26, caption: '📸 @dr.k.bear' },
-  { src: Q('modelling/modelling-27.jpg'), number: 27, caption: '📸 @dr.k.bear' },
-  { src: Q('modelling/modelling-28.jpg'), number: 28, caption: '📸 @dr.k.bear' },
-  { src: Q('modelling/modelling-29.jpg'), number: 29, caption: '📸 @alexanderjacobiphotography' },
-  { src: Q('modelling/modelling-30.jpg'), number: 30, caption: '📸 @alexanderjacobiphotography' },
-  { src: Q('modelling/modelling-31.jpg'), number: 31, caption: '📸 @alexanderjacobiphotography' },
-  { src: Q('modelling/modelling-75.jpg'), number: 75, caption: "Japan House in Illinois" },
-  { src: Q('modelling/modelling-32.jpg'), number: 32, caption: '📸 @alexanderjacobiphotography' },
-  { src: Q('modelling/modelling-33.jpg'), number: 33, caption: '📸 @alexanderjacobiphotography' },
-  { src: Q('modelling/modelling-34.jpg'), number: 34, caption: '📸 @alexanderjacobiphotography' },
-  { src: Q('modelling/modelling-35.jpg'), number: 35, caption: '📸 @alexanderjacobiphotography' },
-  { src: Q('modelling/modelling-37.jpg'), number: 37 },
-  { src: Q('modelling/modelling-38.jpg'), number: 38 },
-  { src: Q('modelling/modelling-39.jpg'), number: 39 },
-  { src: Q('modelling/modelling-40.jpg'), number: 40 },
-  { src: Q('modelling/modelling-41.jpg'), number: 41 },
-  { src: Q('modelling/modelling-42.jpg'), number: 42 },
-  { src: Q('modelling/modelling-43.jpg'), number: 43 },
-  { src: Q('modelling/modelling-44.jpg'), number: 44 },
-  { src: Q('modelling/modelling-45.jpg'), number: 45 },
-  { src: Q('modelling/modelling-47.jpg'), number: 47 },
-  { src: Q('modelling/modelling-48.jpg'), number: 48 },
-  { src: Q('modelling/modelling-49.jpg'), number: 49, caption: "Prom photoshoot" },
-  { src: Q('modelling/modelling-50.jpg'), number: 50, caption: "The Louvre in Paris" },
-  { src: Q('modelling/modelling-51.jpg'), number: 51 },
-  { src: Q('modelling/modelling-52.jpg'), number: 52 },
-  { src: Q('modelling/modelling-54.jpg'), number: 54 },
-  { src: Q('modelling/modelling-55.jpg'), number: 55 },
-  { src: Q('modelling/modelling-56.jpg'), number: 56 },
-  { src: Q('modelling/modelling-57.jpg'), number: 57 },
-  { src: Q('modelling/modelling-59.jpg'), number: 59 },
-  { src: Q('modelling/modelling-60.jpg'), number: 60, caption: "China photoshoot makeup" },
-  { src: Q('modelling/modelling-61.jpg'), number: 61 },
-  { src: Q('modelling/modelling-63.jpg'), number: 63 },
-  { src: Q('modelling/modelling-64.jpg'), number: 64 },
-  { src: Q('modelling/modelling-65.jpg'), number: 65 },
-  { src: Q('modelling/modelling-66.jpg'), number: 66 },
-  { src: Q('modelling/modelling-67.jpg'), number: 67, caption: '📸 @alexanderjacobiphotography' },
-  { src: Q('modelling/modelling-36.jpg'), number: 36, caption: "Recreating poses in Paris" },
-  { src: Q('modelling/modelling-46.jpg'), number: 46 },
-  { src: Q('modelling/modelling-58.jpg'), number: 58 },
-  { src: Q('modelling/modelling-68.jpg'), number: 68 },
+  { src: Q('modelling/modelling-1.jpg'), caption: "Birthday photoshoot in China 2025" },
+  { src: Q('modelling/modelling-69.jpg') },
+  { src: Q('modelling/modelling-70.jpg') },
+  { src: Q('modelling/modelling-72.jpg') },
+  { src: Q('modelling/modelling-73.jpg') },
+  { src: Q('modelling/modelling-74.jpg') },
+  { src: Q('modelling/modelling-71.jpg') },
+  { src: Q('modelling/modelling-2.jpg') },
+  { src: Q('modelling/modelling-3.jpg') },
+  { src: Q('modelling/modelling-4.jpg') },
+  { src: Q('modelling/modelling-5.jpg') },
+  { src: Q('modelling/modelling-6.jpg') },
+  { src: Q('modelling/modelling-7.jpg') },
+  { src: Q('modelling/modelling-8.jpg') },
+  { src: Q('modelling/modelling-9.jpg') },
+  { src: Q('modelling/modelling-10.jpg') },
+  { src: Q('modelling/modelling-11.jpg') },
+  { src: Q('modelling/modelling-12.jpg') },
+  { src: Q('modelling/modelling-13.jpg') },
+  { src: Q('modelling/modelling-14.jpg') },
+  { src: Q('modelling/modelling-15.jpg') },
+  { src: Q('modelling/modelling-16.jpg'), caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-17.jpg'), caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-18.jpg'), caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-19.jpg'), caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-20.jpg'), caption: "Fashion for Change Photoshoot 2025 · 📸 @dr.k.bear" },
+  { src: Q('modelling/modelling-21.jpg'), caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-22.jpg'), caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-23.jpg'), caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-24.jpg'), caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-25.jpg'), caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-26.jpg'), caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-27.jpg'), caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-28.jpg'), caption: '📸 @dr.k.bear' },
+  { src: Q('modelling/modelling-29.jpg'), caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-30.jpg'), caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-31.jpg'), caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-75.jpg'), caption: "Japan House in Illinois" },
+  { src: Q('modelling/modelling-32.jpg'), caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-33.jpg'), caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-34.jpg'), caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-35.jpg'), caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-37.jpg') },
+  { src: Q('modelling/modelling-38.jpg') },
+  { src: Q('modelling/modelling-39.jpg') },
+  { src: Q('modelling/modelling-40.jpg') },
+  { src: Q('modelling/modelling-41.jpg') },
+  { src: Q('modelling/modelling-42.jpg') },
+  { src: Q('modelling/modelling-43.jpg') },
+  { src: Q('modelling/modelling-44.jpg') },
+  { src: Q('modelling/modelling-45.jpg') },
+  { src: Q('modelling/modelling-47.jpg') },
+  { src: Q('modelling/modelling-48.jpg') },
+  { src: Q('modelling/modelling-49.jpg'), caption: "Prom photoshoot" },
+  { src: Q('modelling/modelling-50.jpg'), caption: "The Louvre in Paris" },
+  { src: Q('modelling/modelling-51.jpg') },
+  { src: Q('modelling/modelling-52.jpg') },
+  { src: Q('modelling/modelling-54.jpg') },
+  { src: Q('modelling/modelling-55.jpg') },
+  { src: Q('modelling/modelling-56.jpg') },
+  { src: Q('modelling/modelling-57.jpg') },
+  { src: Q('modelling/modelling-59.jpg') },
+  { src: Q('modelling/modelling-60.jpg'), caption: "China photoshoot makeup" },
+  { src: Q('modelling/modelling-61.jpg') },
+  { src: Q('modelling/modelling-63.jpg') },
+  { src: Q('modelling/modelling-64.jpg') },
+  { src: Q('modelling/modelling-65.jpg') },
+  { src: Q('modelling/modelling-66.jpg') },
+  { src: Q('modelling/modelling-67.jpg'), caption: '📸 @alexanderjacobiphotography' },
+  { src: Q('modelling/modelling-36.jpg'), caption: "Recreating poses in Paris" },
+  { src: Q('modelling/modelling-46.jpg') },
+  { src: Q('modelling/modelling-58.jpg') },
+  { src: Q('modelling/modelling-68.jpg') },
 ]
 
 
 const ROBOTICS_GALLERY: BentoPhoto[] = [
-  { src: Q('robotics/robotics-1.jpg'), number: 1, caption: "DCMP 2025" },
-  { src: Q('robotics/robotics-2.jpg'), number: 2 },
-  { src: Q('robotics/robotics-3.jpg'), number: 3, caption: "Garage sale sign for good luck" },
-  { src: Q('robotics/robotics-4.jpg'), number: 4 },
-  { src: Q('robotics/robotics-5.jpg'), number: 5, caption: "Cheering on 8729" },
-  { src: Q('robotics/robotics-6.jpg'), number: 6 },
-  { src: Q('robotics/robotics-7.jpg'), number: 7, caption: "Spark Youth Robotics pins" },
-  { src: Q('robotics/robotics-8.jpg'), number: 8 },
-  { src: Q('robotics/robotics-9.jpg'), number: 9, caption: "Built the coral reef game pieces" },
-  { src: Q('robotics/robotics-12.jpg'), number: 12 },
-  { src: Q('robotics/robotics-14.jpg'), number: 14 },
-  { src: Q('robotics/robotics-15.jpg'), number: 15 },
-  { src: Q('robotics/robotics-16.jpg'), number: 16 },
-  { src: Q('robotics/robotics-17.jpg'), number: 17 },
-  { src: Q('robotics/robotics-18.jpg'), number: 18 },
-  { src: Q('robotics/robotics-19.jpg'), number: 19 },
-  { src: Q('robotics/robotics-20.jpg'), number: 20 },
-  { src: Q('robotics/robotics-22.jpg'), number: 22 },
-  { src: Q('robotics/robotics-23.jpg'), number: 23 },
-  { src: Q('robotics/robotics-24.jpg'), number: 24 },
-  { src: Q('robotics/robotics-21.jpg'), number: 21, caption: "KCSSC Demo 2024" },
-  { src: Q('robotics/robotics-11.jpg'), number: 11 },
-  { src: Q('robotics/robotics-13.jpg'), number: 13 },
-  { src: Q('robotics/robotics-10.jpg'), number: 10 },
+  { src: Q('robotics/robotics-1.jpg'), caption: "DCMP 2025" },
+  { src: Q('robotics/robotics-2.jpg') },
+  { src: Q('robotics/robotics-3.jpg'), caption: "Garage sale sign for good luck" },
+  { src: Q('robotics/robotics-4.jpg') },
+  { src: Q('robotics/robotics-5.jpg'), caption: "Cheering on 8729" },
+  { src: Q('robotics/robotics-6.jpg') },
+  { src: Q('robotics/robotics-7.jpg'), caption: "Spark Youth Robotics pins" },
+  { src: Q('robotics/robotics-8.jpg') },
+  { src: Q('robotics/robotics-9.jpg'), caption: "Built the coral reef game pieces" },
+  { src: Q('robotics/robotics-12.jpg') },
+  { src: Q('robotics/robotics-14.jpg') },
+  { src: Q('robotics/robotics-15.jpg') },
+  { src: Q('robotics/robotics-16.jpg') },
+  { src: Q('robotics/robotics-17.jpg') },
+  { src: Q('robotics/robotics-18.jpg') },
+  { src: Q('robotics/robotics-19.jpg') },
+  { src: Q('robotics/robotics-20.jpg') },
+  { src: Q('robotics/robotics-22.jpg') },
+  { src: Q('robotics/robotics-23.jpg') },
+  { src: Q('robotics/robotics-24.jpg') },
+  { src: Q('robotics/robotics-21.jpg'), caption: "KCSSC Demo 2024" },
+  { src: Q('robotics/robotics-11.jpg') },
+  { src: Q('robotics/robotics-13.jpg') },
+  { src: Q('robotics/robotics-10.jpg') },
 ]
 
 const LEGO_GALLERY: BentoPhoto[] = [
@@ -262,22 +258,22 @@ const LEGO_GALLERY: BentoPhoto[] = [
 ]
 
 const MUSIC_GALLERY: BentoPhoto[] = [
-  { src: Q('music/music-2.jpg'), number: 2, caption: 'Performing at Taikang retirement center' },
-  { src: Q('music/music-1.jpg'), number: 1 },
-  { src: Q('music/music-3.jpg'), number: 3 },
-  { src: Q('music/music-4.jpg'), number: 4, caption: 'Oscar Peterson statue in Ottawa' },
-  { src: Q('music/music-5.jpg'), number: 5, caption: 'Piano before prom' },
+  { src: Q('music/music-2.jpg'), caption: 'Performing at Taikang retirement center' },
+  { src: Q('music/music-1.jpg') },
+  { src: Q('music/music-3.jpg') },
+  { src: Q('music/music-4.jpg'), caption: 'Oscar Peterson statue in Ottawa' },
+  { src: Q('music/music-5.jpg'), caption: 'Piano before prom' },
 ]
 
 const POOL_GALLERY: BentoPhoto[] = [
-  { src: Q('pool/pool-6.jpg'), number: 6 },
-  { src: Q('pool/pool-1.jpg'), number: 1, caption: 'Teamwork' },
-  { src: Q('pool/pool-2.jpg'), number: 2 },
-  { src: Q('pool/pool-7.jpg'), number: 7 },
-  { src: Q('pool/pool-3.jpg'), number: 3 },
-  { src: Q('pool/pool-4.jpg'), number: 4 },
-  { src: Q('pool/pool-5.jpg'), number: 5 },
-  { src: Q('pool/pool-8.jpg'), number: 8 },
+  { src: Q('pool/pool-6.jpg') },
+  { src: Q('pool/pool-1.jpg'), caption: 'Teamwork' },
+  { src: Q('pool/pool-2.jpg') },
+  { src: Q('pool/pool-7.jpg') },
+  { src: Q('pool/pool-3.jpg') },
+  { src: Q('pool/pool-4.jpg') },
+  { src: Q('pool/pool-5.jpg') },
+  { src: Q('pool/pool-8.jpg') },
 ]
 
 const QUESTS: QuestCard[] = [
@@ -525,13 +521,6 @@ const CSS = `
 /* tile is sized to the photo's exact aspect ratio, so cover never actually crops — it just
    soaks up sub-pixel rounding instead of leaving hairline letterbox gaps */
 .tj-bento-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.tj-bento-number {
-  position: absolute; top: 6px; left: 6px; z-index: 3;
-  min-width: 20px; height: 20px; padding: 0 4px; border-radius: 4px;
-  background: rgba(10,10,18,0.72); border: 1.5px solid;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-mono); font-size:0.6875rem; font-weight: 600;
-}
 /* caption overlays the bottom of the photo so every tile stays exactly image-height, which
    is what keeps the rows aligned — a caption bar below would make captioned tiles taller */
 .tj-bento-caption {
@@ -799,7 +788,6 @@ function PolaroidCard({ src, spot, scrollRef, i, containerRef, onDragEnd, fit = 
           <img src={src} alt="" loading="lazy" draggable={false} style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
         </div>
       )}
-      <span style={{ position: 'absolute', bottom: 6, right: 10, fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: '#8a8270' }}>#{i + 1}</span>
     </div>
   )
 }
@@ -846,7 +834,7 @@ function PolaroidDetail({ quest, onBack }: { quest: QuestCard; onBack: () => voi
   )
 }
 
-// ---- Bento: numbered collage tiles in justified rows, captions overlaid on select tiles ----
+// ---- Bento: collage tiles in justified rows, captions overlaid on select tiles ----
 // Justified-rows packing (Flickr / Google-Photos style): greedily fill each row until the
 // height needed to span the full width drops to the target, so every row is full-width and
 // its photos share a height — nothing is cropped, and the top, bottom and sides stay flat.
@@ -878,12 +866,12 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
 
   // Interleave the video clips evenly through the photos so they spread across the rows
   // instead of clumping at the end.
-  type Item = { kind: 'photo'; photo: BentoPhoto; n: number } | { kind: 'video'; vi: number }
+  type Item = { kind: 'photo'; photo: BentoPhoto } | { kind: 'video'; vi: number }
   const items: Item[] = []
   const step = videos.length ? Math.max(1, Math.floor(photos.length / (videos.length + 1))) : 0
   let vi = 0
   photos.forEach((photo, i) => {
-    items.push({ kind: 'photo', photo, n: photo.number ?? i + 1 })
+    items.push({ kind: 'photo', photo })
     if (step && vi < videos.length && (i + 1) % step === 0) { items.push({ kind: 'video', vi }); vi++ }
   })
   while (vi < videos.length) { items.push({ kind: 'video', vi }); vi++ }
@@ -935,7 +923,6 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
               const item = items[index]
               return item.kind === 'photo' ? (
                 <div key={index} className="tj-bento-tile" style={{ width: w, height: h, flex: '0 0 auto' }}>
-                  <span className="tj-bento-number" style={{ borderColor: c, color: c }}>{item.n}</span>
                   <img src={item.photo.src} alt="" className="tj-bento-img"
                     onLoad={(e) => onMeasure(index, e.currentTarget.naturalWidth, e.currentTarget.naturalHeight)} onError={() => onMeasure(index, 3, 2)} />
                   {item.photo.caption && <div className="tj-bento-caption">{'// '}{item.photo.caption}</div>}
