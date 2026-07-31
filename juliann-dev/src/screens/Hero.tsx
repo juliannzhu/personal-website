@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from 'react'
 import type { Screen } from '../components/layout/TopNav'
 import { Badge } from '../components/ds/Badge'
 
@@ -10,6 +11,7 @@ const CSS = `
   90%  { translate:0 1px;    opacity:1; scale:1 0.99; }
   100% { translate:0 0;      opacity:1; scale:1 1; }
 }
+.tj-heroname{ white-space:nowrap; }
 .tj-heroname span{ display:inline-block; transition:transform 120ms var(--ease-snap); opacity:0; }
 .tj-heroname span.tj-name-anim{ animation:tj-name-drop 560ms cubic-bezier(0.2,0.6,0.3,1) both; }
 .tj-heroname span:hover{ transform:translateY(-6px); }
@@ -35,16 +37,44 @@ function ensureCSS() {
 
 const NAME_COLORS = ['--piece-i','--piece-o','--piece-t','--piece-s','--piece-z','--piece-j','--piece-l'] as const
 
+// Largest the name is ever drawn (matches the old clamp ceiling of 4.25rem).
+const NAME_MAX_PX = 68
+
 export function Hero({ onNav, play }: { onNav: (id: Screen) => void; play: boolean }) {
   ensureCSS()
   const name = 'JULIANN'
+  const nameRef = useRef<HTMLHeadingElement>(null)
+
+  // Keep the name on a single line at any width: measure its natural one-line width at the
+  // max size, then scale the font down to fit the available space (capped at the max, so it
+  // never grows past the design size on desktop). Reruns on any resize. Because it measures
+  // the real rendered width, it adapts to the pixel font's exact metrics instead of guessing.
+  useLayoutEffect(() => {
+    const el = nameRef.current
+    if (!el) return
+    const fit = () => {
+      const avail = el.parentElement?.clientWidth ?? 0
+      if (!avail) return
+      el.style.fontSize = `${NAME_MAX_PX}px`
+      const natural = el.scrollWidth
+      const scale = Math.min(1, (avail * 0.98) / natural)
+      el.style.fontSize = `${NAME_MAX_PX * scale}px`
+    }
+    fit()
+    // the pixel font loads async, so remeasure once it's ready (fallback-font metrics differ)
+    document.fonts?.ready.then(fit)
+    const ro = new ResizeObserver(fit)
+    if (el.parentElement) ro.observe(el.parentElement)
+    return () => ro.disconnect()
+  }, [])
+
   return (
     <section className="tj-hero-section" style={{ position: 'relative', minHeight: 'calc(100vh - 58px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px' }}>
       <div style={{ position: 'relative', width: '100%', maxWidth: 680, margin: '0 auto', textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
           <Badge piece="s" dot>Now playing · CS @ UWATERLOO</Badge>
         </div>
-        <h1 className="tj-heroname" style={{ fontFamily: 'var(--font-pixel)', fontSize: 'clamp(2.125rem, 7vw, 4.25rem)', lineHeight: 1.1, textAlign: 'center', margin: 0, textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+        <h1 ref={nameRef} className="tj-heroname" style={{ fontFamily: 'var(--font-pixel)', fontSize: `${NAME_MAX_PX}px`, lineHeight: 1.1, textAlign: 'center', margin: 0, textTransform: 'uppercase', letterSpacing: '0.02em' }}>
           {name.split('').map((ch, i) => (
             <span
               key={i}
