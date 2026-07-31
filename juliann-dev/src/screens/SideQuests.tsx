@@ -125,6 +125,28 @@ const ART_GALLERY: BentoPhoto[] = [
   { src: Q('art/art-20.jpg'), caption: '3D wooden puzzle piano build' },
   { src: Q('art/art-21.jpg') },
   { src: Q('art/art-22.jpg') },
+  { src: Q('art/art-23.jpg') },
+  { src: Q('art/art-24.jpg') },
+  { src: Q('art/art-25.jpg') },
+  { src: Q('art/art-26.jpg') },
+  { src: Q('art/art-27.jpg') },
+  { src: Q('art/art-28.jpg') },
+  { src: Q('art/art-29.jpg') },
+  { src: Q('art/art-30.jpg') },
+  { src: Q('art/art-31.jpg') },
+  { src: Q('art/art-32.jpg') },
+  { src: Q('art/art-33.jpg') },
+  { src: Q('art/art-34.jpg') },
+  { src: Q('art/art-35.jpg') },
+  { src: Q('art/art-36.jpg') },
+  { src: Q('art/art-37.jpg') },
+  { src: Q('art/art-38.jpg') },
+  { src: Q('art/art-39.jpg') },
+  { src: Q('art/art-40.jpg') },
+  { src: Q('art/art-41.jpg') },
+  { src: Q('art/art-42.jpg') },
+  { src: Q('art/art-43.jpg') },
+  { src: Q('art/art-44.jpg') },
 ]
 
 const BAKING_GALLERY: BentoPhoto[] = [
@@ -137,6 +159,8 @@ const BAKING_GALLERY: BentoPhoto[] = [
   { src: Q('baking/baking-7.jpg') },
   { src: Q('baking/baking-1.jpg') },
   { src: Q('baking/baking-6.jpg') },
+  { src: Q('baking/baking-10.jpg') },
+  { src: Q('baking/baking-11.jpg') },
 ]
 
 const MODELLING_GALLERY: BentoPhoto[] = [
@@ -257,12 +281,12 @@ const LEGO_GALLERY: BentoPhoto[] = [
   { src: Q('lego/lego-11.jpg') },
 ]
 
-const MUSIC_GALLERY: BentoPhoto[] = [
-  { src: Q('music/music-2.jpg'), caption: 'Performing at Taikang retirement center' },
-  { src: Q('music/music-1.jpg') },
-  { src: Q('music/music-3.jpg') },
-  { src: Q('music/music-4.jpg'), caption: 'Oscar Peterson statue in Ottawa' },
-  { src: Q('music/music-5.jpg'), caption: 'Piano before prom' },
+const PIANO_GALLERY: BentoPhoto[] = [
+  { src: Q('piano/piano-2.jpg'), caption: 'Performing at Taikang retirement center' },
+  { src: Q('piano/piano-1.jpg') },
+  { src: Q('piano/piano-3.jpg') },
+  { src: Q('piano/piano-4.jpg'), caption: 'Oscar Peterson statue in Ottawa' },
+  { src: Q('piano/piano-5.jpg'), caption: 'Piano before prom' },
 ]
 
 const POOL_GALLERY: BentoPhoto[] = [
@@ -290,16 +314,16 @@ const QUESTS: QuestCard[] = [
     videos: videosFor('volleyball', 4),
   },
   {
-    id: 'music',
+    id: 'piano',
     piece: 'o',
     title: 'PIANO',
     sub: 'A different kind of keyboard layout than what most developers know. I recently completed my RCM Level 10 Certificate. 13 years of weekly lessons, 10 hours of practice per week, and 6 recitals annually.',
     tags: ['RCM Level 10', 'Classical', 'Technique', 'Ear Training'],
     placeholder: '🎹',
-    images: [Q('music/music-5.jpg')],
+    images: [Q('piano/piano-5.jpg')],
     layout: 'bento',
-    gallery: MUSIC_GALLERY,
-    videos: videosFor('music', 7),
+    gallery: PIANO_GALLERY,
+    videos: videosFor('piano', 10),
   },
   {
     id: 'pool',
@@ -413,7 +437,7 @@ const QUESTS: QuestCard[] = [
     sub: 'Candid shots, travel photos, and life through a lens. Instagram: @juliann.zhu',
     tags: ['Candid', 'Travel', 'Film'],
     placeholder: '📷',
-    images: Array.from({ length: 41 }, (_, i) => Q(`photography/photography-${i + 1}.jpg`)),
+    images: Array.from({ length: 42 }, (_, i) => Q(`photography/photography-${i + 1}.jpg`)),
     layout: 'marquee',
     marqueeHeight: 'calc(100vh - 260px)',
   },
