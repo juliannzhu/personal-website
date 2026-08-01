@@ -159,6 +159,9 @@ const BAKING_GALLERY: BentoPhoto[] = [
   { src: Q('baking/baking-6.jpg') },
   { src: Q('baking/baking-10.jpg') },
   { src: Q('baking/baking-11.jpg') },
+  { src: Q('baking/baking-12.jpg'), caption: 'Bruschetta spread' },
+  { src: Q('baking/baking-13.jpg') },
+  { src: Q('baking/baking-14.jpg') },
 ]
 
 const MODELLING_GALLERY: BentoPhoto[] = [
