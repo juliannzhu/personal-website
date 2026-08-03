@@ -452,6 +452,7 @@ const QUESTS: QuestCard[] = [
     tags: ['Candid', 'Travel', 'Film'],
     placeholder: '📷',
     images: Array.from({ length: 42 }, (_, i) => Q(`photography/photography-${i + 1}.jpg`)),
+    cover: Q('photography/photography-17.jpg'),
     layout: 'marquee',
     marqueeHeight: 'calc(100vh - 260px)',
   },
