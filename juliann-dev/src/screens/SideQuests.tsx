@@ -163,6 +163,11 @@ const BAKING_GALLERY: BentoPhoto[] = [
   { src: Q('baking/baking-12.jpg'), caption: 'Bruschetta spread' },
   { src: Q('baking/baking-13.jpg') },
   { src: Q('baking/baking-14.jpg') },
+  { src: Q('baking/baking-16.jpg'), caption: 'Abura soba' },
+  { src: Q('baking/baking-17.jpg'), caption: 'Homemade avocado toast' },
+  { src: Q('baking/baking-18.jpg'), caption: 'Bruschetta close up' },
+  { src: Q('baking/baking-19.jpg'), caption: 'Prosciutto' },
+  { src: Q('baking/baking-20.jpg'), caption: 'Zucchini egg bites' },
 ]
 
 const MODELLING_GALLERY: BentoPhoto[] = [
@@ -348,7 +353,7 @@ const QUESTS: QuestCard[] = [
     id: 'baking',
     piece: 's',
     title: 'PLATING',
-    sub: 'Cooking, hosting, and making food that looks as good as it tastes. I love the whole process, from the first chop to plating the final dish and sharing it with the people around me.',
+    sub: 'Cooking, hosting, and plating food to look as good as it tastes. I love the whole process and sharing it with the people around me.',
     tags: ['Cooking', 'Plating', 'Presentation', 'Hosting'],
     placeholder: '🍽️',
     images: [Q('baking/baking-3.jpg')],
