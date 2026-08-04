@@ -156,7 +156,6 @@ const PROJECTS: Project[] = [
     tags: ['JavaScript', 'HTML', 'CSS', 'UI/UX'],
     cat: 'web',
     year: 'May 2024',
-    devpost: 'https://devpost.com/juliannzhu',
     images: [
       { src: P('PTC', 'ptc-1.png'), caption: 'winning the Gender Equality track as Team Jinlira' },
       { src: P('PTC', 'ptc-2.png'), caption: 'the post-graduate interview prep page, with curated video guides' },
