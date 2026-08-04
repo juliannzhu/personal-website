@@ -157,6 +157,14 @@ const PROJECTS: Project[] = [
     cat: 'web',
     year: 'May 2024',
     devpost: 'https://devpost.com/juliannzhu',
+    images: [
+      { src: P('PTC', 'ptc-1.png'), caption: 'winning the Gender Equality track as Team Jinlira' },
+      { src: P('PTC', 'ptc-2.png'), caption: 'the post-graduate interview prep page, with curated video guides' },
+      { src: P('PTC', 'ptc-3.png'), caption: 'the job-matching form: filter by education, field, location, and salary' },
+      { src: P('PTC', 'ptc-4.png'), caption: 'the high school events calendar, full of women-in-STEM hackathons and classes' },
+      { src: P('PTC', 'ptc-5.png'), caption: 'beginner coding class picks for middle schoolers' },
+      { src: P('PTC', 'ptc-6.png'), caption: 'the networking guide: what it is, why it matters, and how to start' },
+    ],
   },
   {
     id: 'grafana-dashboards',
