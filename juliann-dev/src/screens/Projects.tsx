@@ -170,7 +170,7 @@ const PROJECTS: Project[] = [
   {
     id: 'grafana-dashboards',
     title: 'GRAFANA DASHBOARDS',
-    piece: 'o',
+    piece: 't',
     tagline: 'Satellite system monitoring dashboards built with Grafana and MySQL data sources, reduced dashboard load time by 86% through SQL query optimization.',
     tags: ['MySQL', 'SQLAlchemy', 'FastAPI', 'APScheduler', 'MariaDB'],
     cat: 'ai',
@@ -179,7 +179,7 @@ const PROJECTS: Project[] = [
 ]
 
 const FILTERS: { id: Cat; label: string; piece: Piece }[] = [
-  { id: 'all',      label: 'All',      piece: 'i' },
+  { id: 'all',      label: 'All',      piece: 's' },
   { id: 'web',      label: 'Web',      piece: 'i' },
   { id: 'ai',       label: 'AI',       piece: 't' },
   { id: 'research', label: 'Research', piece: 'j' },
