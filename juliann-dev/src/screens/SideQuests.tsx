@@ -428,11 +428,15 @@ const QUESTS: QuestCard[] = [
     sub: 'Quality time is my love language. My dog is a Shiba Inu named Pompom and he is a menace.',
     tags: ['Friends', 'Shiba Inu', 'Pompom', 'Quality Time'],
     placeholder: '🐾',
-    // Numbers absent from public/assets/quests/people/ (removed photos, plus 22 which moved
-    // to the photography quest). Keep this list in sync when photos are added/removed there.
-    images: Array.from({ length: 97 }, (_, i) => i + 1)
-      .filter((n) => ![1, 7, 11, 15, 22, 24, 33, 35, 40, 47, 49, 56, 72, 74, 77, 78].includes(n))
-      .map((n) => Q(`people/people-${n}.jpg`)),
+    // Explicit photo order for the scattered polaroid layout (shuffled). Lists only the photos
+    // that exist in public/assets/quests/people/ — update this list when photos are added/removed.
+    images: [
+      23, 88, 57, 5, 37, 54, 16, 12, 25, 36, 13, 29, 94, 32, 50, 93,
+      41, 95, 63, 39, 97, 53, 55, 19, 92, 52, 31, 20, 3, 71, 82, 60,
+      62, 81, 30, 84, 61, 17, 66, 59, 8, 43, 9, 68, 18, 70, 28, 10,
+      69, 45, 87, 86, 34, 14, 51, 75, 21, 58, 73, 91, 85, 42, 6, 2,
+      80, 26, 67, 96, 38, 48, 27, 90, 4, 89, 83, 44, 65,
+    ].map((n) => Q(`people/people-${n}.jpg`)),
     cover: Q('people/people-38.jpg'),
     layout: 'polaroid',
   },
@@ -743,7 +747,7 @@ function seeded(i: number, salt: number) {
 }
 
 const POLA_COLS = 4
-const POLA_ROW_H = 172 // less than a card's own rendered height, so rows overlap
+const POLA_ROW_H = 182 // less than a card's own rendered height, so rows still overlap a little
 const POLA_CARD_W = 180
 
 type ScatterSpot = { x: number; y: number; rot: number; w: number; speed: number }
@@ -760,10 +764,10 @@ function polaroidSpot(i: number, total: number, override?: { width?: number; col
   // Kept well inside the cell (not the full width/row) so a card can partially
   // overlap its neighbours without ever landing squarely on top of one — the
   // overlap should read as clutter, not as a photo that's completely hidden.
-  const xJitter = (seeded(i, 1) - 0.5) * colWidth * 0.5
-  const yJitter = (seeded(i, 2) - 0.5) * POLA_ROW_H * 0.35
+  const xJitter = (seeded(i, 1) - 0.5) * colWidth * 0.32
+  const yJitter = (seeded(i, 2) - 0.5) * POLA_ROW_H * 0.22
   const rot = (seeded(i, 3) - 0.5) * 24
-  const w = override?.width ?? (POLA_CARD_W + (seeded(i, 4) - 0.5) * 30)
+  const w = override?.width ?? (POLA_CARD_W + (seeded(i, 4) - 0.5) * 26)
   const speed = 0.02 + seeded(i, 5) * 0.045
   return { x: Math.max(2, Math.min(96, baseX + xJitter - w / 200 * 5)), y: Math.max(0, row * POLA_ROW_H + yJitter), rot, w, speed }
 }
