@@ -8,7 +8,7 @@ import { IconButton } from '../components/ds/IconButton'
 import { ScrollTetromino3D } from '../components/ScrollTetromino3D'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
-type Cat = 'all' | 'web' | 'ai' | 'systems' | 'research'
+type Cat = 'all' | 'web' | 'ai' | 'research'
 
 // images live in /public/assets/build-log/<ProjectName>/ — add screenshots and list them in each
 // project's `images` array. An entry may be a plain URL or `{ src, caption }` to caption that slide.
@@ -173,7 +173,7 @@ const PROJECTS: Project[] = [
     piece: 'o',
     tagline: 'Satellite system monitoring dashboards built with Grafana and MySQL data sources, reduced dashboard load time by 86% through SQL query optimization.',
     tags: ['MySQL', 'SQLAlchemy', 'FastAPI', 'APScheduler', 'MariaDB'],
-    cat: 'systems',
+    cat: 'ai',
     year: '2026',
   },
 ]
@@ -182,7 +182,6 @@ const FILTERS: { id: Cat; label: string; piece: Piece }[] = [
   { id: 'all',      label: 'All',      piece: 'i' },
   { id: 'web',      label: 'Web',      piece: 'i' },
   { id: 'ai',       label: 'AI',       piece: 't' },
-  { id: 'systems',  label: 'Systems',  piece: 's' },
   { id: 'research', label: 'Research', piece: 'j' },
 ]
 
