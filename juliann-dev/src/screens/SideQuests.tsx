@@ -863,6 +863,11 @@ function PolaroidDetail({ quest, onBack }: { quest: QuestCard; onBack: () => voi
       <BackButton c={c} onBack={onBack} style={{ marginBottom: 32 }} />
       <QuestDetailHeader quest={quest} c={c} />
 
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: -24, marginBottom: 28 }}>
+        <Icon icon="pixelarticons:move" style={{ fontSize: '0.9375rem', color: c }} />
+        {'tip: drag the photos to move them around'}
+      </div>
+
       <div ref={containerRef} style={{ position: 'relative', height: polaroidHeight(quest.images.length, quest.polaroidFit), marginTop: 12 }}>
         {quest.images.map((src, i) => {
           const baseSpot = polaroidSpot(i, quest.images.length, quest.polaroidOverrides?.[src])
