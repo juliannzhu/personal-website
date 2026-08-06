@@ -34,8 +34,11 @@ const TET_PIECES: Record<PieceKey, { size: number; color: ColorKey; cells: [numb
 }
 const TET_KEYS: PieceKey[] = ['I','O','T','S','Z','J','L']
 
-const rotateCells = (cells: [number,number][], size: number): [number,number][] =>
-  cells.map(([x,y]) => [size - 1 - y, x])
+// dir 1 = clockwise, dir -1 = counter-clockwise (the inverse mapping).
+const rotateCells = (cells: [number,number][], size: number, dir: 1 | -1 = 1): [number,number][] =>
+  dir === 1
+    ? cells.map(([x,y]) => [size - 1 - y, x])
+    : cells.map(([x,y]) => [y, size - 1 - x])
 
 const shuffled = (): PieceKey[] => {
   const a = [...TET_KEYS]
@@ -811,9 +814,9 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     return false
   }, [rerender, lockAndNext])
 
-  const rotate = useCallback(() => {
+  const rotate = useCallback((dir: 1 | -1 = 1) => {
     const s = g.current; if (s.status !== 'playing') return
-    const nc = rotateCells(s.cur!.cells, s.cur!.size)
+    const nc = rotateCells(s.cur!.cells, s.cur!.size, dir)
     for (const k of [0, -1, 1, -2, 2]) {
       if (!collides(s.board, nc, s.cur!.x + k, s.cur!.y)) { s.cur!.cells = nc; s.cur!.x += k; lastActionWasRotateRef.current = true; SFX.rotate(); rerender(); return }
     }
@@ -916,8 +919,8 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
       // playing
       if (k === keybinds.left)       { e.preventDefault(); startMoveRepeat(-1) }
       else if (k === keybinds.right) { e.preventDefault(); startMoveRepeat(1) }
-      else if (k === keybinds.rotateCW)  rotate()
-      else if (k === keybinds.rotateCCW) rotate()
+      else if (k === keybinds.rotateCW)  rotate(1)
+      else if (k === keybinds.rotateCCW) rotate(-1)
       else if (k === keybinds.softDrop)  startSoftDropRepeat()
       else if (k === keybinds.hardDrop)  hardDrop()
       else if (k === keybinds.hold)      holdPiece()
@@ -1139,7 +1142,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
                   <CtrlBtn icon="pixelarticons:chevron-left" onDown={() => startMoveRepeat(-1)} onUp={stopAutoRepeat} />
                   <CtrlBtn icon="pixelarticons:chevron-down" onDown={startSoftDropRepeat} onUp={stopSoftDrop} />
                   <CtrlBtn icon="pixelarticons:chevron-right" onDown={() => startMoveRepeat(1)} onUp={stopAutoRepeat} />
-                  <CtrlBtn icon="pixelarticons:reload" accent="var(--piece-i)" onDown={rotate} />
+                  <CtrlBtn icon="pixelarticons:reload" accent="var(--piece-i)" onDown={() => rotate(1)} />
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <CtrlBtn label="Hold" accent="var(--piece-t)" onDown={holdPiece} />
