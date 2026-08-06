@@ -198,7 +198,7 @@ export function Now() {
             return (
               <div key={u.title} style={{
                 display: 'flex', gap: 12, alignItems: 'flex-start',
-                padding: '10px 12px 10px 14px',
+                padding: '16px 12px 16px 14px',
                 background: `color-mix(in srgb, ${c} 7%, var(--bg-well))`,
                 border: '2px solid var(--border-hairline)',
                 borderLeft: `4px solid ${c}`,
