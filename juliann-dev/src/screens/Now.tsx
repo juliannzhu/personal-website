@@ -125,23 +125,23 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   },
 ]
 
-const UPCOMING: { piece: Piece; title: string; icon: string; text: string }[] = [
+const UPCOMING: { piece: Piece; title: string; when: string; text: string }[] = [
   {
     piece: 'z',
     title: 'TEDx Ottawa',
-    icon: 'pixelarticons:mic',
-    text: 'Writing and delivering a TEDxOttawa talk on this year\'s theme, Continuum.',
+    when: 'Fall 2026',
+    text: 'Writing and delivering a TEDxOttawa talk exploring this year\'s theme, Continuum, and the ideas it sparks for me.',
   },
   {
     piece: 'j',
     title: 'UR2PhD @ Waterloo',
-    icon: 'pixelarticons:gamepad',
+    when: 'Fall 2026',
     text: 'Researching gamified attention training for children with ADHD through Waterloo\'s UR2PhD program.',
   },
   {
     piece: 's',
     title: 'WiM Directed Reading',
-    icon: 'pixelarticons:book-open',
+    when: 'Fall 2026',
     text: 'Studying privacy-preserving techniques for database query processing in the Women in Math Directed Reading Program.',
   },
 ]
@@ -196,25 +196,30 @@ export function Now() {
           <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>Coming soon</span>
           <Badge piece="j" dot>next term</Badge>
         </div>
-        <div className="tj-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
-          {UPCOMING.map((u) => (
-            <div key={u.title} style={{
-              display: 'flex', flexDirection: 'column', gap: 12, padding: 16, minWidth: 0,
-              background: `color-mix(in srgb, var(--piece-${u.piece}) 12%, var(--bg-well))`,
-              border: `2px solid var(--piece-${u.piece})`, borderRadius: 'var(--radius-1)',
-            }}>
-              <div style={{
-                width: 38, height: 38, borderRadius: 'var(--radius-1)', flexShrink: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: `var(--piece-${u.piece})`,
-                boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3)',
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {UPCOMING.map((u) => {
+            const c = `var(--piece-${u.piece})`
+            return (
+              <div key={u.title} style={{
+                display: 'flex', gap: 12, alignItems: 'flex-start',
+                padding: '10px 12px 10px 14px',
+                background: `color-mix(in srgb, ${c} 7%, var(--bg-well))`,
+                border: '2px solid var(--border-hairline)',
+                borderLeft: `4px solid ${c}`,
+                borderRadius: 'var(--radius-1)',
               }}>
-                <Icon icon={u.icon} style={{ fontSize: '1.25rem', color: 'var(--text-on-piece)' }} />
+                <div style={{ paddingTop: 3, flexShrink: 0 }}><Tetromino piece={u.piece} size={9} /></div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                    <div style={{ fontSize: '0.9375rem', color: 'var(--text-strong)', fontWeight: 600, lineHeight: 1.3 }}>{u.title}</div>
+                    <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.4375rem', background: c, color: 'var(--ink-900)', padding: '3px 5px', flexShrink: 0, letterSpacing: '0.04em', alignSelf: 'flex-start' }}>SOON</span>
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 3 }}>{u.when}</div>
+                  <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.5, marginTop: 3 }}>{u.text}</div>
+                </div>
               </div>
-              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', lineHeight: 1.5, color: 'var(--text-strong)', textTransform: 'uppercase' }}>{u.title}</div>
-              <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.55 }}>{u.text}</p>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </Card>
     </section>
