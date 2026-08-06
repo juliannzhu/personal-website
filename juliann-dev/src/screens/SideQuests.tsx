@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useLayoutEffect } from 'react'
+import { useReducedMotion, isReduced } from '../lib/reducedMotion'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import { Card } from '../components/ds/Card'
@@ -682,8 +683,11 @@ function MarqueeColumn({ items, direction }: { items: string[]; direction: 'up' 
   const colRef = useRef<HTMLDivElement>(null)
   const offset = useRef(direction === 'down' ? -50 : 0)
   const raf = useRef<number>(0)
+  const reduced = useReducedMotion()
 
   useEffect(() => {
+    // Reduced motion: leave the column static (no auto-scroll).
+    if (reduced) { if (colRef.current) colRef.current.style.transform = '' ; return }
     let last = 0
     const tick = (ts: number) => {
       const delta = ts - last; last = ts
@@ -698,7 +702,7 @@ function MarqueeColumn({ items, direction }: { items: string[]; direction: 'up' 
     }
     raf.current = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf.current)
-  }, [direction])
+  }, [direction, reduced])
 
   const doubled = [...items, ...items]
   return (
@@ -793,7 +797,9 @@ function PolaroidCard({ src, spot, scrollRef, i, containerRef, onDragEnd, fit = 
     const tick = () => {
       if (ref.current) {
         const { dx, dy } = dragRef.current
-        ref.current.style.transform = `translate(${dx}px, ${dy}px) rotate(${spot.rot}deg) translateY(${scrollRef.current * spot.speed}px)`
+        // Reduced motion: drop the scroll-linked parallax term (dragging still works).
+        const parallax = isReduced() ? 0 : scrollRef.current * spot.speed
+        ref.current.style.transform = `translate(${dx}px, ${dy}px) rotate(${spot.rot}deg) translateY(${parallax}px)`
       }
       raf = requestAnimationFrame(tick)
     }

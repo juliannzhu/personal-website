@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Icon } from '@iconify/react'
 import { Tetromino } from '../ds/Tetromino'
 import { isEnabled, setEnabled, SFX } from '../../audio/soundEngine'
+import { useReducedMotion, setReduced } from '../../lib/reducedMotion'
 
 export type Screen = 'home' | 'about' | 'projects' | 'now' | 'sidequests' | 'contact'
 
@@ -73,6 +74,36 @@ function SoundToggle() {
       </div>
       <span className="tj-navbtn-label" style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
         {on ? 'SFX' : 'MUTE'}
+      </span>
+    </button>
+  )
+}
+
+function MotionToggle() {
+  const reduced = useReducedMotion()
+  const toggle = () => { setReduced(!reduced); SFX.uiClick() }
+  return (
+    <button
+      className="tj-navbtn"
+      onClick={toggle}
+      title={reduced ? 'Reduced motion ON, click to enable animations' : 'Animations ON, click to reduce motion'}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-muted)'; e.currentTarget.style.color = 'var(--text-strong)' }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-muted)' }}
+      style={{
+        display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6,
+        padding: '5px 12px',
+        background: 'var(--bg-well)',
+        border: '2px solid var(--border-strong)',
+        borderRadius: 'var(--radius-1)',
+        cursor: 'pointer',
+        color: 'var(--text-muted)',
+        transition: 'border-color 140ms, color 140ms',
+      }}>
+      <div style={{ position: 'relative', width: 14, height: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <Icon icon={reduced ? 'pixelarticons:zap-off' : 'pixelarticons:zap'} style={{ fontSize: '0.875rem', color: 'inherit' }} />
+      </div>
+      <span className="tj-navbtn-label" style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+        {reduced ? 'STILL' : 'MOTION'}
       </span>
     </button>
   )
@@ -230,6 +261,7 @@ export function TopNav({ current, onNav, onPlay, onResume }: { current: Screen; 
           <div style={{ flex: 1 }} />
           {onPlay && <PlayButton onPlay={onPlay} />}
           <ResumeButton onOpen={onResume} />
+          <MotionToggle />
           <SoundToggle />
           <SocialIcons />
         </div>

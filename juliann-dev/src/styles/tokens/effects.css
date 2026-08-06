@@ -50,3 +50,21 @@
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-6px); }
 }
+
+/* ---- Reduced motion ----
+   Driven by the in-app toggle (which sets data-reduce-motion on <html>), defaulting to the
+   OS prefers-reduced-motion setting. Neutralizes CSS animations and transitions site-wide.
+   The JS-driven animations (photo marquees, polaroid scroll parallax) are gated separately
+   in their components via useReducedMotion(). */
+html[data-reduce-motion="true"] *,
+html[data-reduce-motion="true"] *::before,
+html[data-reduce-motion="true"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  transition-delay: 0ms !important;
+  scroll-behavior: auto !important;
+}
+/* the decorative falling-tetromino background is nothing but motion — hide it entirely */
+html[data-reduce-motion="true"] .tj-fallfield-piece { display: none !important; }
