@@ -192,9 +192,8 @@ export function Now() {
       <NowPlaying />
 
       <div style={{ marginTop: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>Coming soon</span>
-          <Badge piece="j" dot>next term</Badge>
+        <div style={{ marginBottom: 16 }}>
+          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', color: 'var(--piece-o)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Coming soon</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {UPCOMING.map((u) => {
