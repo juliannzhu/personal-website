@@ -143,6 +143,26 @@ const UPCOMING: { piece: Piece; title: string; text: string }[] = [
   },
 ]
 
+// Bump this whenever the copy above actually changes. Deliberately hand-written rather than
+// derived from the build date — this should say when the Now section was last true, not when
+// the site last happened to deploy.
+const LAST_UPDATED = 'August 2026'
+
+// One cell, then the date: the smallest thing that still reads as a Tetris stamp.
+function LastUpdated() {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 7,
+      fontFamily: 'var(--font-mono)', fontSize: '0.625rem',
+      color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.14em',
+      whiteSpace: 'nowrap',
+    }}>
+      <span aria-hidden="true" style={{ width: 6, height: 6, background: 'var(--piece-l)', flexShrink: 0 }} />
+      Last updated {LAST_UPDATED}
+    </span>
+  )
+}
+
 export function Now() {
   return (
     <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px' }}>
@@ -167,7 +187,7 @@ export function Now() {
       {/* Single-line header with badge inline */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32, flexWrap: 'wrap' }}>
         <p style={{ fontSize: '1rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.4 }}>
-          A sneak peak of what's on my board right now. Last updated August 2026.
+          A sneak peek of what's on my board right now.
         </p>
         <Badge piece="s" dot>live</Badge>
       </div>
@@ -189,8 +209,9 @@ export function Now() {
       <NowPlaying />
 
       <div style={{ marginTop: 28 }}>
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
           <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', color: 'var(--piece-o)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Coming soon</span>
+          <LastUpdated />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {UPCOMING.map((u) => {
