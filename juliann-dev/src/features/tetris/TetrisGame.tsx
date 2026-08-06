@@ -374,7 +374,7 @@ interface KeyBinds {
   hardDrop: string; softDrop: string; hold: string; restart: string
 }
 
-const DEFAULT_SETTINGS: GameSettings = { das: 133, arr: 33, sdf: 5, ghost: true, grid: true, countdown: false, finesse: false, skin: 'bevel' }
+const DEFAULT_SETTINGS: GameSettings = { das: 133, arr: 33, sdf: 10, ghost: true, grid: true, countdown: false, finesse: false, skin: 'bevel' }
 const DEFAULT_KEYBINDS: KeyBinds = { left: 'ArrowLeft', right: 'ArrowRight', rotateCW: 'ArrowUp', rotateCCW: 'z', hardDrop: ' ', softDrop: 'ArrowDown', hold: 'Shift', restart: 'r' }
 
 function loadSettings(): GameSettings {
