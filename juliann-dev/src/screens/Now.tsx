@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Icon } from '@iconify/react'
 import { Card } from '../components/ds/Card'
 import { Badge } from '../components/ds/Badge'
-import { ProgressBar } from '../components/ds/ProgressBar'
 import { Tetromino } from '../components/ds/Tetromino'
 import { ScrollTetromino3D } from '../components/ScrollTetromino3D'
 
@@ -126,6 +125,27 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   },
 ]
 
+const UPCOMING: { piece: Piece; title: string; icon: string; text: string }[] = [
+  {
+    piece: 'z',
+    title: 'TEDx Ottawa',
+    icon: 'pixelarticons:mic',
+    text: 'Writing and delivering a TEDxOttawa talk on this year\'s theme, Continuum.',
+  },
+  {
+    piece: 'j',
+    title: 'UR2PhD @ Waterloo',
+    icon: 'pixelarticons:gamepad',
+    text: 'Researching gamified attention training for children with ADHD through Waterloo\'s UR2PhD program.',
+  },
+  {
+    piece: 's',
+    title: 'WiM Directed Reading',
+    icon: 'pixelarticons:book-open',
+    text: 'Studying privacy-preserving techniques for database query processing in the Women in Math Directed Reading Program.',
+  },
+]
+
 export function Now() {
   return (
     <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px' }}>
@@ -150,7 +170,7 @@ export function Now() {
       {/* Single-line header with badge inline */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32, flexWrap: 'wrap' }}>
         <p style={{ fontSize: '1rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.4 }}>
-          A sneak peak of what's on my board right now. Last updated July 2026.
+          A sneak peak of what's on my board right now. Last updated August 2026.
         </p>
         <Badge piece="s" dot>live</Badge>
       </div>
@@ -171,12 +191,30 @@ export function Now() {
 
       <NowPlaying />
 
-      <Card accent="o" accentBar style={{ marginTop: 18 }}>
-        <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase', marginBottom: 16 }}>This week's stats</div>
-        <div className="tj-stats-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
-          <ProgressBar value={62} piece="l" label="Piano piece" cells={10} cellHeight={12} />
-          <ProgressBar value={35} piece="o" label="IG post"     cells={10} cellHeight={12} />
-          <ProgressBar value={71} piece="j" label="Research"    cells={10} cellHeight={12} />
+      <Card accent="j" accentBar style={{ marginTop: 18 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
+          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>Coming soon</span>
+          <Badge piece="j" dot>next term</Badge>
+        </div>
+        <div className="tj-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+          {UPCOMING.map((u) => (
+            <div key={u.title} style={{
+              display: 'flex', flexDirection: 'column', gap: 12, padding: 16, minWidth: 0,
+              background: `color-mix(in srgb, var(--piece-${u.piece}) 12%, var(--bg-well))`,
+              border: `2px solid var(--piece-${u.piece})`, borderRadius: 'var(--radius-1)',
+            }}>
+              <div style={{
+                width: 38, height: 38, borderRadius: 'var(--radius-1)', flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: `var(--piece-${u.piece})`,
+                boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3)',
+              }}>
+                <Icon icon={u.icon} style={{ fontSize: '1.25rem', color: 'var(--text-on-piece)' }} />
+              </div>
+              <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', lineHeight: 1.5, color: 'var(--text-strong)', textTransform: 'uppercase' }}>{u.title}</div>
+              <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.55 }}>{u.text}</p>
+            </div>
+          ))}
         </div>
       </Card>
     </section>
