@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { useReducedMotion, isReduced } from '../lib/reducedMotion'
+import { unlock, markQuestOpened } from '../lib/achievements'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import { Card } from '../components/ds/Card'
@@ -645,7 +646,7 @@ function VideoStrip({ videos }: { videos?: QuestVideo[] }) {
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>{'// Video clips'}</div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {videos.map((v, i) => (
-            <button key={i} onClick={() => setOpenIdx(i)} aria-label={`Play video ${i + 1}`} style={{
+            <button key={i} onClick={() => { unlock('film-buff'); setOpenIdx(i) }} aria-label={`Play video ${i + 1}`} style={{
               position: 'relative', width: 168, aspectRatio: '16/9', padding: 0, cursor: 'pointer',
               border: '2px solid var(--border-strong)', borderRadius: 'var(--radius-1)', overflow: 'hidden', background: 'var(--bg-well)',
             }}>
@@ -822,6 +823,7 @@ function PolaroidCard({ src, spot, scrollRef, i, containerRef, onDragEnd, fit = 
     const { dx, dy } = dragRef.current
     dragRef.current.dragging = false
     if (ref.current) ref.current.style.cursor = 'grab'
+    if (dx !== 0 || dy !== 0) unlock('hands-on')
     const containerWidth = containerRef.current?.clientWidth || 1000
     onDragEnd(spot.x + (dx / containerWidth) * 100, spot.y + dy)
     dragRef.current.dx = 0
@@ -987,7 +989,7 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
                 </div>
               ) : (
                 <button key={index} type="button" className="tj-bento-tile tj-bento-video" style={{ width: w, height: h, flex: '0 0 auto' }}
-                  onClick={() => setOpenVideo(item.vi)} aria-label={`Play video ${item.vi + 1}`}>
+                  onClick={() => { unlock('film-buff'); setOpenVideo(item.vi) }} aria-label={`Play video ${item.vi + 1}`}>
                   <img src={videos[item.vi].poster} alt="" className="tj-bento-img"
                     onLoad={(e) => onMeasure(index, e.currentTarget.naturalWidth, e.currentTarget.naturalHeight)} onError={() => onMeasure(index, 3, 2)} />
                   <span className="tj-bento-play">▶</span>
@@ -1515,5 +1517,5 @@ export function SideQuests({ resetSignal }: { resetSignal?: number } = {}) {
     return <QuestDetail quest={quest} onBack={() => setOpenId(null)} />
   }
 
-  return <QuestCarousel onOpen={setOpenId} progressRef={progressRef} savedIndexRef={savedIndexRef} autoStoppedRef={autoStoppedRef} />
+  return <QuestCarousel onOpen={(id) => { markQuestOpened(id); setOpenId(id) }} progressRef={progressRef} savedIndexRef={savedIndexRef} autoStoppedRef={autoStoppedRef} />
 }

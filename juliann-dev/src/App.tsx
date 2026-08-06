@@ -1,5 +1,7 @@
-import { useState, useRef, useLayoutEffect, useCallback } from 'react'
+import { useState, useRef, useLayoutEffect, useEffect, useCallback } from 'react'
 import { TopNav, FixedFooter, type Screen } from './components/layout/TopNav'
+import { AchievementToast } from './components/SiteAchievements'
+import { unlock, markSection } from './lib/achievements'
 import { FallingField } from './components/layout/FallingField'
 import { RevealOnScroll } from './components/ds/RevealOnScroll'
 import { Hero } from './screens/Hero'
@@ -123,6 +125,12 @@ export default function App() {
   const sectionRefs = useRef<Partial<Record<Screen, HTMLDivElement | null>>>({})
   const holdBoxRef = useRef<HTMLElement>(null)
 
+  // Site-exploration achievements: unlock "Welcome" once the loader clears (so its toast
+  // isn't hidden behind the loading screen), then mark each section as the scroll-spy
+  // surfaces it (so scrolling OR clicking nav both count toward "Explorer").
+  useEffect(() => { if (!loading) unlock('welcome') }, [loading])
+  useEffect(() => { markSection(activeSection) }, [activeSection])
+
   // Every screen (including home) lives in one continuous scroll stack — navigating
   // anywhere, including to/from the hero, is always just a smooth scroll to that section.
   const go = useCallback((id: Screen) => {
@@ -180,8 +188,8 @@ export default function App() {
   return (
     <div style={{ height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <FallingField />
-      <TopNav current={activeSection} onNav={go} onPlay={() => setGameOpen(true)} onResume={() => setResumeOpen(true)} />
-      <HoldBox ref={holdBoxRef} onPlay={() => setGameOpen(true)} />
+      <TopNav current={activeSection} onNav={go} onPlay={() => { unlock('player-one'); setGameOpen(true) }} onResume={() => { unlock('paper-trail'); setResumeOpen(true) }} />
+      <HoldBox ref={holdBoxRef} onPlay={() => { unlock('player-one'); setGameOpen(true) }} />
       <div style={{ position: 'relative', zIndex: 1, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <div
           ref={scrollPaneRef}
@@ -209,6 +217,7 @@ export default function App() {
       {gameOpen && <TetrisGame onClose={() => setGameOpen(false)} />}
       {resumeOpen && <ResumeScreen onClose={() => setResumeOpen(false)} />}
       {loading && <Loader onDone={() => setLoading(false)} />}
+      <AchievementToast />
     </div>
   )
 }

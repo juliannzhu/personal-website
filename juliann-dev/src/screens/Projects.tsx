@@ -6,6 +6,7 @@ import { Button } from '../components/ds/Button'
 import { Tetromino } from '../components/ds/Tetromino'
 import { IconButton } from '../components/ds/IconButton'
 import { ScrollTetromino3D } from '../components/ScrollTetromino3D'
+import { unlock } from '../lib/achievements'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 type Cat = 'all' | 'web' | 'ai' | 'research'
@@ -433,7 +434,7 @@ export function Projects({ resetSignal }: { resetSignal?: number } = {}) {
         ))}
       </div>
       <div className="tj-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-        {shown.map((p) => <ProjectCard key={p.id} p={p} onOpen={setOpenId} />)}
+        {shown.map((p) => <ProjectCard key={p.id} p={p} onOpen={(id) => { unlock('inspector'); setOpenId(id) }} />)}
       </div>
     </section>
   )

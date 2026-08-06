@@ -3,6 +3,8 @@ import { Icon } from '@iconify/react'
 import { Tetromino } from '../ds/Tetromino'
 import { isEnabled, setEnabled, SFX } from '../../audio/soundEngine'
 import { useReducedMotion, setReduced } from '../../lib/reducedMotion'
+import { unlock } from '../../lib/achievements'
+import { AchievementsButton } from '../SiteAchievements'
 
 export type Screen = 'home' | 'about' | 'projects' | 'now' | 'sidequests' | 'contact'
 
@@ -81,7 +83,7 @@ function SoundToggle() {
 
 function MotionToggle() {
   const reduced = useReducedMotion()
-  const toggle = () => { setReduced(!reduced); SFX.uiClick() }
+  const toggle = () => { const next = !reduced; setReduced(next); if (next) unlock('zen'); SFX.uiClick() }
   return (
     <button
       className="tj-navbtn"
@@ -261,6 +263,7 @@ export function TopNav({ current, onNav, onPlay, onResume }: { current: Screen; 
           <div style={{ flex: 1 }} />
           {onPlay && <PlayButton onPlay={onPlay} />}
           <ResumeButton onOpen={onResume} />
+          <AchievementsButton />
           <MotionToggle />
           <SoundToggle />
           <SocialIcons />
