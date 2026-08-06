@@ -679,7 +679,7 @@ function VideoStrip({ videos }: { videos?: QuestVideo[] }) {
 // ---- Marquee: three columns auto-scrolling in alternating directions, masked fade ----
 const MARQUEE_MASK = 'linear-gradient(to bottom, transparent 0, black 36px, black calc(100% - 36px), transparent 100%)'
 
-function MarqueeColumn({ items, direction }: { items: string[]; direction: 'up' | 'down' }) {
+function MarqueeColumn({ items, direction, label }: { items: string[]; direction: 'up' | 'down'; label: string }) {
   const colRef = useRef<HTMLDivElement>(null)
   const offset = useRef(direction === 'down' ? -50 : 0)
   const raf = useRef<number>(0)
@@ -710,7 +710,7 @@ function MarqueeColumn({ items, direction }: { items: string[]; direction: 'up' 
       <div ref={colRef} style={{ display: 'flex', flexDirection: 'column', gap: 10, willChange: 'transform' }}>
         {doubled.map((src, i) => (
           <div key={i} style={{ aspectRatio: '3/4', borderRadius: 'var(--radius-1)', overflow: 'hidden', flexShrink: 0 }}>
-            <img src={src} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={src} alt={`${label.toLowerCase()} photo`} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
         ))}
       </div>
@@ -731,9 +731,9 @@ function MarqueeDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void
       <QuestDetailHeader quest={quest} c={c} />
 
       <div style={{ height: quest.marqueeHeight ?? 480, display: 'flex', gap: 12, WebkitMaskImage: MARQUEE_MASK, maskImage: MARQUEE_MASK }}>
-        <MarqueeColumn items={col1} direction="down" />
-        <MarqueeColumn items={col2} direction="up" />
-        <MarqueeColumn items={col3} direction="down" />
+        <MarqueeColumn items={col1} direction="down" label={quest.title} />
+        <MarqueeColumn items={col2} direction="up" label={quest.title} />
+        <MarqueeColumn items={col3} direction="down" label={quest.title} />
       </div>
 
       <VideoStrip videos={quest.videos} />
@@ -784,10 +784,10 @@ function polaroidHeight(total: number, fit: 'square' | 'native' = 'square') {
   return rows * POLA_ROW_H + POLA_CARD_W * 1.3 + 60 + (fit === 'native' ? 240 : 0)
 }
 
-function PolaroidCard({ src, spot, scrollRef, i, containerRef, onDragEnd, fit = 'square' }: {
+function PolaroidCard({ src, spot, scrollRef, i, containerRef, onDragEnd, fit = 'square', label }: {
   src: string; spot: ScatterSpot; scrollRef: React.RefObject<number>; i: number
   containerRef: React.RefObject<HTMLDivElement | null>; onDragEnd: (xPct: number, yPx: number) => void
-  fit?: 'square' | 'native'
+  fit?: 'square' | 'native'; label: string
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const dragRef = useRef<{ startX: number; startY: number; dx: number; dy: number; dragging: boolean }>({ startX: 0, startY: 0, dx: 0, dy: 0, dragging: false })
@@ -835,10 +835,10 @@ function PolaroidCard({ src, spot, scrollRef, i, containerRef, onDragEnd, fit = 
       boxShadow: '0 10px 24px rgba(0,0,0,0.45)', willChange: 'transform',
     }}>
       {fit === 'native' ? (
-        <img src={src} alt="" loading="lazy" draggable={false} style={{ width: '100%', height: 'auto', display: 'block', pointerEvents: 'none' }} />
+        <img src={src} alt={`${label.toLowerCase()} photo`} loading="lazy" draggable={false} style={{ width: '100%', height: 'auto', display: 'block', pointerEvents: 'none' }} />
       ) : (
         <div style={{ aspectRatio: '1/1', overflow: 'hidden', background: 'var(--bg-well)' }}>
-          <img src={src} alt="" loading="lazy" draggable={false} style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
+          <img src={src} alt={`${label.toLowerCase()} photo`} loading="lazy" draggable={false} style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
         </div>
       )}
     </div>
@@ -880,7 +880,7 @@ function PolaroidDetail({ quest, onBack }: { quest: QuestCard; onBack: () => voi
           const drag = dragOverrides[i]
           const spot = drag ? { ...baseSpot, x: drag.x, y: drag.y } : baseSpot
           return (
-            <PolaroidCard key={i} src={src} spot={spot} scrollRef={scrollValue} i={i} containerRef={containerRef} fit={quest.polaroidFit}
+            <PolaroidCard key={i} src={src} spot={spot} scrollRef={scrollValue} i={i} containerRef={containerRef} fit={quest.polaroidFit} label={quest.title}
               onDragEnd={(x, y) => setDragOverrides((prev) => ({ ...prev, [i]: { x, y } }))} />
           )
         })}
@@ -981,7 +981,7 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
               const item = items[index]
               return item.kind === 'photo' ? (
                 <div key={index} className="tj-bento-tile" style={{ width: w, height: h, flex: '0 0 auto' }}>
-                  <img src={item.photo.src} alt="" className="tj-bento-img"
+                  <img src={item.photo.src} alt={item.photo.caption || `${quest.title.toLowerCase()} photo`} className="tj-bento-img"
                     onLoad={(e) => onMeasure(index, e.currentTarget.naturalWidth, e.currentTarget.naturalHeight)} onError={() => onMeasure(index, 3, 2)} />
                   {item.photo.caption && <div className="tj-bento-caption">{'// '}{item.photo.caption}</div>}
                 </div>
@@ -1027,7 +1027,7 @@ function MediaSlot({ src, index }: { src?: string; index: number }) {
     onMouseEnter={(e) => { if (!src) e.currentTarget.style.borderColor = 'var(--border-strong)' }}
     onMouseLeave={(e) => { if (!src) e.currentTarget.style.borderColor = 'var(--border-hairline)' }}>
       {src ? (
-        <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img src={src} alt="Quest photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       ) : (
         <>
           <span style={{ fontSize: '1.75rem', opacity: 0.35 }}>+</span>

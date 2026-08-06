@@ -246,7 +246,7 @@ function MediaSlot({ src, index }: { src?: string; index: number }) {
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10,
     }}>
       {src ? (
-        <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img src={src} alt="Project screenshot" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       ) : (
         <>
           <span style={{ fontSize: '1.75rem', opacity: 0.35 }}>+</span>
