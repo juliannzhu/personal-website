@@ -191,7 +191,7 @@ export function Now() {
 
       <NowPlaying />
 
-      <Card accent="j" accentBar style={{ marginTop: 18 }}>
+      <div style={{ marginTop: 28 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
           <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>Coming soon</span>
           <Badge piece="j" dot>next term</Badge>
@@ -221,7 +221,7 @@ export function Now() {
             )
           })}
         </div>
-      </Card>
+      </div>
     </section>
   )
 }
