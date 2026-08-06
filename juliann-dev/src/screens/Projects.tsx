@@ -14,7 +14,9 @@ type Cat = 'all' | 'web' | 'ai' | 'research'
 // images live in /public/assets/build-log/<ProjectName>/ — add screenshots and list them in each
 // project's `images` array. An entry may be a plain URL or `{ src, caption }` to caption that slide.
 type ProjectImage = string | { src: string; caption?: string }
-type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; github?: string; devpost?: string; images?: ProjectImage[] }
+// `wip` marks a project that's still being built: the detail page shows a coming-soon panel
+// where the screenshots would go. The card in the grid is left alone deliberately.
+type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; github?: string; devpost?: string; images?: ProjectImage[]; wip?: boolean }
 
 // images live in /public/assets/build-log/<folder>/
 const P = (folder: string, file: string) => `/assets/build-log/${folder}/${file}`
@@ -176,6 +178,7 @@ const PROJECTS: Project[] = [
     tags: ['MySQL', 'SQLAlchemy', 'FastAPI', 'APScheduler', 'MariaDB'],
     cat: 'ai',
     year: '2026',
+    wip: true,
   },
 ]
 
@@ -259,6 +262,34 @@ function MediaSlot({ src, index }: { src?: string; index: number }) {
           </span>
         </>
       )}
+    </div>
+  )
+}
+
+// Stands in for the media carousel on a project that's still in progress. Borrows the
+// accent-bar treatment from the "Coming soon" list on the Now page so the two read as the
+// same idea in two places.
+function ComingSoon({ piece }: { piece: Piece }) {
+  const c = `var(--piece-${piece})`
+  return (
+    <div style={{
+      display: 'flex', gap: 16, alignItems: 'flex-start',
+      padding: '28px 24px',
+      background: `color-mix(in srgb, ${c} 7%, var(--bg-well))`,
+      border: '2px solid var(--border-hairline)',
+      borderLeft: `4px solid ${c}`,
+      borderRadius: 'var(--radius-1)',
+    }}>
+      <div style={{ paddingTop: 3, flexShrink: 0 }}><Tetromino piece={piece} size={12} /></div>
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
+          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', color: c, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Coming soon</span>
+          <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.4375rem', background: c, color: 'var(--ink-900)', padding: '3px 5px', letterSpacing: '0.04em' }}>WIP</span>
+        </div>
+        <p style={{ margin: 0, fontSize: '0.9375rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+          Still building this one. Screenshots and a proper writeup are on the way.
+        </p>
+      </div>
     </div>
   )
 }
@@ -353,7 +384,9 @@ function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
         {p.tags.map((t) => <Tag key={t} piece={p.piece}>{t}</Tag>)}
       </div>
 
-      {images.length > 0 ? (
+      {p.wip ? (
+        <ComingSoon piece={p.piece} />
+      ) : images.length > 0 ? (
         <ProjectCarousel images={images} c={c} />
       ) : (
         <>
