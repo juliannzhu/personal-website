@@ -2,50 +2,19 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import { SITE_ACHIEVEMENTS, subscribeToast, useUnlocked, type SiteAch } from '../lib/achievements'
+import { SlideToast } from './AchievementToastCard'
 
-const CSS = `
-@keyframes tj-ach-in { from { transform: translate(-50%, 24px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
-.tj-ach-toast { animation: tj-ach-in 280ms var(--ease-snap) both; }
-`
-let injected = false
-function ensureCSS() {
-  if (!injected && typeof document !== 'undefined') {
-    const s = document.createElement('style'); s.textContent = CSS; document.head.appendChild(s); injected = true
-  }
-}
-
-// ---- Toast: pops when an achievement unlocks, queues if several fire at once ----
+// ---- Toast: slides in at the top-right when an achievement unlocks, one at a time ----
 export function AchievementToast() {
-  ensureCSS()
   const [queue, setQueue] = useState<SiteAch[]>([])
   useEffect(() => subscribeToast((a) => setQueue((q) => [...q, a])), [])
-  useEffect(() => {
-    if (!queue.length) return
-    const t = setTimeout(() => setQueue((q) => q.slice(1)), 4200)
-    return () => clearTimeout(t)
-  }, [queue])
 
   const a = queue[0]
   if (!a) return null
-  const c = `var(--piece-${a.piece})`
   return createPortal(
-    <div className="tj-ach-toast" style={{
-      position: 'fixed', left: '50%', bottom: 104, zIndex: 9700, transform: 'translateX(-50%)',
-      display: 'flex', alignItems: 'center', gap: 14, padding: '12px 18px 12px 12px',
-      background: 'var(--ink-1000)', border: `2px solid ${c}`, borderRadius: 'var(--radius-1)',
-      boxShadow: '0 12px 32px rgba(0,0,0,0.55)', maxWidth: '90vw',
-    }}>
-      <div style={{
-        width: 40, height: 40, flexShrink: 0, borderRadius: 'var(--radius-1)', background: c,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3)',
-      }}>
-        <Icon icon={a.icon} style={{ fontSize: '1.25rem', color: 'var(--text-on-piece)' }} />
-      </div>
-      <div style={{ minWidth: 0 }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: c }}>Achievement unlocked</div>
-        <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase', marginTop: 5 }}>{a.title}</div>
-      </div>
+    // z above the CRT scanline/vignette overlays (9998/9999) so it isn't dimmed
+    <div style={{ position: 'fixed', top: 72, right: 20, zIndex: 10000, pointerEvents: 'none' }}>
+      <SlideToast key={a.id} icon={a.icon} title={a.title} piece={a.piece} onDone={() => setQueue((q) => q.slice(1))} />
     </div>,
     document.body
   )

@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useLayoutEffect, useCallback, forwardRef }
 import { Icon } from '@iconify/react'
 import { Button } from '../../components/ds/Button'
 import { Tetromino } from '../../components/ds/Tetromino'
+import { SlideToast } from '../../components/AchievementToastCard'
 import { SFX } from '../../audio/soundEngine'
 
 // Same 720px breakpoint the rest of the site uses for mobile — the game swaps its whole
@@ -333,17 +334,6 @@ function AchievementsModal({ stats, onClose }: { stats: AchStats; onClose: () =>
   )
 }
 
-const ACH_CSS = `
-@keyframes tj-ach-toast-in { from { transform: translateX(24px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-.tj-ach-toast { animation: tj-ach-toast-in 220ms var(--ease-snap) both; }
-`
-let achCssInjected = false
-function ensureAchCSS() {
-  if (!achCssInjected && typeof document !== 'undefined') {
-    const s = document.createElement('style'); s.textContent = ACH_CSS; document.head.appendChild(s); achCssInjected = true
-  }
-}
-
 const COUNTDOWN_CSS = `
 @keyframes tj-countdown-flash { 0% { opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
 .tj-countdown-num { animation: tj-countdown-flash 650ms linear both; }
@@ -355,27 +345,12 @@ function ensureCountdownCSS() {
   }
 }
 
-function AchievementToasts({ toasts }: { toasts: Achievement[] }) {
+function AchievementToasts({ toasts, onExpire }: { toasts: Achievement[]; onExpire: (id: string) => void }) {
   if (!toasts.length) return null
   return (
-    <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 9750, display: 'flex', flexDirection: 'column', gap: 10, pointerEvents: 'none' }}>
+    <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 10000, display: 'flex', flexDirection: 'column', gap: 10, pointerEvents: 'none' }}>
       {toasts.map((a) => (
-        <div key={a.id} className="tj-ach-toast" style={{
-          display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', minWidth: 220,
-          background: 'var(--ink-1000)', border: `2px solid var(--piece-${a.piece})`, borderRadius: 'var(--radius-1)',
-          boxShadow: `0 0 24px color-mix(in srgb, var(--piece-${a.piece}) 45%, transparent)`,
-        }}>
-          <div style={{
-            width: 30, height: 30, flexShrink: 0, borderRadius: 'var(--radius-1)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: `var(--piece-${a.piece})`, boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3)',
-          }}>
-            <Icon icon={a.icon} style={{ fontSize: '0.9375rem', color: 'var(--text-on-piece)' }} />
-          </div>
-          <div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Achievement Unlocked</div>
-            <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: `var(--piece-${a.piece})`, marginTop: 3, textTransform: 'uppercase' }}>{a.title}</div>
-          </div>
-        </div>
+        <SlideToast key={a.id} icon={a.icon} title={a.title} piece={a.piece} onDone={() => onExpire(a.id)} />
       ))}
     </div>
   )
@@ -733,7 +708,6 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
   const softTimer = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Achievements
-  ensureAchCSS()
   ensureCountdownCSS()
   const achRef = useRef<AchStats>(loadAchStats())
   const usedHoldRef = useRef(false)
@@ -756,7 +730,6 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
     }
     if (newly.length) {
       setToasts((t) => [...t, ...newly])
-      newly.forEach((a) => { setTimeout(() => setToasts((t) => t.filter((x) => x.id !== a.id)), 4200) })
     }
     saveAchStats(s)
     setAchTick((v) => v + 1)
@@ -1336,7 +1309,7 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
         <AchievementsModal stats={achRef.current} onClose={() => setShowAchievements(false)} />
       )}
 
-      <AchievementToasts toasts={toasts} />
+      <AchievementToasts toasts={toasts} onExpire={(id) => setToasts((t) => t.filter((x) => x.id !== id))} />
     </>
   )
 }
