@@ -45,13 +45,13 @@ interface QuestCard {
 // images live in /public/assets/quests/ — replace with your own photos any time
 const Q = (id: string) => `/assets/quests/${id}`
 
-// Video clips live alongside their folder's photos as <prefix>-video-N.m4v with a
+// Video clips live alongside their folder's photos as <prefix>-video-N.mp4 with a
 // matching <prefix>-video-N-poster.webp thumbnail (generated from the video's first frame).
 // `nums` is either a count (1..N) or an explicit list of clip numbers — the latter lets a
 // quest skip a removed clip (e.g. poker keeps 1, 2, 4 after 3 was deleted).
 const videosFor = (prefix: string, nums: number | number[], captions: Record<number, string> = {}): QuestVideo[] =>
   (typeof nums === 'number' ? Array.from({ length: nums }, (_, i) => i + 1) : nums).map((n) => ({
-    src: Q(`${prefix}/${prefix}-video-${n}.m4v`),
+    src: Q(`${prefix}/${prefix}-video-${n}.mp4`),
     poster: Q(`${prefix}/${prefix}-video-${n}-poster.webp`),
     caption: captions[n],
   }))
@@ -1029,7 +1029,7 @@ function MediaSlot({ src, index }: { src?: string; index: number }) {
     onMouseEnter={(e) => { if (!src) e.currentTarget.style.borderColor = 'var(--border-strong)' }}
     onMouseLeave={(e) => { if (!src) e.currentTarget.style.borderColor = 'var(--border-hairline)' }}>
       {src ? (
-        <img src={src} alt="Quest photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img src={src} alt="Quest photo" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       ) : (
         <>
           <span style={{ fontSize: '1.75rem', opacity: 0.35 }}>+</span>
@@ -1395,7 +1395,9 @@ function QuestCarousel({ onOpen, progressRef, savedIndexRef, autoStoppedRef }: {
             style={{ width: TILE_W, height: tileH, flexShrink: 0 }}>
             <Card accent={q.piece} accentBar style={{ display: 'flex', flexDirection: 'column', height: '100%', userSelect: 'none' }}>
               <div className="tj-quest-media">
-                {coverSrc && <img src={coverSrc} alt={q.title} className="tj-quest-img" />}
+                {/* Fourteen quest covers sit in this track but only two or three are ever on
+                    screen. Tile size is fixed, so deferring the rest costs no layout. */}
+                {coverSrc && <img src={coverSrc} alt={q.title} className="tj-quest-img" loading={i < 3 ? 'eager' : 'lazy'} decoding="async" />}
                 {!coverSrc && <span style={{ fontSize: '3rem' }}>{q.placeholder}</span>}
                 <div className="tj-quest-hint">Click to explore</div>
               </div>
@@ -1476,10 +1478,14 @@ function QuestCarousel({ onOpen, progressRef, savedIndexRef, autoStoppedRef }: {
   )
 }
 
+// Used by App to title the tab on a /quests/<id> deep link.
+export const questTitle = (id: string) => QUESTS.find((q) => q.id === id)?.title
+
 // ---- Grid view ----
-export function SideQuests({ resetSignal }: { resetSignal?: number } = {}) {
+// Which quest is open comes from the URL (/quests/<id>), so App owns it and passes it down —
+// that's what makes a quest page linkable and the browser's back button work.
+export function SideQuests({ openId, onOpen, onBack }: { openId: string | null; onOpen: (id: string) => void; onBack: () => void }) {
   ensureCSS()
-  const [openId, setOpenId] = useState<string | null>(null)
   // Both live in the parent (not inside QuestCarousel) so they survive the carousel
   // unmounting while a quest detail page is open — the carousel restores this scroll
   // position on remount instead of snapping back to the first tile. progressRef is the
@@ -1491,9 +1497,9 @@ export function SideQuests({ resetSignal }: { resetSignal?: number } = {}) {
   // they left on.
   const autoStoppedRef = useRef(false)
 
-  // Bumped by App.tsx when "Quests" is clicked again while already on this section —
-  // closes whatever quest detail is open so the full tile grid is visible again.
-  useEffect(() => { setOpenId(null) }, [resetSignal])
+  // An id from the URL is untrusted — a stale or mistyped link falls through to the
+  // carousel instead of blowing up on a missing quest.
+  const quest = openId ? QUESTS.find((q) => q.id === openId) : undefined
 
   // Opening a quest from partway down the carousel would otherwise land on its detail
   // page still scrolled to that position — snap back to the top of it. All QuestDetail
@@ -1512,10 +1518,7 @@ export function SideQuests({ resetSignal }: { resetSignal?: number } = {}) {
     prevOpenId.current = openId
   }, [openId])
 
-  if (openId) {
-    const quest = QUESTS.find(q => q.id === openId)!
-    return <QuestDetail quest={quest} onBack={() => setOpenId(null)} />
-  }
+  if (quest) return <QuestDetail quest={quest} onBack={onBack} />
 
-  return <QuestCarousel onOpen={(id) => { markQuestOpened(id); setOpenId(id) }} progressRef={progressRef} savedIndexRef={savedIndexRef} autoStoppedRef={autoStoppedRef} />
+  return <QuestCarousel onOpen={(id) => { markQuestOpened(id); onOpen(id) }} progressRef={progressRef} savedIndexRef={savedIndexRef} autoStoppedRef={autoStoppedRef} />
 }

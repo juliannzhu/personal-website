@@ -179,6 +179,9 @@ const PROJECTS: Project[] = [
   },
 ]
 
+// Used by App to title the tab on a /projects/<id> deep link.
+export const projectTitle = (id: string) => PROJECTS.find((p) => p.id === id)?.title
+
 const FILTERS: { id: Cat; label: string; piece: Piece }[] = [
   { id: 'all',      label: 'All',      piece: 's' },
   { id: 'web',      label: 'Web',      piece: 'i' },
@@ -247,7 +250,7 @@ function MediaSlot({ src, index }: { src?: string; index: number }) {
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10,
     }}>
       {src ? (
-        <img src={src} alt="Project screenshot" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img src={src} alt="Project screenshot" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       ) : (
         <>
           <span style={{ fontSize: '1.75rem', opacity: 0.35 }}>+</span>
@@ -278,7 +281,9 @@ function ProjectCarousel({ images, c }: { images: { src: string; caption?: strin
           transition: `transform ${CAROUSEL_TRANSITION_MS}ms ${CAROUSEL_EASING}`,
         }}>
           {images.map((im, i) => (
-            <img key={i} src={im.src} alt={im.caption ?? ''} style={{ width: '100%', height: '100%', flexShrink: 0, objectFit: 'contain' }} />
+            // Only the first slide is worth blocking on; the rest sit off-screen in the
+            // translated track and fetch as the visitor pages through.
+            <img key={i} src={im.src} alt={im.caption ?? ''} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" style={{ width: '100%', height: '100%', flexShrink: 0, objectFit: 'contain' }} />
           ))}
         </div>
 
@@ -393,20 +398,17 @@ function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
   )
 }
 
-export function Projects({ resetSignal }: { resetSignal?: number } = {}) {
+// Which project is open comes from the URL (/projects/<id>), so App owns it and passes it
+// down — that's what makes a detail page linkable and the browser's back button work.
+export function Projects({ openId, onOpen, onBack }: { openId: string | null; onOpen: (id: string) => void; onBack: () => void }) {
   ensureCSS()
   const [filter, setFilter] = useState<Cat>('all')
-  const [openId, setOpenId] = useState<string | null>(null)
   const shown = PROJECTS.filter((p) => filter === 'all' || p.cat === filter)
 
-  // Bumped by App.tsx when "Projects" is clicked again while already on this section —
-  // closes whatever project detail is open so the full Build Log grid is visible again.
-  useEffect(() => { setOpenId(null) }, [resetSignal])
-
-  if (openId) {
-    const project = PROJECTS.find((p) => p.id === openId)!
-    return <ProjectDetail p={project} onBack={() => setOpenId(null)} />
-  }
+  // An id from the URL is untrusted — a stale or mistyped link falls through to the grid
+  // instead of blowing up on a missing project.
+  const open = openId ? PROJECTS.find((p) => p.id === openId) : undefined
+  if (open) return <ProjectDetail p={open} onBack={onBack} />
 
   return (
     <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px' }}>
@@ -434,7 +436,7 @@ export function Projects({ resetSignal }: { resetSignal?: number } = {}) {
         ))}
       </div>
       <div className="tj-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-        {shown.map((p) => <ProjectCard key={p.id} p={p} onOpen={(id) => { unlock('inspector'); setOpenId(id) }} />)}
+        {shown.map((p) => <ProjectCard key={p.id} p={p} onOpen={(id) => { unlock('inspector'); onOpen(id) }} />)}
       </div>
     </section>
   )

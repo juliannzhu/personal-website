@@ -1,18 +1,25 @@
-import { useState, useRef, useLayoutEffect, useEffect, useCallback } from 'react'
+import { useState, useRef, useLayoutEffect, useEffect, useCallback, lazy, Suspense } from 'react'
 import { TopNav, FixedFooter, type Screen } from './components/layout/TopNav'
 import { AchievementToast } from './components/SiteAchievements'
 import { unlock, markSection } from './lib/achievements'
+import { useRoute, navigate, back, type Overlay } from './lib/router'
 import { FallingField } from './components/layout/FallingField'
 import { RevealOnScroll } from './components/ds/RevealOnScroll'
 import { Hero } from './screens/Hero'
 import { About } from './screens/About'
-import { Projects } from './screens/Projects'
+import { Projects, projectTitle } from './screens/Projects'
 import { Now } from './screens/Now'
 import { Contact } from './screens/Contact'
-import { SideQuests } from './screens/SideQuests'
-import { TetrisGame, HoldBox } from './features/tetris/TetrisGame'
+import { SideQuests, questTitle } from './screens/SideQuests'
+import { HoldBox } from './features/tetris/HoldBox'
 import { Loader } from './components/Loader'
-import { ResumeScreen } from './screens/ResumeScreen'
+
+// The game engine and the resume are full-screen overlays that most visitors never open,
+// so they're split into their own chunks and fetched on demand instead of riding along in
+// the initial bundle. HoldBox (always on screen) deliberately lives outside TetrisGame.tsx
+// so importing it doesn't drag the engine back in.
+const TetrisGame = lazy(() => import('./features/tetris/TetrisGame').then((m) => ({ default: m.TetrisGame })))
+const ResumeScreen = lazy(() => import('./screens/ResumeScreen').then((m) => ({ default: m.ResumeScreen })))
 
 const STACK_IDS: Screen[] = ['home', 'about', 'projects', 'sidequests', 'now', 'contact']
 const SCROLL_MASK = 'linear-gradient(to bottom, transparent 0, black 56px, black calc(100% - 56px), transparent 100%)'
@@ -109,21 +116,42 @@ const STACK_SCREENS: Partial<Record<StackScreenId, React.ReactNode>> = {
   contact: <Contact />,
 }
 
+const SITE_TITLE = 'Juliann Zhu · Software Developer & CS Student @ UWaterloo'
+const SECTION_TITLES: Record<Screen, string> = {
+  home: SITE_TITLE,
+  about: 'About · Juliann Zhu',
+  projects: 'Build Log · Juliann Zhu',
+  sidequests: 'Side Quests · Juliann Zhu',
+  now: 'Now · Juliann Zhu',
+  contact: 'Contact · Juliann Zhu',
+}
+
 export default function App() {
   ensureCSS()
-  const [activeSection, setActiveSection] = useState<Screen>('home')
+  // The URL is the source of truth for what's on screen: which section, whether a
+  // project/quest detail is open inside it, and whether an overlay is up. Every one of
+  // those states has a path someone can link to, and the browser's back/forward buttons
+  // move through them for free.
+  const route = useRoute()
+  const activeSection = route.section
+  const resumeOpen = route.overlay === 'resume'
+  const gameOpen = route.overlay === 'play'
+
   const [loading, setLoading] = useState(true)
-  const [gameOpen, setGameOpen] = useState(false)
-  const [resumeOpen, setResumeOpen] = useState(false)
-  // Bumped whenever "Quests" is clicked while already on the side quests section, so a
-  // quest detail page that's open can be told to close back to the grid of tiles.
-  const [questsResetTick, setQuestsResetTick] = useState(0)
-  // Same idea for "Projects": bumped when clicked again while already on that section,
-  // so an open project detail page closes back to the Build Log grid.
-  const [projectsResetTick, setProjectsResetTick] = useState(0)
   const scrollPaneRef = useRef<HTMLDivElement>(null)
   const sectionRefs = useRef<Partial<Record<Screen, HTMLDivElement | null>>>({})
   const holdBoxRef = useRef<HTMLElement>(null)
+
+  // Long-lived callbacks (the scroll-spy observer, `go`) need the live route without being
+  // torn down and rebuilt on every navigation.
+  const routeRef = useRef(route)
+  routeRef.current = route
+
+  // The section we last deliberately scrolled to. Anything that moves the scroll position
+  // itself records it here, so the route-sync effect below can tell "the URL changed
+  // because the user scrolled/clicked" (already in the right place, don't touch it) from
+  // "the URL changed underneath us" (browser back/forward, or a cold deep link — scroll).
+  const lastScrolledRef = useRef<Screen | null>(null)
 
   // Site-exploration achievements: unlock "Welcome" once the loader clears (so its toast
   // isn't hidden behind the loading screen), then mark each section as the scroll-spy
@@ -131,19 +159,36 @@ export default function App() {
   useEffect(() => { if (!loading) unlock('welcome') }, [loading])
   useEffect(() => { markSection(activeSection) }, [activeSection])
 
+  useEffect(() => {
+    document.title =
+      route.overlay === 'resume' ? 'Resume · Juliann Zhu'
+      : route.overlay === 'play' ? 'Play Tetris · Juliann Zhu'
+      : route.project ? `${projectTitle(route.project) ?? 'Build Log'} · Juliann Zhu`
+      : route.quest ? `${questTitle(route.quest) ?? 'Side Quests'} · Juliann Zhu`
+      : SECTION_TITLES[route.section]
+  }, [route])
+
   // Every screen (including home) lives in one continuous scroll stack — navigating
   // anywhere, including to/from the hero, is always just a smooth scroll to that section.
   const go = useCallback((id: Screen) => {
-    if (id === activeSection) {
-      if (id === 'sidequests') setQuestsResetTick((t) => t + 1)
-      if (id === 'projects') setProjectsResetTick((t) => t + 1)
-      return
-    }
+    const r = routeRef.current
+    const detailOpen = Boolean(r.project || r.quest)
+    // Clicking the section you're already on does nothing, unless a detail page is open —
+    // then it closes back out to the grid, which dropping the id from the URL does for us.
+    if (r.section === id && !detailOpen) return
+    lastScrolledRef.current = id
+    navigate({ section: id })
     sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    setActiveSection(id)
-  }, [activeSection])
+  }, [])
 
-  // Scroll-spy: keep nav highlight in sync while the user free-scrolls the stack.
+  const openProject = useCallback((id: string) => navigate({ section: 'projects', project: id }), [])
+  const openQuest = useCallback((id: string) => navigate({ section: 'sidequests', quest: id }), [])
+  const openOverlay = useCallback((overlay: Overlay) => navigate({ section: routeRef.current.section, overlay }), [])
+  const closeTo = useCallback((section: Screen) => back({ section }), [])
+
+  // Scroll-spy: keep the nav highlight and the URL in sync while the user free-scrolls the
+  // stack. Uses replace, not push, so a scroll through the page doesn't bury the back
+  // button under one entry per section.
   useLayoutEffect(() => {
     const root = scrollPaneRef.current
     if (!root) return
@@ -156,11 +201,29 @@ export default function App() {
       let best: Screen | null = null
       let bestRatio = 0
       ratios.forEach((ratio, id) => { if (ratio > bestRatio) { bestRatio = ratio; best = id } })
-      if (best) setActiveSection(best)
+      if (!best) return
+      // A detail page or an overlay owns the URL while it's open — the sections behind it
+      // are still being observed, and letting them write would close it out from under us.
+      const r = routeRef.current
+      if (r.project || r.quest || r.overlay) return
+      if (r.section === best) return
+      lastScrolledRef.current = best
+      navigate({ section: best }, { replace: true })
     }, { root, threshold: [0.15, 0.3, 0.45, 0.6, 0.75] })
     STACK_IDS.forEach((id) => { const el = sectionRefs.current[id]; if (el) io.observe(el) })
     return () => io.disconnect()
   }, [])
+
+  // Bring the page to the section the URL names when we weren't the ones who moved it:
+  // a cold landing on a deep link, or the browser's back/forward buttons. Overlays are
+  // skipped — they cover the page, and scrolling behind them would lose the reader's spot.
+  useEffect(() => {
+    if (loading || route.overlay) return
+    if (lastScrolledRef.current === route.section) return
+    const first = lastScrolledRef.current === null
+    lastScrolledRef.current = route.section
+    sectionRefs.current[route.section]?.scrollIntoView({ behavior: first ? 'auto' : 'smooth', block: 'start' })
+  }, [route.section, route.overlay, loading])
 
   // Drive the HoldBox's drift/fade directly off scroll position (not React state) so it
   // animates smoothly on every scroll tick instead of snapping at a visibility threshold.
@@ -188,8 +251,8 @@ export default function App() {
   return (
     <div style={{ height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <FallingField />
-      <TopNav current={activeSection} onNav={go} onPlay={() => { unlock('player-one'); setGameOpen(true) }} onResume={() => { unlock('paper-trail'); setResumeOpen(true) }} />
-      <HoldBox ref={holdBoxRef} onPlay={() => { unlock('player-one'); setGameOpen(true) }} />
+      <TopNav current={activeSection} onNav={go} onPlay={() => { unlock('player-one'); openOverlay('play') }} onResume={() => { unlock('paper-trail'); openOverlay('resume') }} />
+      <HoldBox ref={holdBoxRef} onPlay={() => { unlock('player-one'); openOverlay('play') }} />
       <div style={{ position: 'relative', zIndex: 1, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <div
           ref={scrollPaneRef}
@@ -207,15 +270,24 @@ export default function App() {
             </div>
             {REST_IDS.map((id) => (
               <div key={id} data-section={id} ref={(el) => { sectionRefs.current[id] = el }}>
-                <RevealOnScroll>{id === 'sidequests' ? <SideQuests resetSignal={questsResetTick} /> : id === 'projects' ? <Projects resetSignal={projectsResetTick} /> : STACK_SCREENS[id]}</RevealOnScroll>
+                <RevealOnScroll>{
+                  id === 'sidequests' ? <SideQuests openId={route.quest ?? null} onOpen={openQuest} onBack={() => closeTo('sidequests')} />
+                  : id === 'projects' ? <Projects openId={route.project ?? null} onOpen={openProject} onBack={() => closeTo('projects')} />
+                  : STACK_SCREENS[id]
+                }</RevealOnScroll>
               </div>
             ))}
           </main>
         </div>
       </div>
       <FixedFooter onNav={go} />
-      {gameOpen && <TetrisGame onClose={() => setGameOpen(false)} />}
-      {resumeOpen && <ResumeScreen onClose={() => setResumeOpen(false)} />}
+      {/* Both chunks are fetched on open (or on a cold /play or /resume landing). The
+          fallback is empty rather than a spinner — the chunks are small enough that a
+          flash of loading UI would be more disruptive than the wait. */}
+      <Suspense fallback={null}>
+        {gameOpen && <TetrisGame onClose={() => closeTo(routeRef.current.section)} />}
+        {resumeOpen && <ResumeScreen onClose={() => closeTo(routeRef.current.section)} />}
+      </Suspense>
       {loading && <Loader onDone={() => setLoading(false)} />}
       <AchievementToast />
     </div>
