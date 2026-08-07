@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { useReducedMotion, isReduced } from '../lib/reducedMotion'
+import { useDialog } from '../lib/useDialog'
 import { unlock, markQuestOpened } from '../lib/achievements'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
@@ -637,6 +638,41 @@ function StockNote({ text }: { text: string }) {
 
 // Thumbnail strip of video clips + a click-to-open lightbox. Shared across every detail
 // layout so any quest can attach videos regardless of its photo layout.
+// The bento gallery and the filmstrip both open clips this way, so the dialog lives in one
+// place. Being its own component is also what lets useDialog hook into the open/close: the
+// effect runs on mount, and this only mounts while a video is up.
+function VideoLightbox({ video, onClose }: { video: QuestVideo; onClose: () => void }) {
+  const ref = useDialog<HTMLDivElement>(onClose)
+  return createPortal(
+    <div
+      ref={ref}
+      role="dialog"
+      aria-modal="true"
+      aria-label={video.caption ? `Video: ${video.caption}` : 'Video player'}
+      tabIndex={-1}
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(5,5,9,0.92)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32,
+        outline: 'none',
+      }}
+    >
+      {/* Close comes first in the DOM (it's absolutely positioned, so this doesn't move it) so
+          the first Tab lands on it. With the video first, Tab dives into the browser's native
+          media controls, and Chromium handles Escape internally once focus is in there — the
+          key never reaches the page, so the dialog can't act on it. Reaching Close first keeps
+          a keyboard exit one Tab away regardless. */}
+      <button onClick={onClose} aria-label="Close video" style={{
+        position: 'absolute', top: 24, right: 32, width: 40, height: 40, borderRadius: 4,
+        background: 'var(--bg-well)', border: '2px solid var(--border-strong)', color: 'var(--text-strong)',
+        fontSize: '1.125rem', cursor: 'pointer',
+      }}>✕</button>
+      <video src={video.src} controls autoPlay style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: 4 }} onClick={(e) => e.stopPropagation()} />
+    </div>,
+    document.body
+  )
+}
+
 function VideoStrip({ videos }: { videos?: QuestVideo[] }) {
   const [openIdx, setOpenIdx] = useState<number | null>(null)
   if (!videos || videos.length === 0) return null
@@ -659,20 +695,7 @@ function VideoStrip({ videos }: { videos?: QuestVideo[] }) {
           ))}
         </div>
       </div>
-      {openIdx !== null && createPortal(
-        <div onClick={() => setOpenIdx(null)} style={{
-          position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(5,5,9,0.92)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32,
-        }}>
-          <video src={videos[openIdx].src} controls autoPlay style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: 4 }} onClick={(e) => e.stopPropagation()} />
-          <button onClick={() => setOpenIdx(null)} aria-label="Close video" style={{
-            position: 'absolute', top: 24, right: 32, width: 40, height: 40, borderRadius: 4,
-            background: 'var(--bg-well)', border: '2px solid var(--border-strong)', color: 'var(--text-strong)',
-            fontSize: '1.125rem', cursor: 'pointer',
-          }}>✕</button>
-        </div>,
-        document.body
-      )}
+      {openIdx !== null && <VideoLightbox video={videos[openIdx]} onClose={() => setOpenIdx(null)} />}
     </>
   )
 }
@@ -1001,13 +1024,7 @@ function BentoDetail({ quest, onBack }: { quest: QuestCard; onBack: () => void }
         ))}
       </div>
 
-      {openVideo !== null && createPortal(
-        <div onClick={() => setOpenVideo(null)} style={{ position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(5,5,9,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
-          <video src={videos[openVideo].src} controls autoPlay style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: 4 }} onClick={(e) => e.stopPropagation()} />
-          <button onClick={() => setOpenVideo(null)} aria-label="Close video" style={{ position: 'absolute', top: 24, right: 32, width: 40, height: 40, borderRadius: 4, background: 'var(--bg-well)', border: '2px solid var(--border-strong)', color: 'var(--text-strong)', fontSize: '1.125rem', cursor: 'pointer' }}>✕</button>
-        </div>,
-        document.body
-      )}
+      {openVideo !== null && <VideoLightbox video={videos[openVideo]} onClose={() => setOpenVideo(null)} />}
 
       <BackButton c={c} onBack={onBack} style={{ marginTop: 40 }} />
     </section>
