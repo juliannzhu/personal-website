@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
 import { Icon } from '@iconify/react'
+import { useDialog } from '../lib/useDialog'
 import { Card } from '../components/ds/Card'
 import { Tag } from '../components/ds/Tag'
 import { Button } from '../components/ds/Button'
@@ -164,16 +164,13 @@ const CONTACT = [
 
 export function ResumeScreen({ onClose }: { onClose: () => void }) {
   ensureCSS()
-  const scrollRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  // Doubles as the scroll container ref used by "back to top" below — same element, so one ref
+  // serves both. Escape-to-close now comes from the hook rather than a listener here.
+  const scrollRef = useDialog<HTMLDivElement>(onClose)
 
   return (
-    <div ref={scrollRef} style={{ position: 'fixed', inset: 0, zIndex: 9800, background: 'var(--bg-page)', backgroundImage: 'var(--grid-bg)', overflowY: 'auto' }}>
+    <div ref={scrollRef} role="dialog" aria-modal="true" aria-label="Resume" tabIndex={-1}
+      style={{ position: 'fixed', inset: 0, zIndex: 9800, background: 'var(--bg-page)', backgroundImage: 'var(--grid-bg)', overflowY: 'auto', outline: 'none' }}>
       <div className="tj-resume-page" style={{ maxWidth: 860, margin: '0 auto', padding: '40px 24px 96px' }}>
 
         {/* top bar */}
