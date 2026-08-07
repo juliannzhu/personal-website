@@ -4,6 +4,7 @@ import { Button } from '../../components/ds/Button'
 import { Tetromino } from '../../components/ds/Tetromino'
 import { SlideToast } from '../../components/AchievementToastCard'
 import { SFX } from '../../audio/soundEngine'
+import { useDialog } from '../../lib/useDialog'
 
 // Same 720px breakpoint the rest of the site uses for mobile — the game swaps its whole
 // layout (touch controls, stacked HUD) below this instead of just scaling down.
@@ -665,6 +666,7 @@ function CtrlBtn({ icon, label, accent, wide, onDown, onUp }: {
 // ---- TetrisGame -------------------------------------------------------
 export function TetrisGame({ onClose }: { onClose: () => void }) {
   const CELL = 20
+  const gameDialogRef = useDialog<HTMLDivElement>(onClose, { closeOnEscape: false })
   const isMobile = useIsMobile()
   const g = useRef<GameState>(freshState('ready'))
   const [, force] = useState(0)
@@ -1072,7 +1074,12 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
   const mobileColW = COLS * CELL + 40
 
   return (
-    <>
+    // The wrapper exists so the focus trap covers the settings, achievements and initials
+    // panels too — they're siblings of the board, not children of it. Every one of them is
+    // position:fixed, so this element has no size and doesn't affect layout.
+    // Escape is left to the game's own key handler, which knows not to quit while the settings
+    // panel is open; a second handler here would close the whole game instead.
+    <div ref={gameDialogRef} role="dialog" aria-modal="true" aria-label="Tetris" tabIndex={-1} style={{ outline: 'none' }}>
       <div onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
         style={{
           position: 'fixed', inset: 0, zIndex: 9500, display: 'flex',
@@ -1313,6 +1320,6 @@ export function TetrisGame({ onClose }: { onClose: () => void }) {
       )}
 
       <AchievementToasts toasts={toasts} onExpire={(id) => setToasts((t) => t.filter((x) => x.id !== id))} />
-    </>
+    </div>
   )
 }
