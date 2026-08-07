@@ -55,10 +55,10 @@ Set on Vercel, needed by the functions in `api/`:
 |---|---|
 | `RESEND_API_KEY` | sending contact form messages |
 | `CONTACT_TO` | where those messages go (optional, has a default) |
-| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | leaderboard storage, if set up through Vercel's Upstash integration |
+| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | leaderboard storage and contact form rate limiting, if set up through Vercel's Upstash integration |
 | `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | same, if set up through Upstash directly |
 
-Either Redis pair works — the handler accepts whichever one is present.
+Either Redis pair works — the handlers accept whichever one is present. Without them the leaderboard falls back to scores stored in the browser, and the contact form still sends but isn't rate limited.
 
 ## Status
 

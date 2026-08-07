@@ -39,6 +39,12 @@ export function Contact() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       })
+      // Rate limited — say so plainly instead of implying the message broke, and point at
+      // the email link beside the form as the way through.
+      if (res.status === 429) {
+        setError("That's a few messages in a short window. Give it a bit, or email me directly.")
+        return
+      }
       if (!res.ok) throw new Error()
       setSent(true)
       setForm({ name: '', email: '', message: '', company: '' })
