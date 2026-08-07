@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# The serverless functions have nothing to index and return 405 to a crawler's GET.
+Disallow: /api/
+
+Sitemap: https://juliannzhu.vercel.app/sitemap.xml
