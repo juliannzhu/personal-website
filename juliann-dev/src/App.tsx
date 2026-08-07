@@ -153,6 +153,12 @@ export default function App() {
   // "the URL changed underneath us" (browser back/forward, or a cold deep link — scroll).
   const lastScrolledRef = useRef<Screen | null>(null)
 
+  // False until the page has been put where the URL says it should be. The scroll-spy observes
+  // from mount, which is while the loader is still up and the stack is still at the top — so
+  // without this gate it reports "home", rewrites a /about deep link to /, and the landing
+  // scroll below then sees nothing left to do.
+  const settledRef = useRef(false)
+
   // Site-exploration achievements: unlock "Welcome" once the loader clears (so its toast
   // isn't hidden behind the loading screen), then mark each section as the scroll-spy
   // surfaces it (so scrolling OR clicking nav both count toward "Explorer").
@@ -202,6 +208,7 @@ export default function App() {
       let bestRatio = 0
       ratios.forEach((ratio, id) => { if (ratio > bestRatio) { bestRatio = ratio; best = id } })
       if (!best) return
+      if (!settledRef.current) return
       // A detail page or an overlay owns the URL while it's open — the sections behind it
       // are still being observed, and letting them write would close it out from under us.
       const r = routeRef.current
@@ -219,10 +226,14 @@ export default function App() {
   // skipped — they cover the page, and scrolling behind them would lose the reader's spot.
   useEffect(() => {
     if (loading || route.overlay) return
-    if (lastScrolledRef.current === route.section) return
-    const first = lastScrolledRef.current === null
-    lastScrolledRef.current = route.section
-    sectionRefs.current[route.section]?.scrollIntoView({ behavior: first ? 'auto' : 'smooth', block: 'start' })
+    if (lastScrolledRef.current !== route.section) {
+      const first = lastScrolledRef.current === null
+      lastScrolledRef.current = route.section
+      // The landing scroll is instant, so by the time the observer next reports, the stack is
+      // already in the right place and the spy agrees with the URL instead of fighting it.
+      sectionRefs.current[route.section]?.scrollIntoView({ behavior: first ? 'auto' : 'smooth', block: 'start' })
+    }
+    settledRef.current = true
   }, [route.section, route.overlay, loading])
 
   // Drive the HoldBox's drift/fade directly off scroll position (not React state) so it
