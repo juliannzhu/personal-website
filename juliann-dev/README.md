@@ -30,7 +30,12 @@ Other commands:
 npm run build     # type-checks and builds for production
 npm run preview   # preview the production build locally
 npm run icons     # regenerate src/lib/icons.ts (also runs automatically before a build)
+npm run sitemap   # regenerate public/sitemap.xml (also runs automatically before a build)
 ```
+
+`public/sitemap.xml` is generated from the routes and the project/quest ids in the source, so
+adding a project puts it in the sitemap on the next build. `public/robots.txt` is hand-written
+and points at it.
 
 One thing to know: `npm run dev` only serves the front end. The functions in `api/` don't run under Vite, so the contact form won't send and the leaderboard falls back to local scores stored in the browser. Use `vercel dev` or a deploy preview if you need to work on those.
 

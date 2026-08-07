@@ -30,6 +30,30 @@
     <meta name="twitter:description" content="A playable Tetris portfolio of my projects, research, and side quests. Software developer and CS student at UWaterloo." />
     <meta name="twitter:image" content="https://juliannzhu.vercel.app/assets/og-image.png" />
 
+    <!-- Structured data. Tells search engines who the site is about and that these profiles are
+         all the same person, which is what separates this Juliann Zhu from any other. Kept here
+         as static markup rather than injected by React, so crawlers that don't run JavaScript
+         still read it. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Juliann Zhu",
+      "url": "https://juliannzhu.vercel.app/",
+      "jobTitle": "Software Developer",
+      "description": "Software developer and computer science student at the University of Waterloo.",
+      "affiliation": {
+        "@type": "CollegeOrUniversity",
+        "name": "University of Waterloo"
+      },
+      "sameAs": [
+        "https://github.com/juliannzhu",
+        "https://linkedin.com/in/juliann-zhu/",
+        "https://devpost.com/juliannzhu",
+        "https://instagram.com/juliann.zhu"
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
