@@ -36,7 +36,7 @@ const PROJECTS: Project[] = [
     devpost: 'https://devpost.com/software/caneos',
     writeup: [
       'A white cane only knows what it physically touches, which leaves out the branch at head height and the open cabinet door two steps ahead. CaneOS clips onto the cane someone already carries instead of asking them to buy another gadget. It runs at two speeds. Three time-of-flight sensors poll about fifteen times a second and buzz the Apple Watch the moment something gets close, while a camera and Gemini work out what the obstacle actually is and say it out loud through your AirPods. There is also an SOS button that pulls your location and alerts your emergency contacts.',
-      'The hardware sat on an Arduino with an OAK-1-AF camera doing detection on-device, and a Swift app tied the two paths together over WebSockets. Most of our debugging went into getting those pieces to talk to each other at all. Splitting hardware and software across the team meant agreeing on exact data shapes before anyone started building, which caught a WebSocket mismatch and a missing direction value that would have failed quietly. The bigger lesson was designing for failure from the first day rather than bolting it on at the end: if the whole point is keeping someone safe, a dead camera should fall back to haptics instead of going dark.',
+      'The hardware sat on an Arduino with an OAK-1-AF camera doing detection on-device, and a Swift app tied the two paths together over WebSockets. Most of our debugging went into getting those pieces to talk to each other at all. Since some of us were on hardware and some on the app, we had to settle the exact shape of every message before anyone wrote code. That felt like overkill right up until it turned up a field we had named two different things and a direction value nobody was actually sending. Both of those would have just looked like the sensors were broken. We also sorted out early what each piece should do when another one dies, so if the camera drops out you keep the buzz on your wrist instead of a cane that looks fine and is doing nothing.',
     ],
     images: [
       { src: P('CaneOS', 'app-screens.webp'), caption: 'the companion app: home, settings, emergency SOS, and hazard history' },
@@ -303,7 +303,9 @@ function Writeup({ paragraphs, c }: { paragraphs: string[]; c: string }) {
     <div style={{ marginTop: 44 }}>
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 16 }}>// Notes</div>
       {paragraphs.map((text, i) => (
-        <p key={i} style={{ fontSize: '0.9375rem', color: 'var(--text-body)', lineHeight: 1.75, margin: i === 0 ? 0 : '18px 0 0' }}>{text}</p>
+        // Same size, colour and leading as the tagline above the gallery, so the two read as
+        // one voice rather than as body copy in two different registers.
+        <p key={i} style={{ fontSize: '1rem', color: 'var(--text-muted)', lineHeight: 1.7, margin: i === 0 ? 0 : '18px 0 0' }}>{text}</p>
       ))}
     </div>
   )
