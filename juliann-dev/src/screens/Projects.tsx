@@ -16,7 +16,9 @@ type Cat = 'all' | 'web' | 'ai' | 'research'
 type ProjectImage = string | { src: string; caption?: string }
 // `wip` marks a project that's still being built: the detail page shows a coming-soon panel
 // where the screenshots would go. The card in the grid is left alone deliberately.
-type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; github?: string; devpost?: string; images?: ProjectImage[]; wip?: boolean }
+// `writeup` is one entry per paragraph, shown under the carousel — the longer version of the
+// story for projects worth more than the one-line tagline. Not every project needs one.
+type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; github?: string; devpost?: string; images?: ProjectImage[]; wip?: boolean; writeup?: string[] }
 
 // images live in /public/assets/build-log/<folder>/
 const P = (folder: string, file: string) => `/assets/build-log/${folder}/${file}`
@@ -32,6 +34,10 @@ const PROJECTS: Project[] = [
     year: 'Jul 2026',
     github: 'https://github.com/Emily3226/CaneOS',
     devpost: 'https://devpost.com/software/caneos',
+    writeup: [
+      'A white cane only knows what it physically touches, which leaves out the branch at head height and the open cabinet door two steps ahead. CaneOS clips onto the cane someone already carries instead of asking them to buy another gadget. It runs at two speeds: three time-of-flight sensors poll about fifteen times a second and buzz the Apple Watch the moment something gets close, while a camera and Gemini work out what the obstacle actually is and say it out loud through your AirPods.',
+      'What I\'m most proud of is how it behaves when something breaks. We killed the API key, simulated a camera crash, and flooded the sensors with noise, and each time it degraded instead of going dark — lose the camera and you still get haptics. Splitting the hardware and software across the team also forced us to agree on exact data shapes before building, which caught a WebSocket mismatch and a missing direction value that would have failed quietly.',
+    ],
     images: [
       { src: P('CaneOS', 'app-screens.webp'), caption: 'the companion app: home, settings, emergency SOS, and hazard history' },
       { src: P('CaneOS', 'device-test.webp'), caption: 'blindfolded test run of the clip-on cane' },
@@ -54,6 +60,10 @@ const PROJECTS: Project[] = [
     year: 'Sep 2025',
     github: 'https://github.com/ErinGu0/TrulyHer',
     devpost: 'https://devpost.com/software/trulyher',
+    writeup: [
+      'When you\'re surrounded by talented people it\'s hard not to compare yourself, and for a lot of women in tech that comparison settles into imposter syndrome. Everyone on our team had felt some version of it. TrulyHer lets you vent by voice or by text, reads the mood behind what you said, tracks how it shifts over time, and suggests strategies that follow your own patterns instead of generic advice.',
+      'None of us had built an app before, so most of the weekend went into learning as we went — how to lay out an interface someone would actually want to open, and how much colour and spacing do to set the mood of a page. For a tool about mental health, that turned out to matter as much as the features did.',
+    ],
     images: [
       { src: P('TrulyHer', 'app-screens-1.webp'), caption: 'voice journaling: reflect, save, and get support' },
       { src: P('TrulyHer', 'app-screens-2.webp'), caption: 'affirmation tasks, the emotion cloud, and mood journey' },
@@ -71,6 +81,10 @@ const PROJECTS: Project[] = [
     tags: ['Research', 'LLMs', 'Security', 'Privacy', 'SOUPS'],
     cat: 'research',
     year: '2026',
+    writeup: [
+      'We\'re looking at how people turn to large language models for security and privacy advice, and whether the advice they get back holds up against what an expert would actually recommend.',
+      'The datasets are finished, which was the bulk of the work. I\'m writing up the results with my co-authors now.',
+    ],
     images: [
       { src: P('LLM-Security-Research', 'paper-fade.webp'), caption: 'paper preview' },
       { src: P('LLM-Security-Research', 'usenix-flat.webp'), caption: 'aiming for the USENIX SOUPS symposium' },
@@ -106,6 +120,10 @@ const PROJECTS: Project[] = [
     year: 'Sep 2024',
     github: 'https://github.com/girish316/HackTheHill',
     devpost: 'https://devpost.com/software/neuralearn',
+    writeup: [
+      'NeuraLearn started from a familiar frustration: hours of note-taking that still left us unprepared for the quiz. It takes your notes, generates quizzes that adapt to whatever you keep getting wrong, and answers follow-up questions on the material through Gemini.',
+      'The hardest part ended up being plumbing rather than AI. Every API response came back in its own shape, so we wrote custom parsers to turn the raw responses into markdown the app could render cleanly.',
+    ],
     images: [
       { src: P('NeuraLearn', 'app-screenshot-01.webp'), caption: 'the sign-up screen' },
       { src: P('NeuraLearn', 'app-screenshot-02.webp'), caption: 'writing a note, then generating a quiz from it' },
@@ -266,6 +284,19 @@ function MediaSlot({ src, index }: { src?: string; index: number }) {
   )
 }
 
+// The longer story, under the carousel. Narrower than the media above it on purpose: the
+// gallery wants the full 1080, but text set that wide is tiring to read.
+function Writeup({ paragraphs, c }: { paragraphs: string[]; c: string }) {
+  return (
+    <div style={{ marginTop: 44, maxWidth: 680 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 16 }}>// Notes</div>
+      {paragraphs.map((text, i) => (
+        <p key={i} style={{ fontSize: '0.9375rem', color: 'var(--text-body)', lineHeight: 1.75, margin: i === 0 ? 0 : '18px 0 0' }}>{text}</p>
+      ))}
+    </div>
+  )
+}
+
 // Stands in for the media carousel on a project that's still in progress. Borrows the
 // accent-bar treatment from the "Coming soon" list on the Now page so the two read as the
 // same idea in two places.
@@ -403,6 +434,8 @@ function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
           </div>
         </>
       )}
+
+      {p.writeup && <Writeup paragraphs={p.writeup} c={c} />}
 
       {(p.link || p.github || p.devpost) && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 40 }}>
