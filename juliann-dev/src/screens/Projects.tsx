@@ -35,8 +35,8 @@ const PROJECTS: Project[] = [
     github: 'https://github.com/Emily3226/CaneOS',
     devpost: 'https://devpost.com/software/caneos',
     writeup: [
-      'A white cane only knows what it physically touches, which leaves out the branch at head height and the open cabinet door two steps ahead. CaneOS clips onto the cane someone already carries instead of asking them to buy another gadget. It runs at two speeds: three time-of-flight sensors poll about fifteen times a second and buzz the Apple Watch the moment something gets close, while a camera and Gemini work out what the obstacle actually is and say it out loud through your AirPods.',
-      'What I\'m most proud of is how it behaves when something breaks. We killed the API key, simulated a camera crash, and flooded the sensors with noise, and each time it degraded instead of going dark — lose the camera and you still get haptics. Splitting the hardware and software across the team also forced us to agree on exact data shapes before building, which caught a WebSocket mismatch and a missing direction value that would have failed quietly.',
+      'A white cane only knows what it physically touches, which leaves out the branch at head height and the open cabinet door two steps ahead. CaneOS clips onto the cane someone already carries instead of asking them to buy another gadget. It runs at two speeds. Three time-of-flight sensors poll about fifteen times a second and buzz the Apple Watch the moment something gets close, while a camera and Gemini work out what the obstacle actually is and say it out loud through your AirPods. There is also an SOS button that pulls your location and alerts your emergency contacts.',
+      'The hardware sat on an Arduino with an OAK-1-AF camera doing detection on-device, and a Swift app tied the two paths together over WebSockets. Most of our debugging went into getting those pieces to talk to each other at all. Splitting hardware and software across the team meant agreeing on exact data shapes before anyone started building, which caught a WebSocket mismatch and a missing direction value that would have failed quietly. The bigger lesson was designing for failure from the first day rather than bolting it on at the end: if the whole point is keeping someone safe, a dead camera should fall back to haptics instead of going dark.',
     ],
     images: [
       { src: P('CaneOS', 'app-screens.webp'), caption: 'the companion app: home, settings, emergency SOS, and hazard history' },
@@ -62,7 +62,7 @@ const PROJECTS: Project[] = [
     devpost: 'https://devpost.com/software/trulyher',
     writeup: [
       'When you\'re surrounded by talented people it\'s hard not to compare yourself, and for a lot of women in tech that comparison settles into imposter syndrome. Everyone on our team had felt some version of it. TrulyHer lets you vent by voice or by text, reads the mood behind what you said, tracks how it shifts over time, and suggests strategies that follow your own patterns instead of generic advice.',
-      'None of us had built an app before, so most of the weekend went into learning as we went — how to lay out an interface someone would actually want to open, and how much colour and spacing do to set the mood of a page. For a tool about mental health, that turned out to matter as much as the features did.',
+      'None of us had built an app before, so most of the weekend went into learning as we went. We picked up how to lay out an interface someone would actually want to open, and how much work colour and spacing do to set the mood of a page. For a tool about mental health, that turned out to matter as much as the features did.',
     ],
     images: [
       { src: P('TrulyHer', 'app-screens-1.webp'), caption: 'voice journaling: reflect, save, and get support' },
@@ -100,6 +100,10 @@ const PROJECTS: Project[] = [
     cat: 'web',
     year: '2026',
     github: 'https://github.com/juliannzhu/personal-website',
+    writeup: [
+      'I wanted this to feel like me rather than like a template, which is why it is a Tetris game you can actually play instead of a page with my name on it. Everything here is built from scratch: the design system, the game engine, the sprint leaderboard, the achievements you can unlock by wandering around.',
+      'Most of the time went into details nobody is going to consciously notice. Every piece drifting in the background falls at its own speed. The nav slot for the section you are on glows in that section\'s piece colour. Rotating a piece flush against a wall nudges it clear instead of refusing. None of that shows up in a screenshot, and I am happier with it than with anything that does.',
+    ],
     images: [
       { src: P('tetris-website', 'architecture.svg'), caption: 'system architecture: how the site is built and deployed' },
       { src: P('tetris-website', 'ideation-01.webp'), caption: 'layout explorations for the quote block' },
@@ -143,6 +147,10 @@ const PROJECTS: Project[] = [
     cat: 'web',
     year: 'Jun 2024',
     link: '/geomap/map.html',
+    writeup: [
+      'GeoMap was a client project for an IB Geography teacher at my high school, who wanted his students to revise case studies somewhere more engaging than a textbook. You get a world map you can click into. Each country opens a draggable window with its case study, and a legend filters the map down to whichever unit you are studying, so ticking Global Climate lights up only the countries that matter for it. Working to a real client meant the requirements moved: we added a whole unit partway through because he asked for it, and cut features that turned out to matter less than they sounded.',
+      'I was primary on UI design, so the logo, the legend, and the title screen were mine. The problem that took longest was hovering. Countries made of many separate regions, like Canada and Indonesia, only changed colour under the cursor, which made the map look broken. Each region was its own SVG path, so I wrote a Python script that read the map source and merged every country down to a single path element. After that, hovering lit the whole country at once. It was the first time I wrote a program whose only job was to fix another program\'s data.',
+    ],
     images: [
       { src: P('Geomap', 'geomap-01.webp'), caption: 'the Geomap landing screen' },
       { src: P('Geomap', 'geomap-02.webp'), caption: 'case studies mapped by IB Geography topic' },
@@ -177,6 +185,10 @@ const PROJECTS: Project[] = [
     tags: ['JavaScript', 'HTML', 'CSS', 'UI/UX'],
     cat: 'web',
     year: 'May 2024',
+    writeup: [
+      'The number we kept coming back to was that women went from 37% of computer science majors in 1984 to 17% in 2023. That drop-off does not happen at one moment, it happens at every stage, so we built the site in four of them: beginner coding classes for middle schoolers, a calendar of women-in-STEM events and hackathons for high schoolers, a networking guide, and interview prep and job matching for people finishing a degree.',
+      'None of us had built much of anything before this. What stayed with me is that we were making the thing we had wanted ourselves a few years earlier, back when we did not know what a hackathon was or that most of these paths existed. Being brand new at it and still ending up with something we would genuinely have used felt like the whole point.',
+    ],
     images: [
       { src: P('PTC', 'ptc-1.webp'), caption: 'winning the Gender Equality track as Team Jinlira' },
       { src: P('PTC', 'ptc-7.webp'), caption: 'the problem: women majoring in CS fell from 37% in 1984 to 17% in 2023' },
