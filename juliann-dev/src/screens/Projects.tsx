@@ -36,7 +36,8 @@ const PROJECTS: Project[] = [
     devpost: 'https://devpost.com/software/caneos',
     writeup: [
       'A white cane only knows what it physically touches, which leaves out the branch at head height and the open cabinet door two steps ahead. CaneOS clips onto the cane someone already carries instead of asking them to buy another gadget. It runs at two speeds. Three time-of-flight sensors poll about fifteen times a second and buzz the Apple Watch the moment something gets close, while a camera and Gemini work out what the obstacle actually is and say it out loud through your AirPods. There is also an SOS button that pulls your location and alerts your emergency contacts.',
-      'The hardware sat on an Arduino with an OAK-1-AF camera doing detection on-device, and a Swift app tied the two paths together over WebSockets. Most of our debugging went into getting those pieces to talk to each other at all. Since some of us were on hardware and some on the app, we had to settle the exact shape of every message before anyone wrote code. That felt like overkill right up until it turned up a field we had named two different things and a direction value nobody was actually sending. Both of those would have just looked like the sensors were broken. We also sorted out early what each piece should do when another one dies, so if the camera drops out you keep the buzz on your wrist instead of a cane that looks fine and is doing nothing.',
+      'The hardware sat on an Arduino with an OAK-1-AF camera doing detection on-device, and a Swift app tied everything together over WebSockets. We split the work by piece. Some of us were on the sensors and the camera, some on the app and the watch, and some on the messages moving between them.',
+      'Most of our thinking went into the flows, which the architecture chart above lays out. The fast one never touches the network. The time-of-flight sensors run continuously, and the moment one picks up movement the watch buzzes, with the direction taken from whichever sensor fired. The slower one only wakes up when something reads as urgent: the camera grabs a frame, Gemini sends back a hazard type and one short spoken sentence, the app passes that to ElevenLabs, and you hear it in your headphones. Two smaller flows sit around those. One covers the camera dropping out, so you keep the buzz on your wrist instead of a cane that looks fine and is doing nothing. The other lets you ask the app what is around you and answers back on the watch.',
     ],
     images: [
       { src: P('CaneOS', 'app-screens.webp'), caption: 'the companion app: home, settings, emergency SOS, and hazard history' },
@@ -82,8 +83,8 @@ const PROJECTS: Project[] = [
     cat: 'research',
     year: '2026',
     writeup: [
-      'We\'re looking at how people turn to large language models for security and privacy advice, and whether the advice they get back holds up against what an expert would actually recommend.',
-      'The datasets are finished, which was the bulk of the work. I\'m writing up the results with my co-authors now.',
+      'Large language models have become a common first stop for the security and privacy questions people once brought to forums, documentation, or a knowledgeable friend. This work examines the quality of that guidance: what users ask, what the models return, and how far those answers hold up against expert judgement.',
+      'Building the dataset was the bulk of the work. We put 78 usable security and privacy prompts, drawn from 54 online sources, through two models, then had three security researchers assess the responses for accuracy and for the risk involved in following them. That part is finished, and I am now writing the results section, which centres on where ChatGPT and Claude converge and diverge. We are finalizing everything for submission, with findings also going to CAN-CWiC and IEEE S&P.',
     ],
     images: [
       { src: P('LLM-Security-Research', 'paper-fade.webp'), caption: 'paper preview' },
@@ -101,8 +102,8 @@ const PROJECTS: Project[] = [
     year: '2026',
     github: 'https://github.com/juliannzhu/personal-website',
     writeup: [
-      'I wanted this to feel like me rather than like a template, which is why it is a Tetris game you can actually play instead of a page with my name on it. Everything here is built from scratch: the design system, the game engine, the sprint leaderboard, the achievements you can unlock by wandering around.',
-      'Most of the time went into details nobody is going to consciously notice. Every piece drifting in the background falls at its own speed. The nav slot for the section you are on glows in that section\'s piece colour. Rotating a piece flush against a wall nudges it clear instead of refusing. None of that shows up in a screenshot, and I am happier with it than with anything that does.',
+      'A few years ago I was obsessed with Tetris, to the point where I would close my eyes and still see pieces falling. Somewhere in those hundreds of hours it started shaping how I think: anticipate the obstacle, stay calm when things stack up, stay flexible about the plan. So when I built this, I knew I did not want a flat digital business card. I wanted the game in the layout, the palette, the animations, and the way everything moves.',
+      'The side nav is a NEXT queue. The play button lives in the HOLD box. The footer stripe is the seven piece colours in order, and there is a faint CRT scanline sitting over the whole thing. The hardest part was capturing the feeling that made me love Tetris in the first place. Every iteration came out slightly off, and I lost hours to small details nobody will ever consciously notice. It is still unfinished, and it is the project I keep coming back to. I am very proud of this website and its authenticity.',
     ],
     images: [
       { src: P('tetris-website', 'architecture.svg'), caption: 'system architecture: how the site is built and deployed' },
@@ -126,7 +127,7 @@ const PROJECTS: Project[] = [
     devpost: 'https://devpost.com/software/neuralearn',
     writeup: [
       'NeuraLearn started from a familiar frustration: hours of note-taking that still left us unprepared for the quiz. It takes your notes, generates quizzes that adapt to whatever you keep getting wrong, and answers follow-up questions on the material through Gemini.',
-      'The hardest part ended up being plumbing rather than AI. Every API response came back in its own shape, so we wrote custom parsers to turn the raw responses into markdown the app could render cleanly.',
+      'Choosing the model took a while, because we needed one that could work through a math problem and still hold a conversation with a student, and Gemini was where we landed between performance and being accessible enough to build on. The quizzes took longer. Making them genuinely adaptive meant several rounds of tuning the algorithm so it aimed at what you kept getting wrong without burying you in it.',
     ],
     images: [
       { src: P('NeuraLearn', 'app-screenshot-01.webp'), caption: 'the sign-up screen' },
