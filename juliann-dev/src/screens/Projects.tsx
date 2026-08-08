@@ -284,11 +284,11 @@ function MediaSlot({ src, index }: { src?: string; index: number }) {
   )
 }
 
-// The longer story, under the carousel. Narrower than the media above it on purpose: the
-// gallery wants the full 1080, but text set that wide is tiring to read.
+// The longer story, under the carousel. Runs the full column width so it lines up with the
+// tagline above the gallery rather than sitting in a narrower block of its own.
 function Writeup({ paragraphs, c }: { paragraphs: string[]; c: string }) {
   return (
-    <div style={{ marginTop: 44, maxWidth: 680 }}>
+    <div style={{ marginTop: 44 }}>
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: c, marginBottom: 16 }}>// Notes</div>
       {paragraphs.map((text, i) => (
         <p key={i} style={{ fontSize: '0.9375rem', color: 'var(--text-body)', lineHeight: 1.75, margin: i === 0 ? 0 : '18px 0 0' }}>{text}</p>
