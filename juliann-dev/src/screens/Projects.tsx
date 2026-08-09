@@ -167,6 +167,10 @@ const PROJECTS: Project[] = [
     tags: ['Research', 'Prototyping', 'Green Energy', 'STEAM'],
     cat: 'research',
     year: 'Jul 2024',
+    writeup: [
+      'The challenge that year was working green energy into the everyday lives of Canadians, which is broad enough that deciding what to build took far longer than building it. We wanted something nobody would have to change their habits for. Cars already throw energy away constantly: every bump in the road moves the suspension, and that motion turns into heat and disappears. Charg-E is an electromagnetic vibrational energy harvester that sits in that system and converts the movement into usable power instead.',
+      'We drafted the whole design ourselves and prototyped the circuit on an Arduino breadboard in the lab. Ideation was easily the longest stretch, since we kept discarding ideas for not being different enough from what already existed.',
+    ],
     images: [
       { src: P('Charg-E', '209BF43A-1FE5-4546-B40B-D4043B7CA15E.webp'), caption: 'our SHAD design team' },
       { src: P('Charg-E', '3684E1A4-2A4F-4FB0-8EDF-CD23A309169D.webp'), caption: 'presenting Charg-E: Driving the Future' },
