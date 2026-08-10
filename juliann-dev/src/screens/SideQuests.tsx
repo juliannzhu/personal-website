@@ -107,6 +107,7 @@ const VOLLEYBALL_GALLERY: BentoPhoto[] = [
 ]
 
 const ART_GALLERY: BentoPhoto[] = [
+  { src: Q('art/art-41.webp'), caption: 'Apple of my eye' },
   { src: Q('art/art-1.webp'), caption: 'IB English Poster' },
   { src: Q('art/art-2.webp') },
   { src: Q('art/art-3.webp'), caption: 'Clay crafts' },
@@ -144,7 +145,6 @@ const ART_GALLERY: BentoPhoto[] = [
   { src: Q('art/art-38.webp') },
   { src: Q('art/art-39.webp') },
   { src: Q('art/art-40.webp') },
-  { src: Q('art/art-41.webp'), caption: 'Apple of my eye' },
   { src: Q('art/art-42.webp') },
   { src: Q('art/art-43.webp') },
   { src: Q('art/art-44.webp') },
@@ -377,6 +377,7 @@ const QUESTS: QuestCard[] = [
     tags: ['Sketching', 'Paint', 'Creativity'],
     placeholder: '🎨',
     images: [Q('art/art-11.webp')],
+    cover: Q('art/art-41.webp'),
     layout: 'bento',
     gallery: ART_GALLERY,
   },
