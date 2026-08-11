@@ -191,8 +191,8 @@ const PROJECTS: Project[] = [
     cat: 'web',
     year: 'May 2024',
     writeup: [
-      'The number we kept coming back to was that women went from 37% of computer science majors in 1984 to 17% in 2023. That drop-off does not happen at one moment, it happens at every stage, so we built the site in four of them: beginner coding classes for middle schoolers, a calendar of women-in-STEM events and hackathons for high schoolers, a networking guide, and interview prep and job matching for people finishing a degree.',
-      'None of us had built much of anything before this. What stayed with me is that we were making the thing we had wanted ourselves a few years earlier, back when we did not know what a hackathon was or that most of these paths existed. Being brand new at it and still ending up with something we would genuinely have used felt like the whole point.',
+      'Women went from 37% of computer science majors in 1984 to 17% in 2023. Those numbers do not happen at once, it happens at every stage. We built this site in four of them: beginner coding classes for middle schoolers, a calendar of women-in-STEM events and hackathons for high schoolers, a networking guide, and interview prep and job matching for people finishing a degree.',
+      'None of us had built much of anything before this, but we were building something we wished for ourselves a few years earlier. Back then, we did not know what a hackathon was or that most of these paths existed.',
     ],
     images: [
       { src: P('PTC', 'ptc-1.webp'), caption: 'winning the Gender Equality track as Team Jinlira' },
