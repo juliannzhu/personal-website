@@ -83,8 +83,8 @@ const PROJECTS: Project[] = [
     cat: 'research',
     year: '2026',
     writeup: [
-      'Large language models have become a common first stop for the security and privacy questions people once brought to forums, documentation, or a knowledgeable friend. This work examines the quality of that guidance: what users ask, what the models return, and how far those answers hold up against expert judgement.',
-      'Building the dataset was the bulk of the work. We put 78 usable security and privacy prompts, drawn from 54 online sources, through two models, then had three security researchers assess the responses for accuracy and for the risk involved in following them. That part is finished, and I am now writing the results section, which centres on where ChatGPT and Claude converge and diverge. We are finalizing everything for submission, with findings also going to CAN-CWiC and IEEE S&P.',
+      'Large language models (LLMs) have become common advisors for the security and privacy questions people once brought to forums, documentation, or a knowledgeable friend. This work examines the quality and accuracy of LLM-generated responses and evaluates them against expert judgement.',
+      'Building the dataset was the bulk of the work, inputting 78 usable security and privacy prompts drawn from 54 online sources through two models. I am currently writing the results section, which centres on where ChatGPT and Claude converge and diverge when compared to a golden dataset. We are finalizing everything for submission, with findings also going to CAN-CWiC and IEEE S&P.',
     ],
     images: [
       { src: P('LLM-Security-Research', 'paper-fade.webp'), caption: 'paper preview' },
