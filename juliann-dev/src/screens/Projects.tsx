@@ -102,8 +102,8 @@ const PROJECTS: Project[] = [
     year: '2026',
     github: 'https://github.com/juliannzhu/personal-website',
     writeup: [
-      'A few years ago I was obsessed with Tetris, to the point where I would close my eyes and still see pieces falling. Somewhere in those hundreds of hours it started shaping how I think: anticipate the obstacle, stay calm when things stack up, stay flexible about the plan. So when I built this, I knew I did not want a flat digital business card. I wanted the game in the layout, the palette, the animations, and the way everything moves.',
-      'The side nav is a NEXT queue. The play button lives in the HOLD box. The footer stripe is the seven piece colours in order, and there is a faint CRT scanline sitting over the whole thing. The hardest part was capturing the feeling that made me love Tetris in the first place. Every iteration came out slightly off, and I lost hours to small details nobody will ever consciously notice. It is still unfinished, and it is the project I keep coming back to. I am very proud of this website and its authenticity.',
+      'A few years ago I was obsessed with Tetris, to the point where I would close my eyes and still see pieces falling. Somewhere in those hundreds of hours it started shaping how I think, like staying calm when things stacked up. So when I built this website, I knew I did not want a flat digital business card. I wanted to include Tetris in the layout, the palette, the animations, and the way everything moves.',
+      'The side nav bar is a NEXT queue, the play button lives in the HOLD box, and the footer stripe is the seven piece colours in order. The hardest part was capturing the feeling that made me love Tetris in the first place. Every iteration came out slightly off, and I lost hours to small details nobody will ever consciously notice. It is still unfinished, and it is a project I keep coming back to. I am very proud of this website and its authenticity.',
     ],
     images: [
       { src: P('tetris-website', 'architecture.svg'), caption: 'system architecture: how the site is built and deployed' },
