@@ -62,8 +62,8 @@ const PROJECTS: Project[] = [
     github: 'https://github.com/ErinGu0/TrulyHer',
     devpost: 'https://devpost.com/software/trulyher',
     writeup: [
-      'When you\'re surrounded by talented people it\'s hard not to compare yourself, and for a lot of women in tech that comparison settles into imposter syndrome. Everyone on our team had felt some version of it. TrulyHer lets you vent by voice or by text, reads the mood behind what you said, tracks how it shifts over time, and suggests strategies that follow your own patterns instead of generic advice.',
-      'None of us had built an app before, so most of the weekend went into learning as we went. We picked up how to lay out an interface someone would actually want to open, and how much work colour and spacing do to set the mood of a page. For a tool about mental health, that turned out to matter as much as the features did.',
+      'When you\'re surrounded by talented people, it\'s hard not to compare yourself. For a lot of women in tech, that comparison settles into imposter syndrome, which our team has experienced firsthand. TrulyHer lets you vent by voice or text, reads the mood behind what you said, tracks how it shifts over time, and suggests strategies that follow your own patterns instead of generic advice. It also creates a mood tracking dashboard to show their ups and downs over time, offering encouragement and guidance along the way.',
+      'None of us had built an app before, so most of the weekend went into learning as we went. We picked up how to lay out an interface someone would actually want to open, and how much work colour and spacing do to set the mood of a page.',
     ],
     images: [
       { src: P('TrulyHer', 'app-screens-1.webp'), caption: 'voice journaling: reflect, save, and get support' },
