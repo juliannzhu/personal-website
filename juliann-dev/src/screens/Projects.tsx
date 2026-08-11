@@ -126,8 +126,8 @@ const PROJECTS: Project[] = [
     github: 'https://github.com/girish316/HackTheHill',
     devpost: 'https://devpost.com/software/neuralearn',
     writeup: [
-      'NeuraLearn started from a familiar frustration: hours of note-taking that still left us unprepared for the quiz. It takes your notes, generates quizzes that adapt to whatever you keep getting wrong, and answers follow-up questions on the material through Gemini.',
-      'Choosing the model took a while, because we needed one that could work through a math problem and still hold a conversation with a student, and Gemini was where we landed between performance and being accessible enough to build on. The quizzes took longer. Making them genuinely adaptive meant several rounds of tuning the algorithm so it aimed at what you kept getting wrong without burying you in it.',
+      'It started with hours of note-taking that still left us unprepared for the quiz. NeuraLearn takes your notes, generates quizzes that adapt to whatever you keep getting wrong, and answers follow-up questions on the material through Gemini.',
+      'Choosing the model took a while, and Gemini was where we landed between performance and being accessible enough to build on. The quizzes took longer, and making them adaptive meant several rounds of tuning the algorithm so it focused on improving your weaknesses.',
     ],
     images: [
       { src: P('NeuraLearn', 'app-screenshot-01.webp'), caption: 'the sign-up screen' },
