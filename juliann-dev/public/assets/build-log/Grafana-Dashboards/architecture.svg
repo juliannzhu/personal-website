@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1060" width="1600" height="1060" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#E31837"/>
+    </marker>
+    <marker id="arrBlk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111111"/>
+    </marker>
+    <marker id="arrGry" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7A7A7A"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="1060" fill="#FFFFFF"/>
+
+  <!-- ── header ───────────────────────────────────────────────── -->
+  <text x="40" y="52" font-size="32" font-weight="700" fill="#111111">AI Analytics Service</text>
+  <text x="40" y="80" font-size="15" fill="#6B6B6B">Forecasting, anomaly detection and narrative summaries layered onto existing network telemetry</text>
+  <rect x="40" y="94" width="86" height="4" fill="#E31837"/>
+
+  <!-- legend -->
+  <rect x="838" y="34" width="14" height="14" fill="#FFFFFF" stroke="#E31837" stroke-width="2"/>
+  <text x="860" y="46" font-size="13" fill="#333333">Built by this service</text>
+  <rect x="1000" y="34" width="14" height="14" fill="#F0F0F0" stroke="#B4B4B4" stroke-width="2"/>
+  <text x="1022" y="46" font-size="13" fill="#333333">Existing systems</text>
+
+  <!-- ── grafana ──────────────────────────────────────────────── -->
+  <rect x="40" y="120" width="1060" height="88" rx="4" fill="#F0F0F0" stroke="#B4B4B4" stroke-width="2"/>
+  <text x="66" y="152" font-size="17" font-weight="700" fill="#111111" letter-spacing="1">GRAFANA</text>
+  <text x="66" y="176" font-size="13" fill="#4A4A4A">Existing visualization layer, unmodified. New panels read the results database through its native MySQL data source.</text>
+  <text x="66" y="196" font-size="13" fill="#4A4A4A">Filtered by the regional beam resource variables already used by the Performance Metrics panels.</text>
+
+  <!-- ── fastapi service boundary ─────────────────────────────── -->
+  <rect x="40" y="262" width="1060" height="452" rx="6" fill="#FFFFFF" stroke="#E31837" stroke-width="2.5"/>
+  <path d="M46,262 h1048 a6,6 0 0 1 6,6 v40 h-1060 v-40 a6,6 0 0 1 6,-6 z" fill="#E31837"/>
+  <text x="66" y="294" font-size="17" font-weight="700" fill="#FFFFFF" letter-spacing="1">FASTAPI APPLICATION</text>
+  <text x="316" y="294" font-size="13" fill="#FFD9DE">app/main.py &#183; hosts the HTTP API and owns the scheduler lifecycle</text>
+
+  <!-- http api -->
+  <rect x="70" y="338" width="316" height="196" rx="4" fill="#FFFFFF" stroke="#111111" stroke-width="2"/>
+  <text x="90" y="366" font-size="15" font-weight="700" fill="#111111" letter-spacing="0.6">HTTP API</text>
+  <text x="90" y="392" font-size="12.5" fill="#333333" font-family="Menlo, Consolas, monospace">POST /run-analysis</text>
+  <text x="90" y="414" font-size="12.5" fill="#333333" font-family="Menlo, Consolas, monospace">POST /run-analysis/{metric}</text>
+  <text x="90" y="436" font-size="12.5" fill="#333333" font-family="Menlo, Consolas, monospace">GET&#160;&#160;/</text>
+  <text x="90" y="458" font-size="12.5" fill="#333333" font-family="Menlo, Consolas, monospace">GET&#160;&#160;/health/db</text>
+  <text x="90" y="480" font-size="12.5" fill="#333333" font-family="Menlo, Consolas, monospace">GET&#160;&#160;/latest/{metric}</text>
+  <text x="90" y="508" font-size="11.5" fill="#7A7A7A">On demand re-runs, health and sanity checks</text>
+
+  <!-- scheduler -->
+  <rect x="70" y="558" width="316" height="126" rx="4" fill="#FCEEF0" stroke="#E31837" stroke-width="2"/>
+  <text x="90" y="586" font-size="15" font-weight="700" fill="#E31837" letter-spacing="0.6">APSCHEDULER</text>
+  <text x="90" y="612" font-size="12.5" fill="#333333">In-process background job</text>
+  <text x="90" y="634" font-size="12.5" fill="#333333">Full analysis pass every 15 minutes</text>
+  <text x="90" y="660" font-size="11.5" fill="#7A7A7A">Runs without blocking the API</text>
+
+  <!-- pipeline -->
+  <rect x="430" y="338" width="640" height="346" rx="4" fill="#FFFFFF" stroke="#111111" stroke-width="2"/>
+  <text x="452" y="366" font-size="15" font-weight="700" fill="#111111" letter-spacing="0.6">ANALYSIS PIPELINE</text>
+  <text x="640" y="366" font-size="12" fill="#7A7A7A">runs independently for every configured metric</text>
+  <line x1="452" y1="378" x2="1048" y2="378" stroke="#E6E6E6" stroke-width="1.5"/>
+
+  <g font-size="12.5" fill="#333333">
+    <circle cx="466" cy="402" r="10" fill="#111111"/><text x="466" y="406" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">1</text>
+    <text x="488" y="406">Load recent per-channel metric buckets &#183; 15 to 65 day lookback per metric</text>
+
+    <circle cx="466" cy="442" r="10" fill="#111111"/><text x="466" y="446" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">2</text>
+    <text x="488" y="446">Aggregate channels into a network-wide series &#183; sum for traffic, mean for gauges</text>
+
+    <circle cx="466" cy="482" r="10" fill="#111111"/><text x="466" y="486" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">3</text>
+    <text x="488" y="486">Descriptive statistics &#183; daily and weekly averages, percent change, trend</text>
+
+    <circle cx="466" cy="522" r="10" fill="#E31837"/><text x="466" y="526" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">4</text>
+    <text x="488" y="526">Detect anomalies against the seasonal baseline &#183; network, channel, channel+ILC</text>
+
+    <circle cx="466" cy="562" r="10" fill="#E31837"/><text x="466" y="566" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">5</text>
+    <text x="488" y="566">Forecast 60 days ahead from the same baseline</text>
+
+    <circle cx="466" cy="602" r="10" fill="#E31837"/><text x="466" y="606" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">6</text>
+    <text x="488" y="606">Generate a plain-language narrative and, where warranted, notifications</text>
+
+    <circle cx="466" cy="642" r="10" fill="#111111"/><text x="466" y="646" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">7</text>
+    <text x="488" y="646">Persist every result to the dedicated results database</text>
+  </g>
+
+  <!-- triggers into the pipeline -->
+  <line x1="386" y1="436" x2="424" y2="436" stroke="#111111" stroke-width="2" marker-end="url(#arrBlk)"/>
+  <text x="390" y="428" font-size="10.5" fill="#7A7A7A">on demand</text>
+  <path d="M386,620 L406,620 L406,470 L424,470" fill="none" stroke="#E31837" stroke-width="2" marker-end="url(#arrRed)"/>
+
+  <!-- ── sqlalchemy band ──────────────────────────────────────── -->
+  <rect x="40" y="744" width="1060" height="64" rx="4" fill="#FFFFFF" stroke="#E31837" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="66" y="772" font-size="14" font-weight="700" fill="#E31837" letter-spacing="0.6">SQLALCHEMY ENGINES</text>
+  <text x="66" y="794" font-size="12" fill="#4A4A4A">two engines kept separate, one connection pool each &#183; PyMySQL</text>
+
+  <!-- ── databases ────────────────────────────────────────────── -->
+  <rect x="70" y="846" width="480" height="146" rx="4" fill="#F0F0F0" stroke="#B4B4B4" stroke-width="2"/>
+  <text x="94" y="876" font-size="15" font-weight="700" fill="#111111" letter-spacing="0.6">SOURCE DATABASE</text>
+  <text x="94" y="900" font-size="12.5" fill="#4A4A4A">MySQL / MariaDB</text>
+  <text x="94" y="922" font-size="12.5" fill="#4A4A4A">Existing network monitoring data</text>
+  <rect x="94" y="938" width="86" height="24" rx="3" fill="#FFFFFF" stroke="#7A7A7A" stroke-width="1.5"/>
+  <text x="137" y="955" font-size="11.5" font-weight="700" fill="#4A4A4A" text-anchor="middle">READ ONLY</text>
+  <text x="196" y="955" font-size="11.5" fill="#7A7A7A">never written to by this service</text>
+
+  <rect x="590" y="846" width="480" height="146" rx="4" fill="#FFFFFF" stroke="#E31837" stroke-width="2.5"/>
+  <text x="614" y="876" font-size="15" font-weight="700" fill="#111111" letter-spacing="0.6">RESULTS DATABASE</text>
+  <text x="614" y="900" font-size="12.5" fill="#4A4A4A">MySQL / MariaDB</text>
+  <text x="614" y="922" font-size="12.5" fill="#4A4A4A">Statistics, anomalies, forecasts, narratives</text>
+  <rect x="614" y="938" width="96" height="24" rx="3" fill="#E31837"/>
+  <text x="662" y="955" font-size="11.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">READ / WRITE</text>
+  <text x="726" y="955" font-size="11.5" fill="#7A7A7A">owned entirely by this service</text>
+
+  <!-- read: source db up through the engines into step 1 -->
+  <line x1="450" y1="842" x2="450" y2="692" stroke="#7A7A7A" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrGry)"/>
+  <text x="460" y="832" font-size="11" fill="#7A7A7A">read</text>
+
+  <!-- write: step 7 down through the engines into the results db -->
+  <line x1="900" y1="690" x2="900" y2="842" stroke="#E31837" stroke-width="2" marker-end="url(#arrRed)"/>
+  <text x="910" y="832" font-size="11" fill="#E31837">write</text>
+
+  <!-- grafana reads the results db, up the right-hand channel -->
+  <path d="M1070,910 L1136,910 L1136,164 L1106,164" fill="none" stroke="#7A7A7A" stroke-width="2" marker-end="url(#arrGry)"/>
+
+  <!-- ── sidebar ──────────────────────────────────────────────── -->
+  <rect x="1180" y="120" width="380" height="252" rx="4" fill="#FAFAFA" stroke="#DCDCDC" stroke-width="1.5"/>
+  <path d="M1184,120 h372 a4,4 0 0 1 4,4 v30 h-380 v-30 a4,4 0 0 1 4,-4 z" fill="#111111"/>
+  <text x="1202" y="143" font-size="13" font-weight="700" fill="#FFFFFF" letter-spacing="1">SEASONAL BASELINE</text>
+  <text x="1202" y="182" font-size="12" fill="#333333">168 time-of-week slots</text>
+  <text x="1202" y="202" font-size="11.5" fill="#6B6B6B">one per day-of-week and hour pair</text>
+  <text x="1202" y="230" font-size="12" fill="#333333">Median and MAD, not mean and SD</text>
+  <text x="1202" y="250" font-size="11.5" fill="#6B6B6B">traffic and signal data carry bursts that</text>
+  <text x="1202" y="268" font-size="11.5" fill="#6B6B6B">would distort a deviation-based threshold</text>
+  <text x="1202" y="296" font-size="12" fill="#333333">Thin-slot fallback</text>
+  <text x="1202" y="316" font-size="11.5" fill="#6B6B6B">a slot with under 50 samples borrows the</text>
+  <text x="1202" y="334" font-size="11.5" fill="#6B6B6B">global median and MAD instead of trusting</text>
+  <text x="1202" y="352" font-size="11.5" fill="#6B6B6B">its own thin estimate</text>
+
+  <rect x="1180" y="400" width="380" height="216" rx="4" fill="#FAFAFA" stroke="#DCDCDC" stroke-width="1.5"/>
+  <path d="M1184,400 h372 a4,4 0 0 1 4,4 v30 h-380 v-30 a4,4 0 0 1 4,-4 z" fill="#111111"/>
+  <text x="1202" y="423" font-size="13" font-weight="700" fill="#FFFFFF" letter-spacing="1">RETENTION</text>
+  <text x="1202" y="462" font-size="12" fill="#333333">Notifications</text><text x="1430" y="462" font-size="12" fill="#6B6B6B">30 days</text>
+  <line x1="1202" y1="474" x2="1538" y2="474" stroke="#E8E8E8"/>
+  <text x="1202" y="496" font-size="12" fill="#333333">Narratives and statistics</text><text x="1430" y="496" font-size="12" fill="#6B6B6B">90 days</text>
+  <line x1="1202" y1="508" x2="1538" y2="508" stroke="#E8E8E8"/>
+  <text x="1202" y="530" font-size="12" fill="#333333">Closed anomaly episodes</text><text x="1430" y="530" font-size="12" fill="#6B6B6B">90 days</text>
+  <line x1="1202" y1="542" x2="1538" y2="542" stroke="#E8E8E8"/>
+  <text x="1202" y="564" font-size="12" fill="#333333">Open anomaly episodes</text><text x="1430" y="564" font-size="12" fill="#6B6B6B">kept</text>
+  <line x1="1202" y1="576" x2="1538" y2="576" stroke="#E8E8E8"/>
+  <text x="1202" y="598" font-size="12" fill="#333333">Forecasts</text><text x="1430" y="598" font-size="12" fill="#6B6B6B">replaced each run</text>
+
+  <rect x="1180" y="644" width="380" height="350" rx="4" fill="#FAFAFA" stroke="#DCDCDC" stroke-width="1.5"/>
+  <path d="M1184,644 h372 a4,4 0 0 1 4,4 v30 h-380 v-30 a4,4 0 0 1 4,-4 z" fill="#111111"/>
+  <text x="1202" y="667" font-size="13" font-weight="700" fill="#FFFFFF" letter-spacing="1">STACK</text>
+  <g font-size="12" fill="#333333">
+    <text x="1202" y="706">Python 3.14</text>
+    <text x="1202" y="732">FastAPI</text><text x="1340" y="732" font-size="11.5" fill="#6B6B6B">HTTP API framework</text>
+    <text x="1202" y="758">APScheduler</text><text x="1340" y="758" font-size="11.5" fill="#6B6B6B">in-process scheduling</text>
+    <text x="1202" y="784">SQLAlchemy</text><text x="1340" y="784" font-size="11.5" fill="#6B6B6B">both connections</text>
+    <text x="1202" y="810">PyMySQL</text><text x="1340" y="810" font-size="11.5" fill="#6B6B6B">driver</text>
+    <text x="1202" y="836">pandas, numpy</text><text x="1340" y="836" font-size="11.5" fill="#6B6B6B">statistics</text>
+    <text x="1202" y="862">Jinja2</text><text x="1340" y="862" font-size="11.5" fill="#6B6B6B">narrative templates</text>
+    <text x="1202" y="888">MySQL / MariaDB</text><text x="1340" y="888" font-size="11.5" fill="#6B6B6B">source and results</text>
+    <text x="1202" y="914">Grafana</text><text x="1340" y="914" font-size="11.5" fill="#6B6B6B">visualization</text>
+  </g>
+  <line x1="1202" y1="930" x2="1538" y2="930" stroke="#E8E8E8"/>
+  <text x="1202" y="952" font-size="11.5" fill="#6B6B6B">Narratives sit behind a template interface so a</text>
+  <text x="1202" y="970" font-size="11.5" fill="#6B6B6B">local LLM can replace Jinja2 later without</text>
+  <text x="1202" y="988" font-size="11.5" fill="#6B6B6B">touching the rest of the pipeline.</text>
+
+  <line x1="40" y1="1024" x2="1560" y2="1024" stroke="#E8E8E8" stroke-width="1.5"/>
+  <text x="40" y="1046" font-size="11.5" fill="#9A9A9A">Every statistic is computed from raw historical monitoring data on each run, using explainable methods rather than a trained model.</text>
+</svg>

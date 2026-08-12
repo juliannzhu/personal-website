@@ -213,7 +213,9 @@ const PROJECTS: Project[] = [
     tags: ['MySQL', 'SQLAlchemy', 'FastAPI', 'APScheduler', 'MariaDB'],
     cat: 'ai',
     year: '2026',
-    wip: true,
+    images: [
+      { src: P('Grafana-Dashboards', 'architecture.svg'), caption: 'system architecture: scheduled analysis pipeline between the source and results databases' },
+    ],
     writeup: [
       'The team monitors satellite performance, data usage, and network telemetry across a lot of moving parts, and most of that lived in dashboards that could tell you what happened without telling you what it meant. I am building an AI layer on top of that existing data: a service that produces forecasts, flags unusual network activity, monitors the network, and writes plain-language summaries of what a dashboard is actually showing, alongside stats on things like signal quality.',
       'The part I find most interesting is the plumbing. Grafana can only chart what a data source hands it, so I built a new data source for the AI output and a Python service behind it that generates the results, schedules the jobs, and writes them somewhere the dashboards can query. The forecasting, anomaly flagging, and generated summaries then arrive as ordinary panels sitting beside the raw telemetry, rather than as a separate tool nobody remembers to open.',
