@@ -214,6 +214,11 @@ const PROJECTS: Project[] = [
     cat: 'ai',
     year: '2026',
     wip: true,
+    writeup: [
+      'The team monitors satellite performance, data usage, and network telemetry across a lot of moving parts, and most of that lived in dashboards that could tell you what happened without telling you what it meant. I am building an AI layer on top of that existing data: a service that produces forecasts, flags unusual network activity, monitors the network, and writes plain-language summaries of what a dashboard is actually showing, alongside stats on things like signal quality.',
+      'The part I find most interesting is the plumbing. Grafana can only chart what a data source hands it, so I built a new data source for the AI output and a Python service behind it that generates the results, schedules the jobs, and writes them somewhere the dashboards can query. The forecasting, anomaly flagging, and generated summaries then arrive as ordinary panels sitting beside the raw telemetry, rather than as a separate tool nobody remembers to open.',
+      'I am building my own dashboards on top of it and pushing the work into the engineering repo so it can run in production instead of staying on my machine. Right now I am adding colour overrides by regex so my panels match the conventions of the dashboards the team already uses, and keeping the high-level design document updated under version control as the design shifts.',
+    ],
   },
 ]
 
@@ -337,7 +342,7 @@ function ComingSoon({ piece }: { piece: Piece }) {
           <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.4375rem', background: c, color: 'var(--ink-900)', padding: '3px 5px', letterSpacing: '0.04em' }}>WIP</span>
         </div>
         <p style={{ margin: 0, fontSize: '0.9375rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-          Still building this one. Screenshots and a proper writeup are on the way.
+          Still building this one. Screenshots are on the way.
         </p>
       </div>
     </div>
