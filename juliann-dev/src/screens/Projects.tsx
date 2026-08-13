@@ -122,7 +122,7 @@ const PROJECTS: Project[] = [
     github: 'https://github.com/juliannzhu/personal-website',
     writeup: [
       'A few years ago I was obsessed with Tetris, to the point where I would close my eyes and still see pieces falling. Somewhere in those hundreds of hours it started shaping how I think, like staying calm when things stacked up. So when I built this website, I knew I did not want a flat digital business card. I wanted to include Tetris in the layout, the palette, the animations, and the way everything moves.',
-      'The side nav bar is a NEXT queue, the play button lives in the HOLD box, and the footer stripe is the seven piece colours in order. The hardest part was capturing the feeling that made me love Tetris in the first place. Every iteration came out slightly off, and I lost hours to small details nobody will ever consciously notice. It is still unfinished, and it is a project I keep coming back to. I am very proud of this website and its authenticity.',
+      'The side nav bar is a NEXT queue, the play button lives in the HOLD box, the footer stripe is the seven piece colours in order, and the Tetris theme music is performed by me on the piano. The hardest part was capturing the feeling that made me love Tetris in the first place. Every iteration came out slightly off, and I lost hours to small details nobody will ever consciously notice. It is still unfinished, and it is a project I keep coming back to. I am very proud of this website and its authenticity.',
     ],
     images: [
       { src: P('tetris-website', 'architecture.svg'), caption: 'system architecture: how the site is built and deployed' },
