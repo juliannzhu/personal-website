@@ -10,7 +10,7 @@ export const SITE_ACHIEVEMENTS: SiteAch[] = [
   { id: 'explorer',      title: 'Explorer',      desc: 'Scroll through every section.',         icon: 'pixelarticons:map',         piece: 'o' },
   { id: 'side-quester',  title: 'Side Quester',  desc: 'Open a side quest.',                    icon: 'pixelarticons:heart',       piece: 't' },
   { id: 'completionist', title: 'Completionist', desc: 'Open all 15 side quests.',              icon: 'pixelarticons:checkbox-on', piece: 's' },
-  { id: 'inspector',     title: 'Inspector',     desc: 'Open a project in the Project Portfolio.',      icon: 'pixelarticons:briefcase',   piece: 'j' },
+  { id: 'inspector',     title: 'Inspector',     desc: 'Open a project tile',      icon: 'pixelarticons:briefcase',   piece: 'j' },
   { id: 'film-buff',     title: 'Film Buff',     desc: 'Play a video clip.',                    icon: 'pixelarticons:play',        piece: 'z' },
   { id: 'hands-on',      title: 'Hands On',      desc: 'Drag a polaroid photo around.',         icon: 'pixelarticons:move',        piece: 'l' },
   { id: 'player-one',    title: 'Player One',    desc: 'Open the Tetris game.',                 icon: 'pixelarticons:gamepad',     piece: 'i' },
