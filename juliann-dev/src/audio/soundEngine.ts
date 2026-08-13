@@ -1,7 +1,5 @@
 let ctx: AudioContext | null = null
 let enabled = false
-let bgTimer: ReturnType<typeof setInterval> | null = null
-let bgIdx = 0
 
 function getCtx(): AudioContext | null {
   if (!enabled) return null
@@ -29,27 +27,72 @@ function beep(freq: number, dur: number, type: OscillatorType = 'square', vol = 
   } catch { /* ignore */ }
 }
 
-// Korobeiniki-inspired 8-bit melody
-const MELODY = [659,0,494,523,587,0,523,494,440,0,440,523,659,0,587,523,494,0,494,523,587,0,659,523,440,0,440,0]
-const BEAT = 160
+// ---- background music ---------------------------------------------------------------
+// Juliann playing the Tetris theme. The file is one 45.748s loop cut from the recording at a
+// point where the phrase returns to the chorus, phase-aligned to the sample and crossfaded
+// across the seam, so it repeats without a join.
+//
+// Played through an AudioBufferSourceNode rather than an <audio loop> tag on purpose: AAC
+// carries encoder padding, so an audio element inserts a short gap every time it wraps.
+// Looping a decoded buffer is sample-accurate.
+const MUSIC_URL = '/assets/audio/tetris-theme-loop.m4a'
+const MUSIC_GAIN = 0.22          // sits under the SFX beeps (0.05 - 0.13) rather than over them
+const FADE = 0.4
 
-function startBg() {
-  if (bgTimer) return
-  bgIdx = 0
-  bgTimer = setInterval(() => {
-    const note = MELODY[bgIdx % MELODY.length]
-    if (note > 0) beep(note, BEAT / 1100, 'square', 0.055)
-    bgIdx++
-  }, BEAT)
+let musicBuf: AudioBuffer | null = null
+let musicReq: Promise<AudioBuffer | null> | null = null
+let musicSrc: AudioBufferSourceNode | null = null
+let musicGain: GainNode | null = null
+
+// Fetched on first unmute, never on page load, and only once per session.
+function loadMusic(c: AudioContext): Promise<AudioBuffer | null> {
+  if (musicBuf) return Promise.resolve(musicBuf)
+  if (!musicReq) {
+    musicReq = fetch(MUSIC_URL)
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(String(r.status)))))
+      .then((b) => c.decodeAudioData(b))
+      .then((buf) => { musicBuf = buf; return buf })
+      .catch(() => { musicReq = null; return null })   // stay silent, let the SFX carry on
+  }
+  return musicReq
+}
+
+async function startBg() {
+  const c = getCtx()
+  if (!c || musicSrc) return
+  const buf = await loadMusic(c)
+  // The visitor may have muted again while the file was still downloading.
+  if (!buf || !enabled || musicSrc) return
+
+  musicGain = c.createGain()
+  musicGain.gain.setValueAtTime(0.0001, c.currentTime)
+  musicGain.gain.linearRampToValueAtTime(MUSIC_GAIN, c.currentTime + FADE)
+  musicGain.connect(c.destination)
+
+  const src = c.createBufferSource()
+  src.buffer = buf
+  src.loop = true
+  src.connect(musicGain)
+  src.start()
+  musicSrc = src
 }
 
 function stopBg() {
-  if (bgTimer) { clearInterval(bgTimer); bgTimer = null }
+  const src = musicSrc, gain = musicGain
+  musicSrc = null; musicGain = null
+  if (!src || !gain || !ctx) return
+  // Ramp down before stopping, otherwise cutting mid-waveform clicks.
+  const t = ctx.currentTime
+  gain.gain.cancelScheduledValues(t)
+  gain.gain.setValueAtTime(gain.gain.value, t)
+  gain.gain.linearRampToValueAtTime(0.0001, t + FADE)
+  src.onended = () => { src.disconnect(); gain.disconnect() }
+  try { src.stop(t + FADE + 0.05) } catch { /* already stopped */ }
 }
 
 export function setEnabled(on: boolean) {
   enabled = on
-  if (on) { getCtx(); startBg() }
+  if (on) { getCtx(); void startBg() }
   else stopBg()
 }
 

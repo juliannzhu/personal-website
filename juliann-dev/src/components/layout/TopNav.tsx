@@ -53,7 +53,7 @@ function SoundToggle() {
     <button
       className="tj-navbtn"
       onClick={toggle}
-      title={on ? 'Sound ON, click to mute' : 'Sound OFF, click for 8-bit audio'}
+      title={on ? 'Sound ON, click to mute' : 'Sound OFF, click for music and game audio'}
       onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-muted)'; e.currentTarget.style.color = 'var(--text-strong)' }}
       onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-muted)' }}
       style={{

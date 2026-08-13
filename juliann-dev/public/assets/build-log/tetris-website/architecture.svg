@@ -113,8 +113,8 @@
   <rect x="840" y="660" width="340" height="6" fill="#ff3b3b" />
   <text x="866" y="704" fill="#ff3b3b" font-size="18" font-weight="700" letter-spacing="1">WEB AUDIO</text>
   <text x="866" y="740" fill="#8a8aa6" font-size="14">synthesized 8-bit SFX</text>
-  <text x="866" y="764" fill="#8a8aa6" font-size="14">Korobeiniki melody</text>
-  <text x="866" y="788" fill="#5c5c78" font-size="13">no audio files</text>
+  <text x="866" y="764" fill="#8a8aa6" font-size="14">looped piano recording</text>
+  <text x="866" y="788" fill="#5c5c78" font-size="13">gapless buffer loop · lazy loaded</text>
 
   <!-- 07 /api/contact -->
   <rect x="1240" y="660" width="240" height="180" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
