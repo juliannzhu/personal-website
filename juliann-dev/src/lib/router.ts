@@ -106,7 +106,7 @@ export function navigate(next: Route, { replace = false }: { replace?: boolean }
 }
 
 // Step back one entry if we put one there, otherwise rewrite the current entry to
-// `fallback` — so "Back to Build Log" works the same whether the visitor clicked in from
+// `fallback` — so "Back to Project Portfolio" works the same whether the visitor clicked in from
 // the grid or landed on the detail page from a shared link.
 export function back(fallback: Route) {
   if (depth > 0) history.back()

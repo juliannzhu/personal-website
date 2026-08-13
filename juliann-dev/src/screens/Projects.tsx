@@ -25,6 +25,43 @@ const P = (folder: string, file: string) => `/assets/build-log/${folder}/${file}
 
 const PROJECTS: Project[] = [
   {
+    id: 'grafana-dashboards',
+    title: 'GRAFANA DASHBOARDS',
+    piece: 't',
+    tagline: 'Satellite system monitoring dashboards built with Grafana and MySQL data sources, reduced dashboard load time by 86% through SQL query optimization.',
+    tags: ['MySQL', 'SQLAlchemy', 'FastAPI', 'APScheduler', 'MariaDB'],
+    cat: 'ai',
+    year: '2026',
+    images: [
+      { src: P('Grafana-Dashboards', 'architecture.svg'), caption: 'system architecture: scheduled analysis pipeline between the source and results databases' },
+      { src: P('Grafana-Dashboards', 'ai-layer-traffic.webp'), caption: 'the AI layer: traffic averages, 60-day forecasts, anomaly detail and a generated summary. panel titles and data changed for confidentiality, every series is Grafana random walk' },
+      { src: P('Grafana-Dashboards', 'ai-layer-signal-quality.webp'), caption: 'the same layer over signal quality metrics. panel titles and data changed for confidentiality, every series is Grafana random walk' },
+    ],
+    writeup: [
+      'The Network Services Team monitors satellite performance, data usage, and network telemetry across a lot of moving parts, and most of that lived in dashboards that could tell you what happened without telling you what it meant. I built an AI layer on top of the existing data: a service that produces forecasts, flags unusual network activity, monitors the performance metrics, and writes plain-language dashboard summaries to reflect signal quality stats.',
+      'The part I found most interesting was that Grafana can only chart what a data source hands it, so I built a new data source for the AI output and a Python service behind it that generates the results, schedules the jobs, and writes them somewhere the dashboards can query. The forecasting, anomaly flagging, and generated summaries arrive as panels rather than as a separate tool.',
+      'I am building my own dashboards on top of it and pushing the work into the engineering repo so it can run in production. Currently, I am adding colour overrides by regex so my panels match the conventions of the dashboards the team already uses, and keeping the high-level design document updated under version control as the design shifts.',
+    ],
+  },
+  {
+    id: 'llm-security-research',
+    title: 'LLM SECURITY RESEARCH',
+    piece: 't',
+    tagline: 'Co-authoring a Symposium on Usable Privacy and Security (SOUPS) research paper on how users seek security and privacy advice from large language models, evaluating the accuracy of that advice against expert guidance.',
+    tags: ['Research', 'LLMs', 'Security', 'Privacy', 'SOUPS'],
+    cat: 'research',
+    year: '2026',
+    writeup: [
+      'Large language models (LLMs) have become common advisors for the security and privacy questions people once brought to forums, documentation, or a knowledgeable friend. This work examines the quality and accuracy of LLM-generated responses and evaluates them against expert judgement.',
+      'Building the dataset was the bulk of the work, inputting 78 usable security and privacy prompts drawn from 54 online sources through two models. I am currently writing the results section, which centres on where ChatGPT and Claude converge and diverge when compared to a golden dataset. We are finalizing everything for submission, with findings also going to CAN-CWiC and IEEE S&P.',
+    ],
+    images: [
+      { src: P('LLM-Security-Research', 'paper-fade.webp'), caption: 'paper preview' },
+      { src: P('LLM-Security-Research', 'usenix-flat.webp'), caption: 'aiming for the USENIX SOUPS symposium' },
+      { src: P('LLM-Security-Research', 'cancwic-crop.webp'), caption: 'presenting at CAN-CWiC 2026, University of Waterloo' },
+    ],
+  },
+  {
     id: 'caneos',
     title: 'CANEOS',
     piece: 'i',
@@ -52,47 +89,6 @@ const PROJECTS: Project[] = [
     ],
   },
   {
-    id: 'trulyher',
-    title: 'TRULYHER',
-    piece: 'o',
-    tagline: 'AI-powered web app that helps women in computer science manage imposter syndrome through speech and text journaling paired with real-time mood detection.',
-    tags: ['React', 'JavaScript', 'HTML', 'CSS', 'Base44', 'UI/UX'],
-    cat: 'ai',
-    year: 'Sep 2025',
-    github: 'https://github.com/ErinGu0/TrulyHer',
-    devpost: 'https://devpost.com/software/trulyher',
-    writeup: [
-      'When you\'re surrounded by talented people, it\'s hard not to compare yourself. For a lot of women in tech, that comparison settles into imposter syndrome, which our team has experienced firsthand. TrulyHer lets you vent by voice or text, reads the mood behind what you said, tracks how it shifts over time, and suggests strategies that follow your own patterns instead of generic advice. It also creates a mood tracking dashboard to show their ups and downs over time, offering encouragement and guidance along the way.',
-      'None of us had built an app before, so most of the weekend went into learning as we went. We picked up how to lay out an interface someone would actually want to open, and how much work colour and spacing do to set the mood of a page.',
-    ],
-    images: [
-      { src: P('TrulyHer', 'app-screens-1.webp'), caption: 'voice journaling: reflect, save, and get support' },
-      { src: P('TrulyHer', 'app-screens-2.webp'), caption: 'affirmation tasks, the emotion cloud, and mood journey' },
-      { src: P('TrulyHer', 'app-screens-3.webp'), caption: 'history, badges, and personal insights' },
-      { src: P('TrulyHer', 'app-screens-4.webp'), caption: 'AI-generated insights: strengths, patterns, and growth areas' },
-      { src: P('TrulyHer', 'hackathons-11.webp'), caption: 'our photo strip from TechNova 2025' },
-      { src: P('TrulyHer', 'hackathons-12.webp'), caption: 'TechNova swag and stickers' },
-    ],
-  },
-  {
-    id: 'llm-security-research',
-    title: 'LLM SECURITY RESEARCH',
-    piece: 't',
-    tagline: 'Co-authoring a Symposium on Usable Privacy and Security (SOUPS) research paper on how users seek security and privacy advice from large language models, evaluating the accuracy of that advice against expert guidance.',
-    tags: ['Research', 'LLMs', 'Security', 'Privacy', 'SOUPS'],
-    cat: 'research',
-    year: '2026',
-    writeup: [
-      'Large language models (LLMs) have become common advisors for the security and privacy questions people once brought to forums, documentation, or a knowledgeable friend. This work examines the quality and accuracy of LLM-generated responses and evaluates them against expert judgement.',
-      'Building the dataset was the bulk of the work, inputting 78 usable security and privacy prompts drawn from 54 online sources through two models. I am currently writing the results section, which centres on where ChatGPT and Claude converge and diverge when compared to a golden dataset. We are finalizing everything for submission, with findings also going to CAN-CWiC and IEEE S&P.',
-    ],
-    images: [
-      { src: P('LLM-Security-Research', 'paper-fade.webp'), caption: 'paper preview' },
-      { src: P('LLM-Security-Research', 'usenix-flat.webp'), caption: 'aiming for the USENIX SOUPS symposium' },
-      { src: P('LLM-Security-Research', 'cancwic-crop.webp'), caption: 'presenting at CAN-CWiC 2026, University of Waterloo' },
-    ],
-  },
-  {
     id: 'tetris-juliann',
     title: 'PERSONAL WEBSITE',
     piece: 's',
@@ -113,6 +109,52 @@ const PROJECTS: Project[] = [
       { src: P('tetris-website', 'ideation-04.webp'), caption: 'an early build of the Side Quests section' },
       { src: P('tetris-website', 'ideation-05.webp'), caption: 'end-tile options for the Side Quests carousel' },
       { src: P('tetris-website', 'old-radar-chart.webp'), caption: 'old radar chart design' },
+    ],
+  },
+  {
+    id: 'project-tech-careers',
+    title: 'PROJECT TECH CAREERS',
+    piece: 'i',
+    tagline: 'Four-stage mentorship platform supporting women at different stages of their computer science education, connecting them with mentors and resources along the way. Won the Gender Equality Track Award.',
+    tags: ['JavaScript', 'HTML', 'CSS', 'UI/UX'],
+    cat: 'web',
+    year: 'May 2024',
+    writeup: [
+      'Women went from 37% of computer science majors in 1984 to 17% in 2023. Those numbers do not happen at once, it happens at every stage. We built this site in four of them: beginner coding classes for middle schoolers, a calendar of women-in-STEM events and hackathons for high schoolers, a networking guide, and interview prep and job matching for people finishing a degree.',
+      'None of us had built much of anything before this, but we were building something we wished for ourselves a few years earlier. Back then, we did not know what a hackathon was or that most of these paths existed.',
+    ],
+    images: [
+      { src: P('PTC', 'ptc-1.webp'), caption: 'winning the Gender Equality track as Team Jinlira' },
+      { src: P('PTC', 'ptc-7.webp'), caption: 'the problem: women majoring in CS fell from 37% in 1984 to 17% in 2023' },
+      { src: P('PTC', 'ptc-8.webp'), caption: 'our solution: a four-stage site of resources, jobs, events, and mentors' },
+      { src: P('PTC', 'ptc-5.webp'), caption: 'beginner coding class picks for middle schoolers' },
+      { src: P('PTC', 'ptc-6.webp'), caption: 'the networking guide: what it is, why it matters, and how to start' },
+      { src: P('PTC', 'ptc-4.webp'), caption: 'the high school events calendar, full of women-in-STEM hackathons and classes' },
+      { src: P('PTC', 'ptc-2.webp'), caption: 'the post-graduate interview prep page, with curated video guides' },
+      { src: P('PTC', 'ptc-3.webp'), caption: 'the job-matching form: filter by education, field, location, and salary' },
+    ],
+  },
+  {
+    id: 'trulyher',
+    title: 'TRULYHER',
+    piece: 'o',
+    tagline: 'AI-powered web app that helps women in computer science manage imposter syndrome through speech and text journaling paired with real-time mood detection.',
+    tags: ['React', 'JavaScript', 'HTML', 'CSS', 'Base44', 'UI/UX'],
+    cat: 'ai',
+    year: 'Sep 2025',
+    github: 'https://github.com/ErinGu0/TrulyHer',
+    devpost: 'https://devpost.com/software/trulyher',
+    writeup: [
+      'When you\'re surrounded by talented people, it\'s hard not to compare yourself. For a lot of women in tech, that comparison settles into imposter syndrome, which our team has experienced firsthand. TrulyHer lets you vent by voice or text, reads the mood behind what you said, tracks how it shifts over time, and suggests strategies that follow your own patterns instead of generic advice. It also creates a mood tracking dashboard to show their ups and downs over time, offering encouragement and guidance along the way.',
+      'None of us had built an app before, so most of the weekend went into learning as we went. We picked up how to lay out an interface someone would actually want to open, and how much work colour and spacing do to set the mood of a page.',
+    ],
+    images: [
+      { src: P('TrulyHer', 'app-screens-1.webp'), caption: 'voice journaling: reflect, save, and get support' },
+      { src: P('TrulyHer', 'app-screens-2.webp'), caption: 'affirmation tasks, the emotion cloud, and mood journey' },
+      { src: P('TrulyHer', 'app-screens-3.webp'), caption: 'history, badges, and personal insights' },
+      { src: P('TrulyHer', 'app-screens-4.webp'), caption: 'AI-generated insights: strengths, patterns, and growth areas' },
+      { src: P('TrulyHer', 'hackathons-11.webp'), caption: 'our photo strip from TechNova 2025' },
+      { src: P('TrulyHer', 'hackathons-12.webp'), caption: 'TechNova swag and stickers' },
     ],
   },
   {
@@ -182,48 +224,6 @@ const PROJECTS: Project[] = [
       { src: P('Charg-E', 'IMG_9850.webp'), caption: 'trade offer mode' },
     ],
   },
-  {
-    id: 'project-tech-careers',
-    title: 'PROJECT TECH CAREERS',
-    piece: 'i',
-    tagline: 'Four-stage mentorship platform supporting women at different stages of their computer science education, connecting them with mentors and resources along the way. Won the Gender Equality Track Award.',
-    tags: ['JavaScript', 'HTML', 'CSS', 'UI/UX'],
-    cat: 'web',
-    year: 'May 2024',
-    writeup: [
-      'Women went from 37% of computer science majors in 1984 to 17% in 2023. Those numbers do not happen at once, it happens at every stage. We built this site in four of them: beginner coding classes for middle schoolers, a calendar of women-in-STEM events and hackathons for high schoolers, a networking guide, and interview prep and job matching for people finishing a degree.',
-      'None of us had built much of anything before this, but we were building something we wished for ourselves a few years earlier. Back then, we did not know what a hackathon was or that most of these paths existed.',
-    ],
-    images: [
-      { src: P('PTC', 'ptc-1.webp'), caption: 'winning the Gender Equality track as Team Jinlira' },
-      { src: P('PTC', 'ptc-7.webp'), caption: 'the problem: women majoring in CS fell from 37% in 1984 to 17% in 2023' },
-      { src: P('PTC', 'ptc-8.webp'), caption: 'our solution: a four-stage site of resources, jobs, events, and mentors' },
-      { src: P('PTC', 'ptc-5.webp'), caption: 'beginner coding class picks for middle schoolers' },
-      { src: P('PTC', 'ptc-6.webp'), caption: 'the networking guide: what it is, why it matters, and how to start' },
-      { src: P('PTC', 'ptc-4.webp'), caption: 'the high school events calendar, full of women-in-STEM hackathons and classes' },
-      { src: P('PTC', 'ptc-2.webp'), caption: 'the post-graduate interview prep page, with curated video guides' },
-      { src: P('PTC', 'ptc-3.webp'), caption: 'the job-matching form: filter by education, field, location, and salary' },
-    ],
-  },
-  {
-    id: 'grafana-dashboards',
-    title: 'GRAFANA DASHBOARDS',
-    piece: 't',
-    tagline: 'Satellite system monitoring dashboards built with Grafana and MySQL data sources, reduced dashboard load time by 86% through SQL query optimization.',
-    tags: ['MySQL', 'SQLAlchemy', 'FastAPI', 'APScheduler', 'MariaDB'],
-    cat: 'ai',
-    year: '2026',
-    images: [
-      { src: P('Grafana-Dashboards', 'architecture.svg'), caption: 'system architecture: scheduled analysis pipeline between the source and results databases' },
-      { src: P('Grafana-Dashboards', 'ai-layer-traffic.webp'), caption: 'the AI layer: traffic averages, 60-day forecasts, anomaly detail and a generated summary. panel titles and data changed for confidentiality, every series is Grafana random walk' },
-      { src: P('Grafana-Dashboards', 'ai-layer-signal-quality.webp'), caption: 'the same layer over signal quality metrics. panel titles and data changed for confidentiality, every series is Grafana random walk' },
-    ],
-    writeup: [
-      'The Network Services Team monitors satellite performance, data usage, and network telemetry across a lot of moving parts, and most of that lived in dashboards that could tell you what happened without telling you what it meant. I built an AI layer on top of the existing data: a service that produces forecasts, flags unusual network activity, monitors the performance metrics, and writes plain-language dashboard summaries to reflect signal quality stats.',
-      'The part I found most interesting was that Grafana can only chart what a data source hands it, so I built a new data source for the AI output and a Python service behind it that generates the results, schedules the jobs, and writes them somewhere the dashboards can query. The forecasting, anomaly flagging, and generated summaries arrive as panels rather than as a separate tool.',
-      'I am building my own dashboards on top of it and pushing the work into the engineering repo so it can run in production. Currently, I am adding colour overrides by regex so my panels match the conventions of the dashboards the team already uses, and keeping the high-level design document updated under version control as the design shifts.',
-    ],
-  },
 ]
 
 // Used by App to title the tab on a /projects/<id> deep link.
@@ -281,7 +281,7 @@ function BackButton({ c, onBack }: { c: string; onBack: () => void }) {
       onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)' }}
       style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', padding: 0, marginBottom: 32, transition: 'color 140ms' }}>
       <Icon icon="pixelarticons:arrow-left" style={{ fontSize: '0.875rem' }} />
-      Back to Build Log
+      Back to Project Portfolio
     </button>
   )
 }
@@ -509,7 +509,7 @@ export function Projects({ openId, onOpen, onBack }: { openId: string | null; on
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, marginBottom: 28 }}>
         <div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-i)' }}>// Completed lines</div>
-          <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Build Log</h2>
+          <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--text-strong)', margin: '14px 0 0', textTransform: 'uppercase' }}>Project Portfolio</h2>
         </div>
         <ScrollTetromino3D
           className="tj-float-projects-s"

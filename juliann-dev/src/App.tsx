@@ -120,7 +120,7 @@ const SITE_TITLE = 'Juliann Zhu · Software Developer & CS Student @ UWaterloo'
 const SECTION_TITLES: Record<Screen, string> = {
   home: SITE_TITLE,
   about: 'About · Juliann Zhu',
-  projects: 'Build Log · Juliann Zhu',
+  projects: 'Project Portfolio · Juliann Zhu',
   sidequests: 'Side Quests · Juliann Zhu',
   now: 'Now · Juliann Zhu',
   contact: 'Contact · Juliann Zhu',
@@ -169,7 +169,7 @@ export default function App() {
     document.title =
       route.overlay === 'resume' ? 'Resume · Juliann Zhu'
       : route.overlay === 'play' ? 'Play Tetris · Juliann Zhu'
-      : route.project ? `${projectTitle(route.project) ?? 'Build Log'} · Juliann Zhu`
+      : route.project ? `${projectTitle(route.project) ?? 'Project Portfolio'} · Juliann Zhu`
       : route.quest ? `${questTitle(route.quest) ?? 'Side Quests'} · Juliann Zhu`
       : SECTION_TITLES[route.section]
   }, [route])
