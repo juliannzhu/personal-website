@@ -215,6 +215,8 @@ const PROJECTS: Project[] = [
     year: '2026',
     images: [
       { src: P('Grafana-Dashboards', 'architecture.svg'), caption: 'system architecture: scheduled analysis pipeline between the source and results databases' },
+      { src: P('Grafana-Dashboards', 'ai-layer-traffic.webp'), caption: 'the AI layer: traffic averages, 60-day forecasts, anomaly detail and a generated summary. panel titles and data changed for confidentiality, every series is Grafana random walk' },
+      { src: P('Grafana-Dashboards', 'ai-layer-signal-quality.webp'), caption: 'the same layer over signal quality metrics. panel titles and data changed for confidentiality, every series is Grafana random walk' },
     ],
     writeup: [
       'The Network Services Team monitors satellite performance, data usage, and network telemetry across a lot of moving parts, and most of that lived in dashboards that could tell you what happened without telling you what it meant. I built an AI layer on top of the existing data: a service that produces forecasts, flags unusual network activity, monitors the performance metrics, and writes plain-language dashboard summaries to reflect signal quality stats.',
