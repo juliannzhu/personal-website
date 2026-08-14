@@ -28,16 +28,26 @@ function beep(freq: number, dur: number, type: OscillatorType = 'square', vol = 
 }
 
 // ---- background music ---------------------------------------------------------------
-// Juliann playing the Tetris theme. The file is one 45.748s loop cut from the recording at a
-// point where the phrase returns to the chorus, phase-aligned to the sample and crossfaded
-// across the seam, so it repeats without a join.
+// Juliann playing the Tetris theme. The file is the single opening E note followed by exactly
+// one 45.784s period of the piece, cut where the phrase repeats, phase-aligned to the sample
+// and crossfaded across the join so it repeats without a seam.
+//
+// Playback starts at 0 so the E is heard once; the loop region begins just after it, so the E
+// never comes back around:
+//
+//   0.000s ──── 0.240s ─────────────────────── 46.024s
+//      E        loopStart               loopEnd ↺
 //
 // Played through an AudioBufferSourceNode rather than an <audio loop> tag on purpose: AAC
-// carries encoder padding, so an audio element inserts a short gap every time it wraps.
-// Looping a decoded buffer is sample-accurate.
+// carries encoder padding, so an audio element inserts a short gap every time it wraps, and
+// it has no equivalent of loopStart. Looping a decoded buffer is sample-accurate.
 const MUSIC_URL = '/assets/audio/tetris-theme-loop.m4a'
+const LOOP_START = 0.24
+const LOOP_END = 46.0238
 const MUSIC_GAIN = 0.22          // sits under the SFX beeps (0.05 - 0.13) rather than over them
-const FADE = 0.4
+const START_DELAY = 0.4          // a beat of silence after the toggle click before the E lands
+const FADE_IN = 0.05             // just enough to avoid a click; short so the E is not ducked
+const FADE_OUT = 0.4
 
 let musicBuf: AudioBuffer | null = null
 let musicReq: Promise<AudioBuffer | null> | null = null
@@ -64,16 +74,22 @@ async function startBg() {
   // The visitor may have muted again while the file was still downloading.
   if (!buf || !enabled || musicSrc) return
 
+  const at = c.currentTime + START_DELAY
+
   musicGain = c.createGain()
-  musicGain.gain.setValueAtTime(0.0001, c.currentTime)
-  musicGain.gain.linearRampToValueAtTime(MUSIC_GAIN, c.currentTime + FADE)
+  musicGain.gain.setValueAtTime(0.0001, at)
+  musicGain.gain.linearRampToValueAtTime(MUSIC_GAIN, at + FADE_IN)
   musicGain.connect(c.destination)
 
   const src = c.createBufferSource()
   src.buffer = buf
   src.loop = true
+  src.loopStart = LOOP_START
+  // Guard against an AAC decode coming back a hair short of the authored length, which would
+  // otherwise leave loopEnd past the end of the buffer.
+  src.loopEnd = Math.min(LOOP_END, buf.duration)
   src.connect(musicGain)
-  src.start()
+  src.start(at)
   musicSrc = src
 }
 
@@ -85,9 +101,9 @@ function stopBg() {
   const t = ctx.currentTime
   gain.gain.cancelScheduledValues(t)
   gain.gain.setValueAtTime(gain.gain.value, t)
-  gain.gain.linearRampToValueAtTime(0.0001, t + FADE)
+  gain.gain.linearRampToValueAtTime(0.0001, t + FADE_OUT)
   src.onended = () => { src.disconnect(); gain.disconnect() }
-  try { src.stop(t + FADE + 0.05) } catch { /* already stopped */ }
+  try { src.stop(t + FADE_OUT + 0.05) } catch { /* already stopped */ }
 }
 
 export function setEnabled(on: boolean) {
