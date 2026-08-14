@@ -145,9 +145,6 @@ const ART_GALLERY: BentoPhoto[] = [
   { src: Q('art/art-38.webp') },
   { src: Q('art/art-39.webp') },
   { src: Q('art/art-40.webp') },
-  { src: Q('art/art-42.webp') },
-  { src: Q('art/art-43.webp') },
-  { src: Q('art/art-44.webp') },
 ]
 
 const BAKING_GALLERY: BentoPhoto[] = [
