@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1900 930" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8aa6" />
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1900" height="930" fill="#0a0a12" />
+
+  <!-- decorative piece -->
+  <g fill="#3cf000">
+    <rect x="1772" y="56" width="26" height="26" />
+    <rect x="1798" y="56" width="26" height="26" />
+    <rect x="1746" y="82" width="26" height="26" />
+    <rect x="1772" y="82" width="26" height="26" />
+  </g>
+
+  <!-- header -->
+  <text x="60" y="76" fill="#00f0f0" font-size="17" letter-spacing="3">// SYSTEM FLOW</text>
+  <text x="60" y="118" fill="#ffffff" font-size="42" font-weight="800" letter-spacing="2" font-family="Arial, Helvetica, sans-serif">ARCHITECTURE</text>
+  <text x="60" y="150" fill="#8a8aa6" font-size="16">React SPA on Vercel, with serverless APIs for the leaderboard and contact form.</text>
+
+  <!-- ===== Row 1: build + deploy pipeline ===== -->
+  <rect x="60" y="200" width="340" height="140" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="60" y="200" width="340" height="6" fill="#ff9f1c" />
+  <text x="86" y="240" fill="#ff9f1c" font-size="14" letter-spacing="2">01</text>
+  <text x="86" y="270" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="1">DEVELOPER</text>
+  <text x="86" y="300" fill="#8a8aa6" font-size="14">git push origin main</text>
+
+  <rect x="450" y="200" width="340" height="140" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="450" y="200" width="340" height="6" fill="#00f0f0" />
+  <text x="476" y="240" fill="#00f0f0" font-size="14" letter-spacing="2">02</text>
+  <text x="476" y="270" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="1">GITHUB</text>
+  <text x="476" y="300" fill="#8a8aa6" font-size="14">juliannzhu/personal-website</text>
+
+  <rect x="840" y="200" width="340" height="140" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="840" y="200" width="340" height="6" fill="#f5d800" />
+  <text x="866" y="240" fill="#f5d800" font-size="14" letter-spacing="2">03</text>
+  <text x="866" y="270" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="1">VERCEL</text>
+  <text x="866" y="298" fill="#8a8aa6" font-size="14">tsc -b &amp;&amp; vite build</text>
+  <text x="866" y="320" fill="#8a8aa6" font-size="14">auto-deploy · global CDN</text>
+
+  <line x1="400" y1="270" x2="450" y2="270" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <line x1="790" y1="270" x2="840" y2="270" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+
+  <!-- deploy: Vercel -> Browser (vertical) -->
+  <line x1="1010" y1="340" x2="1010" y2="430" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <text x="1024" y="392" fill="#8a8aa6" font-size="13">deploys SPA</text>
+
+  <!-- deploy: Vercel -> serverless functions (orthogonal elbow) -->
+  <polyline points="1180,270 1420,270 1420,430" fill="none" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <text x="1196" y="262" fill="#8a8aa6" font-size="13">deploys API fns</text>
+
+  <!-- ===== Row 2: browser (left) + /api/scores + Redis (right) ===== -->
+  <!-- 04 Browser -->
+  <rect x="60" y="430" width="1120" height="180" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="60" y="430" width="1120" height="6" fill="#3cf000" />
+  <text x="86" y="470" fill="#3cf000" font-size="14" letter-spacing="2">04</text>
+  <text x="86" y="502" fill="#ffffff" font-size="24" font-weight="700" letter-spacing="1">BROWSER · CLIENT</text>
+  <text x="86" y="536" fill="#8a8aa6" font-size="15">React 19 + Vite 6 + TypeScript (strict), rendered entirely client-side</text>
+  <text x="86" y="560" fill="#8a8aa6" font-size="15">CSS custom-property design tokens · Iconify icons · client-side routing, no SSR</text>
+  <text x="86" y="584" fill="#5c5c78" font-size="14">Calls the leaderboard and contact APIs over fetch; everything else runs in the browser</text>
+
+  <!-- 05 /api/scores -->
+  <rect x="1300" y="430" width="240" height="180" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="1300" y="430" width="240" height="6" fill="#f5d800" />
+  <text x="1326" y="470" fill="#f5d800" font-size="14" letter-spacing="2">05</text>
+  <text x="1326" y="500" fill="#ffffff" font-size="17" font-weight="700" letter-spacing="1">/API/SCORES</text>
+  <text x="1326" y="534" fill="#8a8aa6" font-size="13">GET top 20 · POST score</text>
+  <text x="1326" y="556" fill="#5c5c78" font-size="12">Vercel Function (Node)</text>
+
+  <!-- 06 Upstash Redis -->
+  <rect x="1660" y="430" width="200" height="180" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="1660" y="430" width="200" height="6" fill="#ff9f1c" />
+  <text x="1686" y="470" fill="#ff9f1c" font-size="14" letter-spacing="2">06</text>
+  <text x="1686" y="500" fill="#ffffff" font-size="16" font-weight="700" letter-spacing="1">UPSTASH REDIS</text>
+  <text x="1686" y="534" fill="#8a8aa6" font-size="13">sorted set</text>
+  <text x="1686" y="556" fill="#5c5c78" font-size="12">top 20 · shared</text>
+
+  <!-- browser <-> /api/scores (horizontal, two-way) -->
+  <line x1="1180" y1="520" x2="1300" y2="520" stroke="#8a8aa6" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+  <text x="1240" y="512" fill="#8a8aa6" font-size="12" text-anchor="middle">GET / POST</text>
+  <text x="1240" y="539" fill="#5c5c78" font-size="12" text-anchor="middle">scores</text>
+
+  <!-- /api/scores -> redis (horizontal) -->
+  <line x1="1540" y1="520" x2="1660" y2="520" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <text x="1600" y="512" fill="#8a8aa6" font-size="11" text-anchor="middle">ZADD/ZRANGE</text>
+
+  <!-- browser -> subsystems (vertical) -->
+  <line x1="230" y1="610" x2="230" y2="660" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <line x1="620" y1="610" x2="620" y2="660" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <line x1="1010" y1="610" x2="1010" y2="660" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+
+  <!-- browser -> /api/contact (orthogonal elbow through the right-hand gutter) -->
+  <polyline points="1180,570 1225,570 1225,750 1300,750" fill="none" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+
+  <!-- ===== Row 3: client subsystems (left) + /api/contact + Resend (right) ===== -->
+  <rect x="60" y="660" width="340" height="180" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="60" y="660" width="340" height="6" fill="#b14cff" />
+  <text x="86" y="704" fill="#b14cff" font-size="18" font-weight="700" letter-spacing="1">REACT STATE</text>
+  <text x="86" y="740" fill="#8a8aa6" font-size="14">useState / useRef</text>
+  <text x="86" y="764" fill="#8a8aa6" font-size="14">nav · game loop · UI · animation</text>
+  <text x="86" y="788" fill="#5c5c78" font-size="13">in-memory, resets on reload</text>
+
+  <rect x="450" y="660" width="340" height="180" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="450" y="660" width="340" height="6" fill="#3d6bff" />
+  <text x="476" y="704" fill="#3d6bff" font-size="18" font-weight="700" letter-spacing="1">LOCALSTORAGE</text>
+  <text x="476" y="740" fill="#8a8aa6" font-size="14">settings · keybinds</text>
+  <text x="476" y="764" fill="#8a8aa6" font-size="14">achievements</text>
+  <text x="476" y="788" fill="#5c5c78" font-size="13">leaderboard: offline fallback only</text>
+
+  <rect x="840" y="660" width="340" height="180" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="840" y="660" width="340" height="6" fill="#ff3b3b" />
+  <text x="866" y="704" fill="#ff3b3b" font-size="18" font-weight="700" letter-spacing="1">WEB AUDIO</text>
+  <text x="866" y="740" fill="#8a8aa6" font-size="14">synthesized 8-bit SFX</text>
+  <text x="866" y="764" fill="#8a8aa6" font-size="14">looped piano recording</text>
+  <text x="866" y="788" fill="#5c5c78" font-size="13">loads on first unmute and loops</text>
+
+  <!-- 07 /api/contact -->
+  <rect x="1300" y="660" width="240" height="180" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="1300" y="660" width="240" height="6" fill="#f5d800" />
+  <text x="1326" y="700" fill="#f5d800" font-size="14" letter-spacing="2">07</text>
+  <text x="1326" y="730" fill="#ffffff" font-size="17" font-weight="700" letter-spacing="1">/API/CONTACT</text>
+  <text x="1326" y="764" fill="#8a8aa6" font-size="13">POST · validate + send</text>
+  <text x="1326" y="786" fill="#8a8aa6" font-size="13">honeypot spam guard</text>
+  <text x="1326" y="808" fill="#5c5c78" font-size="12">Vercel Function (Node)</text>
+
+  <!-- 08 Resend -->
+  <rect x="1660" y="660" width="200" height="180" fill="#18182a" stroke="#3b3b5c" stroke-width="2" />
+  <rect x="1660" y="660" width="200" height="6" fill="#00f0f0" />
+  <text x="1686" y="700" fill="#00f0f0" font-size="14" letter-spacing="2">08</text>
+  <text x="1686" y="730" fill="#ffffff" font-size="17" font-weight="700" letter-spacing="1">RESEND</text>
+  <text x="1686" y="764" fill="#8a8aa6" font-size="13">email delivery</text>
+  <text x="1686" y="786" fill="#8a8aa6" font-size="13">lands in your inbox</text>
+  <text x="1686" y="808" fill="#5c5c78" font-size="12">onboarding sender</text>
+
+  <!-- /api/contact -> resend (horizontal) -->
+  <line x1="1540" y1="750" x2="1660" y2="750" stroke="#8a8aa6" stroke-width="2" marker-end="url(#arrow)" />
+  <text x="1600" y="742" fill="#8a8aa6" font-size="11" text-anchor="middle">send email</text>
+
+  <!-- footer -->
+  <text x="60" y="892" fill="#5c5c78" font-size="13">// React SPA on Vercel. Two serverless functions: /api/scores backed by Upstash Redis, and /api/contact sending mail through Resend.</text>
+</svg>
