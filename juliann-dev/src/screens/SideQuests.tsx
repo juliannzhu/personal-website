@@ -436,13 +436,12 @@ const QUESTS: QuestCard[] = [
     // Explicit photo order for the scattered polaroid layout (shuffled). Lists only the photos
     // that exist in public/assets/quests/people/ — update this list when photos are added/removed.
     images: [
-      23, 88, 57, 5, 37, 54, 16, 12, 25, 36, 13, 29, 94, 32, 50, 93,
-      41, 95, 63, 39, 97, 53, 55, 19, 92, 52, 31, 20, 3, 71, 82, 60,
-      62, 81, 30, 84, 61, 17, 66, 59, 8, 43, 9, 68, 18, 70, 28, 10,
-      69, 45, 87, 86, 34, 14, 51, 75, 21, 58, 73, 91, 85, 42, 6, 2,
-      80, 26, 67, 96, 38, 48, 27, 90, 4, 89, 83, 44, 65,
+      23, 57, 5, 37, 54, 16, 12, 25, 36, 13, 29, 32, 50, 41, 63, 97,
+      55, 19, 92, 52, 31, 20, 3, 71, 82, 60, 81, 84, 61, 17, 66, 59,
+      8, 9, 68, 18, 70, 10, 69, 45, 87, 86, 34, 14, 75, 21, 58, 73,
+      91, 85, 42, 6, 2, 26, 67, 48, 90, 4, 89, 83, 44, 65,
     ].map((n) => Q(`people/people-${n}.webp`)),
-    cover: Q('people/people-38.webp'),
+    cover: Q('people/people-63.webp'),
     layout: 'polaroid',
   },
   {

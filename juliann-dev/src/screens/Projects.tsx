@@ -11,7 +11,7 @@ import { unlock } from '../lib/achievements'
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
 type Cat = 'all' | 'web' | 'ai' | 'research'
 
-// images live in /public/assets/build-log/<ProjectName>/ — add screenshots and list them in each
+// images live in /public/assets/project-portfolio/<ProjectName>/ — add screenshots and list them in each
 // project's `images` array. An entry may be a plain URL or `{ src, caption }` to caption that slide.
 type ProjectImage = string | { src: string; caption?: string }
 // `wip` marks a project that's still being built: the detail page shows a coming-soon panel
@@ -20,8 +20,8 @@ type ProjectImage = string | { src: string; caption?: string }
 // story for projects worth more than the one-line tagline. Not every project needs one.
 type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; github?: string; devpost?: string; images?: ProjectImage[]; wip?: boolean; writeup?: string[] }
 
-// images live in /public/assets/build-log/<folder>/
-const P = (folder: string, file: string) => `/assets/build-log/${folder}/${file}`
+// images live in /public/assets/project-portfolio/<folder>/
+const P = (folder: string, file: string) => `/assets/project-portfolio/${folder}/${file}`
 
 const PROJECTS: Project[] = [
   {
