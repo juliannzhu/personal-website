@@ -125,10 +125,12 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   },
 ]
 
-const UPCOMING: { piece: Piece; title: string; text: string }[] = [
+// `when` replaces the generic SOON badge once a date is actually known.
+const UPCOMING: { piece: Piece; title: string; text: string; when?: string }[] = [
   {
     piece: 'z',
     title: 'TEDx Ottawa',
+    when: 'Nov 2026',
     text: 'Writing and delivering a TEDxOttawa talk exploring this year\'s theme, Continuum, and the ideas it sparks for me.',
   },
   {
@@ -229,7 +231,7 @@ export function Now() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                     <div style={{ fontSize: '0.9375rem', color: 'var(--text-strong)', fontWeight: 600, lineHeight: 1.3 }}>{u.title}</div>
-                    <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.4375rem', background: c, color: 'var(--ink-900)', padding: '3px 5px', flexShrink: 0, letterSpacing: '0.04em', alignSelf: 'flex-start' }}>SOON</span>
+                    <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.4375rem', background: c, color: 'var(--ink-900)', padding: '3px 5px', flexShrink: 0, letterSpacing: '0.04em', alignSelf: 'flex-start', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{u.when ?? 'SOON'}</span>
                   </div>
                   <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.5, marginTop: 3 }}>{u.text}</div>
                 </div>
