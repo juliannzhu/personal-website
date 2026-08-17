@@ -1,106 +1,9 @@
-import { useEffect, useState } from 'react'
-import { Icon } from '@iconify/react'
 import { Card } from '../components/ds/Card'
 import { Badge } from '../components/ds/Badge'
 import { Tetromino } from '../components/ds/Tetromino'
 import { ScrollTetromino3D } from '../components/ScrollTetromino3D'
 
 type Piece = 'i' | 'o' | 't' | 's' | 'z' | 'j' | 'l'
-
-// duration in seconds — real track lengths, so the progress bar takes the actual song length to fill
-const NOW_PLAYING_SONGS: { title: string; artist: string; album: string; piece: Piece; duration: number }[] = [
-  { title: 'As It Was',       artist: 'Harry Styles', album: "Harry's House",             piece: 'i', duration: 167 },
-  { title: 'Blinding Lights', artist: 'The Weeknd',   album: 'After Hours',               piece: 'o', duration: 200 },
-  { title: 'Anti-Hero',       artist: 'Taylor Swift', album: 'Midnights',                 piece: 't', duration: 200 },
-  { title: 'Flowers',         artist: 'Miley Cyrus',  album: 'Endless Summer Vacation',   piece: 's', duration: 200 },
-  { title: 'Cruel Summer',    artist: 'Taylor Swift', album: 'Lover',                     piece: 'l', duration: 178 },
-]
-const TICK_MS = 250
-
-function formatTime(totalSeconds: number) {
-  const s = Math.max(0, Math.floor(totalSeconds))
-  const m = Math.floor(s / 60)
-  const rem = s % 60
-  return `${m}:${rem.toString().padStart(2, '0')}`
-}
-
-const NOW_PLAYING_CSS = `
-@keyframes tj-eq-a { 0%,100% { height: 4px; }  50% { height: 14px; } }
-@keyframes tj-eq-b { 0%,100% { height: 11px; } 40% { height: 3px; }  75% { height: 13px; } }
-@keyframes tj-eq-c { 0%,100% { height: 6px; }  30% { height: 14px; } 65% { height: 4px; } }
-@keyframes tj-eq-d { 0%,100% { height: 12px; } 45% { height: 4px; }  80% { height: 10px; } }
-.tj-eq-bar-0 { animation: tj-eq-a 0.9s ease-in-out infinite; }
-.tj-eq-bar-1 { animation: tj-eq-b 1.1s ease-in-out infinite; }
-.tj-eq-bar-2 { animation: tj-eq-c 0.8s ease-in-out infinite; }
-.tj-eq-bar-3 { animation: tj-eq-d 1.0s ease-in-out infinite; }
-.tj-np-progress { transition: width ${TICK_MS}ms linear; }
-`
-let nowPlayingCssInjected = false
-function ensureNowPlayingCSS() {
-  if (!nowPlayingCssInjected && typeof document !== 'undefined') {
-    const s = document.createElement('style'); s.textContent = NOW_PLAYING_CSS; document.head.appendChild(s); nowPlayingCssInjected = true
-  }
-}
-
-function NowPlaying() {
-  ensureNowPlayingCSS()
-  const [index, setIndex] = useState(0)
-  const [elapsed, setElapsed] = useState(0)
-
-  const song = NOW_PLAYING_SONGS[index]
-
-  useEffect(() => {
-    setElapsed(0)
-    const t = setInterval(() => {
-      setElapsed((e) => {
-        const next = e + TICK_MS / 1000
-        if (next >= song.duration) {
-          setIndex((i) => (i + 1) % NOW_PLAYING_SONGS.length)
-          return 0
-        }
-        return next
-      })
-    }, TICK_MS)
-    return () => clearInterval(t)
-  }, [index, song.duration])
-
-  const c = `var(--piece-${song.piece})`
-  const pct = Math.min(100, (elapsed / song.duration) * 100)
-
-  return (
-    <Card accent={song.piece} accentBar style={{ marginTop: 18 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-        <Icon icon="pixelarticons:volume-2" style={{ fontSize: '0.8125rem', color: c }} />
-        <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>Now playing on Spotify</span>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        <div style={{
-          width: 52, height: 52, flexShrink: 0, borderRadius: 'var(--radius-1)',
-          background: `linear-gradient(135deg, ${c}, color-mix(in srgb, ${c} 40%, var(--ink-900)))`,
-          boxShadow: 'inset 2px 2px 0 rgba(255,255,255,0.25), inset -2px -2px 0 rgba(0,0,0,0.35)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <Icon icon="pixelarticons:music" style={{ fontSize: '1.375rem', color: 'var(--ink-900)' }} />
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
-            <div style={{ fontSize: '0.9375rem', color: 'var(--text-strong)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.title}</div>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'var(--text-faint)', flexShrink: 0 }}>{formatTime(elapsed)} / {formatTime(song.duration)}</span>
-          </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.artist} · {song.album}</div>
-          <div style={{ marginTop: 9, height: 3, background: 'var(--bg-well)', borderRadius: 2, overflow: 'hidden' }}>
-            <div className="tj-np-progress" style={{ height: '100%', width: `${pct}%`, background: c }} />
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 14, flexShrink: 0 }}>
-          {[0, 1, 2, 3].map((i) => (
-            <span key={i} className={`tj-eq-bar-${i}`} style={{ width: 3, background: 'var(--piece-s)', borderRadius: 1 }} />
-          ))}
-        </div>
-      </div>
-    </Card>
-  )
-}
 
 const NOW: { piece: Piece; label: string; text: string }[] = [
   {
@@ -207,8 +110,6 @@ export function Now() {
           </Card>
         ))}
       </div>
-
-      <NowPlaying />
 
       <div style={{ marginTop: 28 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
