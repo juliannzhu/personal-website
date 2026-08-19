@@ -89,20 +89,20 @@ const EXPERIENCE = [
     piece: 's' as Piece,
     bullets: [
       'Developed 8 Grafana dashboards with MySQL data sources to monitor satellite network performance across 12 metrics, cutting load times by 86% through dynamic filtering and optimized SQL queries.',
-      'Shipped an AI-driven analytics service that generates summaries, detects unusual network activity, extends predictive forecasting by 60x, cuts pipeline runtime by 78%, lowers false-positive anomaly alerts by 80%.',
-      'Delivered the system’s architecture and new AI-driven monitoring features to engineering leadership, backed by a high-level design document and live technical demo of visualization and usability improvements.',
+      'Shipped an AI-driven analytics service that generates summaries, detects unusual network activity, extends predictive forecasting by 60x, cuts pipeline runtime by 78%, and lowers false-positive anomaly alerts by 80%.',
+      'Delivered the system architecture and new AI-driven monitoring features to engineering leadership, backed by a high-level design document and live technical demo of visualization and usability improvements.',
     ],
   },
   {
     title: 'Usable Security & Privacy Research',
-    sub: 'Women in Math DRP, University of Waterloo',
+    sub: 'University of Waterloo',
     role: 'Undergraduate Research Mentee',
     location: 'Waterloo, ON',
     date: 'Jan 2026 - Present',
     piece: 'j' as Piece,
     bullets: [
       'Co-authoring an academic research paper for the Symposium On Usable Privacy and Security investigating how users seek security and privacy advice from LLMs, with findings to be presented at the Annual Celebration of Women in Computing 2026 Conference (CAN-CWiC) and IEEE S&P.',
-      'Analyzing 2 LLMs against 78 privacy and usable security prompts sourced from 54 online databases, evaluating advice against expert feedback from 3 security researchers to assess accuracy and risks.',
+      'Constructed a validated golden-answer dataset from 54 online databases and analyzed 2 LLMs against 100 privacy and security prompts across 15 demographic and thematic categories, using a rubric co-developed with 3 security and HCI researchers to score comprehensibility, actionability, and technical efficacy.',
     ],
   },
 ]
@@ -124,14 +124,14 @@ const RESUME_PROJECTS = [
   {
     title: 'TrulyHer',
     sub: 'Technova',
-    role: 'AI Integration & Front-End Developer',
+    role: 'AI Integration & Full Stack Developer',
     location: 'Waterloo, ON',
-    date: 'Sep 2025',
+    date: 'Sep 2025 - Aug 2026',
     piece: 't' as Piece,
-    tools: ['React', 'JavaScript', 'HTML', 'CSS', 'Base44', 'VS Code'],
+    tools: ['React', 'JavaScript', 'PostgreSQL', 'pgvector', 'Node.js', 'PyTorch', 'ONNX', 'Vercel'],
     bullets: [
-      'Developed an AI-powered web application with speech and text input helping women in computer science manage imposter syndrome, featuring journaling and mood detection across 11 tracked emotional states.',
-      'Designed an interactive dashboard visualizing emotional trends and personalized insights from 200+ journal entries across 5 chart views, encouraging mental health awareness and empowering underrepresented groups.',
+      'Built full-stack RAG application using React, Node.js, and PostgreSQL with pgvector to help women in CS manage imposter syndrome by enabling semantic search across 200+ journal entries via HNSW vector embeddings, generating personalized emotional trend reports across 5 analytics views.',
+      'Detected imposter syndrome at 0.92 F1 on 200 hand-labeled entries by training a DistilBERT classifier, calibrating its confidence scores and exporting to ONNX with INT8 quantization to run in-browser.',
     ],
   },
   {
@@ -150,9 +150,9 @@ const RESUME_PROJECTS = [
 
 const SKILLS: { label: string; piece: Piece; items: string[] }[] = [
   { label: 'Languages',          piece: 'i', items: ['Python', 'JavaScript', 'HTML/CSS', 'C/C++', 'Racket', 'SQL', 'Bash', 'Swift'] },
-  { label: 'Data and Analytics', piece: 'o', items: ['MySQL', 'MongoDB Atlas', 'InfluxDB', 'pandas', 'NumPy', 'Grafana'] },
-  { label: 'Frameworks and APIs',piece: 't', items: ['React', 'Gemini API', 'Node.js', 'REST APIs', 'SQLAlchemy', 'Uvicorn', 'Resend API'] },
-  { label: 'Tools and Systems',  piece: 's', items: ['Git/Github', 'Linux', 'Google Cloud Platform', 'VirtualBox', 'VS Code', 'Xcode'] },
+  { label: 'Data and Analytics', piece: 'o', items: ['MongoDB Atlas', 'InfluxDB', 'pandas', 'NumPy', 'Grafana', 'PostgreSQL', 'pgvector', 'scikit-learn'] },
+  { label: 'Frameworks and APIs',piece: 't', items: ['React', 'Gemini API', 'Node.js', 'REST APIs', 'SQLAlchemy', 'Uvicorn', 'Resend API', 'PyTorch'] },
+  { label: 'Tools and Systems',  piece: 's', items: ['Git/Github', 'Linux', 'Google Cloud Platform', 'VirtualBox', 'VS Code', 'Xcode', 'Vercel'] },
 ]
 
 const CONTACT = [
@@ -210,7 +210,7 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
             <div className="tj-resume-entry-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
               <div>
                 <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.8125rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>University of Waterloo</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: 8 }}>BCS, Honours Computer Science with Co-operative Program</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: 8 }}>BCS, Honours Computer Science with Co-operative Program, GPA: 3.7/4.0</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--piece-o)', marginTop: 8 }}>President Scholarship of Distinction</div>
               </div>
               <div className="tj-resume-meta tj-resume-meta-flush" style={{ textAlign: 'right', flexShrink: 0 }}>
