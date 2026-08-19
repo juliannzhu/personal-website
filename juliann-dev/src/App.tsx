@@ -2,7 +2,7 @@ import { useState, useRef, useLayoutEffect, useEffect, useCallback, lazy, Suspen
 import { TopNav, FixedFooter, type Screen } from './components/layout/TopNav'
 import { AchievementToast } from './components/SiteAchievements'
 import { unlock, markSection } from './lib/achievements'
-import { useRoute, navigate, back, type Overlay } from './lib/router'
+import { useRoute, navigate, back, routeToPath, type Overlay, type Route } from './lib/router'
 import { FallingField } from './components/layout/FallingField'
 import { RevealOnScroll } from './components/ds/RevealOnScroll'
 import { Hero } from './screens/Hero'
@@ -159,6 +159,24 @@ export default function App() {
   // scroll below then sees nothing left to do.
   const settledRef = useRef(false)
 
+  // Which detail page is open, held separately from the URL. Scrolling past an open project
+  // into Now or Contact should move the URL along with the reader, but it must not unmount the
+  // detail: the grid and the detail are wildly different heights, so tearing it down mid-scroll
+  // would yank the page. These keep it mounted while the URL follows the scroll, and the spy
+  // below puts the id back in the URL when you scroll back onto that section.
+  const [openProjectId, setOpenProjectId] = useState<string | null>(null)
+  const [openQuestId, setOpenQuestId] = useState<string | null>(null)
+  const openProjectRef = useRef<string | null>(null); openProjectRef.current = openProjectId
+  const openQuestRef = useRef<string | null>(null); openQuestRef.current = openQuestId
+
+  // The URL leads only while it is actually naming that section. Once the spy has moved the URL
+  // to /now, route.project is gone, and reading it here would close the detail we just kept.
+  useEffect(() => {
+    if (route.overlay) return
+    if (route.section === 'projects') setOpenProjectId(route.project ?? null)
+    if (route.section === 'sidequests') setOpenQuestId(route.quest ?? null)
+  }, [route.section, route.project, route.quest, route.overlay])
+
   // Site-exploration achievements: unlock "Welcome" once the loader clears (so its toast
   // isn't hidden behind the loading screen), then mark each section as the scroll-spy
   // surfaces it (so scrolling OR clicking nav both count toward "Explorer").
@@ -178,7 +196,7 @@ export default function App() {
   // anywhere, including to/from the hero, is always just a smooth scroll to that section.
   const go = useCallback((id: Screen) => {
     const r = routeRef.current
-    const detailOpen = Boolean(r.project || r.quest)
+    const detailOpen = (id === 'projects' && !!openProjectRef.current) || (id === 'sidequests' && !!openQuestRef.current)
     // Clicking the section you're already on does nothing, unless a detail page is open —
     // then it closes back out to the grid, which dropping the id from the URL does for us.
     if (r.section === id && !detailOpen) return
@@ -209,13 +227,18 @@ export default function App() {
       ratios.forEach((ratio, id) => { if (ratio > bestRatio) { bestRatio = ratio; best = id } })
       if (!best) return
       if (!settledRef.current) return
-      // A detail page or an overlay owns the URL while it's open — the sections behind it
-      // are still being observed, and letting them write would close it out from under us.
+      // An overlay covers the page, so leave the URL alone while one is up.
       const r = routeRef.current
-      if (r.project || r.quest || r.overlay) return
-      if (r.section === best) return
+      if (r.overlay) return
+      // Carry the open detail's id along, so scrolling back onto its section restores the
+      // shareable /projects/<id> URL rather than dropping to the bare section.
+      const target: Route =
+        best === 'projects' && openProjectRef.current ? { section: 'projects', project: openProjectRef.current }
+        : best === 'sidequests' && openQuestRef.current ? { section: 'sidequests', quest: openQuestRef.current }
+        : { section: best }
+      if (routeToPath(r) === routeToPath(target)) return
       lastScrolledRef.current = best
-      navigate({ section: best }, { replace: true })
+      navigate(target, { replace: true })
     }, { root, threshold: [0.15, 0.3, 0.45, 0.6, 0.75] })
     STACK_IDS.forEach((id) => { const el = sectionRefs.current[id]; if (el) io.observe(el) })
     return () => io.disconnect()
@@ -282,8 +305,8 @@ export default function App() {
             {REST_IDS.map((id) => (
               <div key={id} data-section={id} ref={(el) => { sectionRefs.current[id] = el }}>
                 <RevealOnScroll>{
-                  id === 'sidequests' ? <SideQuests openId={route.quest ?? null} onOpen={openQuest} onBack={() => closeTo('sidequests')} />
-                  : id === 'projects' ? <Projects openId={route.project ?? null} onOpen={openProject} onBack={() => closeTo('projects')} />
+                  id === 'sidequests' ? <SideQuests openId={openQuestId} onOpen={openQuest} onBack={() => closeTo('sidequests')} />
+                  : id === 'projects' ? <Projects openId={openProjectId} onOpen={openProject} onBack={() => closeTo('projects')} />
                   : STACK_SCREENS[id]
                 }</RevealOnScroll>
               </div>
