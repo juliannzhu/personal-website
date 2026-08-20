@@ -104,6 +104,7 @@ const PROJECTS: Project[] = [
       'It started as a weekend hackathon project and I kept working on it for the year after. The first version was a prototype with none of this underneath it, and most of what I learned came from replacing those pieces one at a time.',
     ],
     images: [
+      { src: P('TrulyHer', 'architecture.svg'), caption: 'project architecture: how one entry becomes a grounded response' },
       { src: P('TrulyHer', 'app-screens-1.webp'), caption: 'voice journaling: reflect, save, and get support' },
       { src: P('TrulyHer', 'app-screens-2.webp'), caption: 'affirmation tasks, the emotion cloud, and mood journey' },
       { src: P('TrulyHer', 'app-screens-3.webp'), caption: 'history, badges, and personal insights' },

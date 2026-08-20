@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1820 896" width="1820" height="896" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="warm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#EE8A63"/>
+      <stop offset="1" stop-color="#E0568C"/>
+    </linearGradient>
+    <filter id="soft" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="2" stdDeviation="7" flood-color="#C08A72" flood-opacity="0.16"/>
+    </filter>
+    <marker id="arrCoral" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#EE8A63"/>
+    </marker>
+    <marker id="arrPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8B5CF6"/>
+    </marker>
+    <marker id="arrInk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#93818B"/>
+    </marker>
+  </defs>
+
+  <rect width="1820" height="896" fill="#FFF8EF"/>
+
+  <!-- ── header ───────────────────────────────────────────────── -->
+  <text x="40" y="56" font-size="37" font-weight="700" fill="#33262E">Project Architecture</text>
+  <rect x="40" y="76" width="96" height="4" rx="2" fill="url(#warm)"/>
+
+  <rect x="1200" y="34" width="16" height="16" rx="4" fill="#FFFFFF" stroke="#EE8A63" stroke-width="2"/>
+  <text x="1226" y="48" font-size="15" fill="#5F4E58">classification, in the browser</text>
+  <rect x="1500" y="34" width="16" height="16" rx="4" fill="#FFFFFF" stroke="#8B5CF6" stroke-width="2"/>
+  <text x="1526" y="48" font-size="15" fill="#5F4E58">retrieval, in Postgres</text>
+
+  <!-- ── the entry ────────────────────────────────────────────── -->
+  <rect x="40" y="286" width="185" height="132" rx="8" fill="#FFFFFF" stroke="#EBDACE" stroke-width="2" filter="url(#soft)"/>
+  <text x="64" y="318" font-size="16" font-weight="700" fill="#33262E" letter-spacing="0.6">JOURNAL ENTRY</text>
+  <text x="64" y="348" font-size="14" fill="#5F4E58">voice or text</text>
+  <text x="64" y="378" font-size="13" fill="#93818B">whatever you needed</text>
+  <text x="64" y="398" font-size="13" fill="#93818B">to get out that day</text>
+
+  <!-- ── upper branch: classification, on device ──────────────── -->
+  <text x="290" y="170" font-size="13.5" fill="#B08C7C" letter-spacing="2.2" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">ON DEVICE · THE ENTRY NEVER LEAVES THE BROWSER</text>
+  <rect x="290" y="180" width="605" height="162" rx="12" fill="#FEF1EB" stroke="#F2BBA2" stroke-width="2" stroke-dasharray="8 6"/>
+
+  <rect x="310" y="194" width="240" height="134" rx="8" fill="url(#warm)" filter="url(#soft)"/>
+  <text x="334" y="228" font-size="20" font-weight="700" fill="#FFFFFF" letter-spacing="0.8">DISTILBERT</text>
+  <text x="334" y="260" font-size="14" fill="#FFEDE5">fine-tuned on 200 entries</text>
+  <text x="334" y="282" font-size="14" fill="#FFEDE5">we labelled by hand</text>
+  <text x="334" y="312" font-size="13" fill="#FFDCCF" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">INT8 ONNX · 67 MB</text>
+
+  <rect x="595" y="194" width="280" height="134" rx="8" fill="#FFFFFF" stroke="#EE8A63" stroke-width="2" filter="url(#soft)"/>
+  <text x="619" y="226" font-size="17" font-weight="700" fill="#33262E" letter-spacing="0.6">5 PATTERN SCORES</text>
+  <text x="619" y="258" font-size="14" fill="#5F4E58">one score per pattern,</text>
+  <text x="619" y="280" font-size="14" fill="#5F4E58">not one overall verdict</text>
+  <text x="619" y="310" font-size="13" fill="#E0568C" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">0.92 F1 · calibrated</text>
+
+  <!-- ── lower branch: retrieval, in postgres ─────────────────── -->
+  <rect x="290" y="362" width="605" height="162" rx="12" fill="#F7F3FF" stroke="#C4B0F0" stroke-width="2" stroke-dasharray="8 6"/>
+
+  <rect x="310" y="376" width="240" height="134" rx="8" fill="#FFFFFF" stroke="#8B5CF6" stroke-width="2" filter="url(#soft)"/>
+  <text x="334" y="408" font-size="17" font-weight="700" fill="#33262E" letter-spacing="0.6">EMBED</text>
+  <text x="334" y="440" font-size="14" fill="#5F4E58">the same entry, as a</text>
+  <text x="334" y="462" font-size="14" fill="#5F4E58">point in vector space</text>
+  <text x="334" y="492" font-size="13" fill="#8B5CF6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">768 dimensions</text>
+
+  <rect x="595" y="376" width="280" height="134" rx="8" fill="#FFFFFF" stroke="#8B5CF6" stroke-width="2" filter="url(#soft)"/>
+  <text x="619" y="408" font-size="16" font-weight="700" fill="#33262E" letter-spacing="0.5">POSTGRESQL + PGVECTOR</text>
+  <text x="619" y="440" font-size="14" fill="#5F4E58">HNSW index over every</text>
+  <text x="619" y="462" font-size="14" fill="#5F4E58">entry you have written</text>
+  <text x="619" y="492" font-size="13" fill="#8B5CF6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">top-k nearest by cosine</text>
+
+  <text x="290" y="548" font-size="13.5" fill="#9E8BC4" letter-spacing="2.2" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">IN POSTGRES · SEARCHED BY MEANING, NOT BY KEYWORD</text>
+
+  <!-- ── convergence ──────────────────────────────────────────── -->
+  <rect x="960" y="274" width="250" height="156" rx="8" fill="#FFFFFF" stroke="#33262E" stroke-width="2" filter="url(#soft)"/>
+  <text x="984" y="306" font-size="17" font-weight="700" fill="#33262E" letter-spacing="0.6">GROUNDED PROMPT</text>
+  <text x="984" y="338" font-size="14" fill="#5F4E58">the scores, plus the entries</text>
+  <text x="984" y="360" font-size="14" fill="#5F4E58">you wrote before</text>
+  <text x="984" y="390" font-size="13" fill="#93818B">Gemini writes the words, it</text>
+  <text x="984" y="408" font-size="13" fill="#93818B">never picks the pattern</text>
+
+  <rect x="1265" y="324" width="160" height="56" rx="8" fill="#FDEEE7" stroke="#EE8A63" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="1345" y="347" text-anchor="middle" font-size="12.5" font-weight="700" fill="#E0568C" letter-spacing="0.6">REPEAT GUARD</text>
+  <text x="1345" y="367" text-anchor="middle" font-size="11.5" fill="#C77E96" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">cosine ≥ 0.85</text>
+  <text x="1345" y="402" text-anchor="middle" font-size="12.5" fill="#A3919B">drops advice you have heard</text>
+
+  <rect x="1480" y="286" width="300" height="132" rx="8" fill="#FFFFFF" stroke="#EBDACE" stroke-width="2" filter="url(#soft)"/>
+  <text x="1504" y="318" font-size="16" font-weight="700" fill="#33262E" letter-spacing="0.6">RESULTS</text>
+  <text x="1504" y="350" font-size="14" fill="#5F4E58">the pattern named, plus the entry</text>
+  <text x="1504" y="372" font-size="14" fill="#5F4E58">that says you have been here</text>
+  <text x="1504" y="394" font-size="14" fill="#5F4E58">before</text>
+
+  <!-- ── arrows ───────────────────────────────────────────────── -->
+  <path d="M225,324 C268,324 268,261 300,261" fill="none" stroke="#EE8A63" stroke-width="2" marker-end="url(#arrCoral)"/>
+  <path d="M225,380 C268,380 268,443 300,443" fill="none" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arrPurple)"/>
+
+  <line x1="550" y1="261" x2="589" y2="261" stroke="#EE8A63" stroke-width="2" marker-end="url(#arrCoral)"/>
+  <line x1="550" y1="443" x2="589" y2="443" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arrPurple)"/>
+
+  <path d="M875,261 C918,261 918,314 950,314" fill="none" stroke="#EE8A63" stroke-width="2" marker-end="url(#arrCoral)"/>
+  <path d="M875,443 C918,443 918,390 950,390" fill="none" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arrPurple)"/>
+
+  <line x1="1210" y1="352" x2="1259" y2="352" stroke="#93818B" stroke-width="2" marker-end="url(#arrInk)"/>
+  <line x1="1425" y1="352" x2="1474" y2="352" stroke="#93818B" stroke-width="2" marker-end="url(#arrInk)"/>
+
+  <!-- ── bottom row ───────────────────────────────────────────── -->
+  <line x1="40" y1="584" x2="1780" y2="584" stroke="#EFE0D6" stroke-width="1.5"/>
+
+  <rect x="40" y="616" width="640" height="240" rx="6" fill="#FFFCF7" stroke="#EFE0D6" stroke-width="1.5"/>
+  <path d="M46,616 h628 a6,6 0 0 1 6,6 v34 h-640 v-34 a6,6 0 0 1 6,-6 z" fill="#33262E"/>
+  <text x="64" y="642" font-size="15" font-weight="700" fill="#FFFFFF" letter-spacing="1">WHO DOES WHAT</text>
+
+  <text x="64" y="712" font-size="14" font-weight="700" fill="#33262E">The classifier decides</text>
+  <text x="64" y="740" font-size="13.5" fill="#7C6A74">Ask a language model how confident it is</text>
+  <text x="64" y="762" font-size="13.5" fill="#7C6A74">and it will agree with whatever you hint</text>
+  <text x="64" y="784" font-size="13.5" fill="#7C6A74">at. A small fine-tuned model answers the</text>
+  <text x="64" y="806" font-size="13.5" fill="#7C6A74">same way twice.</text>
+
+  <text x="376" y="712" font-size="14" font-weight="700" fill="#33262E">The language model writes</text>
+  <text x="376" y="740" font-size="13.5" fill="#7C6A74">Gemini gets the scores and the entries</text>
+  <text x="376" y="762" font-size="13.5" fill="#7C6A74">that came back, then turns them into</text>
+  <text x="376" y="784" font-size="13.5" fill="#7C6A74">something worth reading. It is never</text>
+  <text x="376" y="806" font-size="13.5" fill="#7C6A74">asked what the entry means.</text>
+
+  <rect x="710" y="616" width="580" height="240" rx="6" fill="#FFFCF7" stroke="#EFE0D6" stroke-width="1.5"/>
+  <path d="M716,616 h568 a6,6 0 0 1 6,6 v34 h-580 v-34 a6,6 0 0 1 6,-6 z" fill="#33262E"/>
+  <text x="734" y="642" font-size="15" font-weight="700" fill="#FFFFFF" letter-spacing="1">STACK</text>
+
+  <g font-size="14" fill="#33262E">
+    <text x="734" y="712">React</text><text x="1010" y="712" text-anchor="end" font-size="13" fill="#93818B">frontend</text>
+    <text x="734" y="744">Node.js</text><text x="1010" y="744" text-anchor="end" font-size="13" fill="#93818B">API</text>
+    <text x="734" y="776">PostgreSQL</text><text x="1010" y="776" text-anchor="end" font-size="13" fill="#93818B">entries and embeddings</text>
+    <text x="734" y="808">pgvector + HNSW</text><text x="1010" y="808" text-anchor="end" font-size="13" fill="#93818B">the vector index</text>
+
+    <text x="1040" y="712">PyTorch</text><text x="1266" y="712" text-anchor="end" font-size="13" fill="#93818B">trained the classifier</text>
+    <text x="1040" y="744">ONNX Runtime Web</text><text x="1266" y="744" text-anchor="end" font-size="13" fill="#93818B">in the tab</text>
+    <text x="1040" y="776">Gemini</text><text x="1266" y="776" text-anchor="end" font-size="13" fill="#93818B">writes the response</text>
+    <text x="1040" y="808">Vercel</text><text x="1266" y="808" text-anchor="end" font-size="13" fill="#93818B">hosting</text>
+  </g>
+
+  <rect x="1320" y="616" width="460" height="240" rx="6" fill="#FFFCF7" stroke="#EFE0D6" stroke-width="1.5"/>
+  <path d="M1326,616 h448 a6,6 0 0 1 6,6 v34 h-460 v-34 a6,6 0 0 1 6,-6 z" fill="#33262E"/>
+  <text x="1344" y="642" font-size="15" font-weight="700" fill="#FFFFFF" letter-spacing="1">WHAT I MEASURED</text>
+
+  <text x="1490" y="678" font-size="11.5" fill="#A3919B" letter-spacing="1.6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">CLASSIFIER</text>
+  <text x="1344" y="704" font-size="30" font-weight="700" fill="#33262E">0.92</text>
+  <text x="1490" y="704" font-size="12.5" fill="#5F4E58">F1 on entries held out of training</text>
+  <line x1="1344" y1="716" x2="1756" y2="716" stroke="#EFE0D6"/>
+
+  <text x="1490" y="742" font-size="11.5" fill="#A3919B" letter-spacing="1.6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">TRAINING DATA</text>
+  <text x="1344" y="768" font-size="30" font-weight="700" fill="#33262E">200</text>
+  <text x="1490" y="768" font-size="12.5" fill="#5F4E58">entries labelled by hand, one by one</text>
+  <line x1="1344" y1="780" x2="1756" y2="780" stroke="#EFE0D6"/>
+
+  <text x="1490" y="806" font-size="11.5" fill="#A3919B" letter-spacing="1.6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">IN THE BROWSER</text>
+  <text x="1344" y="832" font-size="30" font-weight="700" fill="#33262E">67<tspan font-size="17" fill="#7C6A74"> MB</tspan></text>
+  <text x="1490" y="832" font-size="12.5" fill="#5F4E58">INT8 ONNX build, downloaded once</text>
+</svg>
