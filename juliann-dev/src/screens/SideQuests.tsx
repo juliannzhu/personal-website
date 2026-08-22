@@ -334,7 +334,7 @@ const QUESTS: QuestCard[] = [
     images: [Q('piano/piano-5.webp')],
     layout: 'bento',
     gallery: PIANO_GALLERY,
-    videos: videosFor('piano', [1, 8, 3, 4, 5, 6, 7, 9, 10, 11], {
+    videos: videosFor('piano', [1, 8, 3, 4, 5, 6, 7, 9, 10, 11, 12], {
       1: 'Romantic Flight from How to Train Your Dragon by John Powell',
       8: "Mia & Sebastian's Theme by Justin Hurwitz",
       9: 'Someone Like You by Adele',
