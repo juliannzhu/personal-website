@@ -24,7 +24,7 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   {
     piece: 't',
     label: 'Playing',
-    text: 'Working through Talking to the Moon by Bruno Mars on piano. The bridge has other ideas, but I\'m gaining on it.',
+    text: 'Learning Just the Two of Us by Grover Washington Jr. and Bill Withers on piano. Those chord changes move a lot more than they let on.',
   },
 ]
 
