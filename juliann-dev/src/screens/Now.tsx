@@ -9,7 +9,7 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   {
     piece: 'i',
     label: 'Building',
-    text: 'MySQL and Grafana dashboards for satellite telemetry at ORBCOMM. Prototyping an AI layer to flag signal anomalies automatically.',
+    text: 'MySQL and Grafana dashboards for satellite telemetry at ORBCOMM.',
   },
   {
     piece: 'o',
