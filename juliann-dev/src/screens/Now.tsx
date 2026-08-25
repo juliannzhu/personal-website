@@ -14,7 +14,7 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   {
     piece: 'o',
     label: 'Learning',
-    text: 'A rotation of easy recipes that survive a dorm kitchen and I could bring to a potluck.',
+    text: 'Google AI Essentials, a course on using AI tools in everyday work.',
   },
   {
     piece: 's',
