@@ -4,6 +4,17 @@ My personal website, built from scratch with a Tetris-inspired look and feel. It
 
 Live at [juliannzhu.vercel.app](https://juliannzhu.vercel.app/).
 
+## What's in here
+
+```
+juliann-dev/            the site itself, and the only thing that gets deployed
+TETRIS_design_system/   the design system I wrote first: voice, tokens, components
+```
+
+I designed the system before building anything, so the colours, type scale, and spacing in
+the site all trace back to `TETRIS_design_system/`. It's here because the reasoning is half
+the project.
+
 ## Built with
 
 - **React 19** + **Vite**
@@ -15,9 +26,10 @@ Live at [juliannzhu.vercel.app](https://juliannzhu.vercel.app/).
 
 ## Running it locally
 
-Node 22.
+Node 22. Everything runs from `juliann-dev/`, not the repo root.
 
 ```bash
+cd juliann-dev
 npm install
 npm run dev
 ```
@@ -33,11 +45,11 @@ npm run icons     # regenerate src/lib/icons.ts (also runs automatically before 
 npm run sitemap   # regenerate public/sitemap.xml (also runs automatically before a build)
 ```
 
-`public/sitemap.xml` is generated from the routes and the project/quest ids in the source, so
-adding a project puts it in the sitemap on the next build. `public/robots.txt` is hand-written
-and points at it.
+`juliann-dev/public/sitemap.xml` is generated from the routes and the project/quest ids in the
+source, so adding a project puts it in the sitemap on the next build.
+`juliann-dev/public/robots.txt` is hand-written and points at it.
 
-One thing to know: `npm run dev` only serves the front end. The functions in `api/` don't run under Vite, so the contact form won't send and the leaderboard falls back to local scores stored in the browser. Use `vercel dev` or a deploy preview if you need to work on those.
+One thing to know: `npm run dev` only serves the front end. The functions in `juliann-dev/api/` don't run under Vite, so the contact form won't send and the leaderboard falls back to local scores stored in the browser. Use `vercel dev` or a deploy preview if you need to work on those.
 
 ## Routes
 
@@ -50,11 +62,11 @@ Every view has its own URL, so any of these can be linked to directly:
 /resume  /play       the resume and the Tetris game
 ```
 
-`vercel.json` rewrites unknown paths to `index.html` so deep links survive a hard refresh. Static files and `/api/*` are matched first, so they're unaffected.
+`juliann-dev/vercel.json` rewrites unknown paths to `index.html` so deep links survive a hard refresh. Static files and `/api/*` are matched first, so they're unaffected.
 
 ## Environment variables
 
-Set on Vercel, needed by the functions in `api/`:
+Set on Vercel, needed by the functions in `juliann-dev/api/`:
 
 | Variable | Used for |
 |---|---|
