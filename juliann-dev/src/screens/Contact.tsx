@@ -93,7 +93,7 @@ export function Contact() {
                 <Input label="Email" name="email" type="email" value={form.email} onChange={update('email')} placeholder="you@email.com" required />
               </div>
               <div style={{ marginBottom: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <Textarea label="Message" name="message" value={form.message} onChange={update('message')} placeholder="What are we building?" required style={{ flex: 1, minHeight: 120 }} />
+                <Textarea label="Message" name="message" value={form.message} onChange={update('message')} placeholder="What's on your mind?" required style={{ flex: 1, minHeight: 120 }} />
               </div>
               {/* Honeypot: hidden from real users; bots that fill it get silently dropped server-side */}
               <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true"
