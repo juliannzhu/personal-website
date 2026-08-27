@@ -1,5 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+// Vercel Web Analytics: page views and visitor counts, no cookies. The `/react` entry point is
+// the one for a plain Vite SPA; `/next` is for Next.js and won't resolve here.
+import { Analytics } from '@vercel/analytics/react'
 // Registers the pixelarticons used on the site up front. Without this, @iconify/react
 // fetches each one from api.iconify.design at render time — a third-party round trip on
 // every visit, with the icons popping in after the rest of the page has painted.
@@ -20,5 +23,6 @@ import App from './App'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
+    <Analytics />
   </StrictMode>,
 )
