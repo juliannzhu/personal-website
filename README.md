@@ -1,14 +1,14 @@
 # juliann.dev
 
-My personal website, built from scratch with a Tetris-inspired look and feel. It's where I put my projects, my resume, and a few of the other things I spend my time on outside of code.
+My Tetris-themed personal website, including my projects, resume, and a few other side quests.
 
 Live at [juliannzhu.vercel.app](https://juliannzhu.vercel.app/).
 
-A few years ago I was obsessed with Tetris, to the point where I would close my eyes and still see pieces falling. Somewhere in those hundreds of hours it started shaping how I think: anticipate the obstacle, stay calm under pressure, stay flexible with the strategy. So when I built this site, I knew I didn't want a generic, flat digital business card. I wanted people to get a sense of my personality immediately, so I designed the whole thing around Tetris and hid references in the layout, the colour palette, the animations, and the interactions.
+A few years ago I was obsessed with Tetris, to the point where I would close my eyes and still see pieces falling. Somewhere in those hundreds of hours it started shaping how I think, like staying calm under pressure when things stack up. So when I built this site, I knew I didn't want a generic, flat digital business card. I wanted people to get a sense of my personality, so I designed the whole thing around Tetris and hid references in the layout, the colour palette, the animations, and the interactions.
 
-The hardest part was capturing the feeling that made me love Tetris in the first place. Every iteration came out slightly off, and I lost hours to small visual details nobody will ever consciously notice. To me this project represents more than a portfolio. It's a reflection of my personal journey as someone who loves building, enjoys the process, and won't stop until I create exactly what I was picturing.
+The hardest part was capturing the feeling that made me love Tetris in the first place. Every version came out slightly off, and I lost hours to small details nobody will ever notice. To me, this project represents more than a portfolio. It's a reflection of my personal journey as someone who loves building, enjoys the process, and won't stop until I create exactly what I was picturing.
 
-## What's in here
+## Project structure
 
 ```
 juliann-dev/            the React app, deployed to Vercel
@@ -16,10 +16,10 @@ juliann-dev/            the React app, deployed to Vercel
 
 ## Built with
 
-- **React 19**
-- **Vite**
-- **TypeScript**
-- **Iconify** (pixelarticons)
+- React 19
+- Vite
+- TypeScript
+- Iconify (pixelarticons)
 - Plain CSS with custom properties
 - Self-hosted fonts via `@fontsource`: Press Start 2P, Inter, JetBrains Mono, latin subset only
 - Vercel serverless functions for the contact form (Resend) and the Tetris leaderboard (Upstash Redis)
