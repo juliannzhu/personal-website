@@ -88,9 +88,9 @@ const EXPERIENCE = [
     date: 'May 2026 - Present',
     piece: 's' as Piece,
     bullets: [
-      'Developed 8 Grafana dashboards with MySQL data sources to monitor satellite network performance across 12 metrics, cutting load times by 86% through dynamic filtering and optimized SQL queries.',
+      'Developed 8 Grafana dashboards with MySQL data pipelines to monitor satellite network performance across 12 metrics, cutting load times by 86% through dynamic filtering and optimized SQL queries.',
       'Shipped an AI-driven analytics service that generates summaries, detects unusual network activity, extends predictive forecasting by 60x, cuts pipeline runtime by 78%, and lowers false-positive anomaly alerts by 80%.',
-      'Delivered the system architecture and new AI-driven monitoring features to engineering leadership, backed by a high-level design document and live technical demo of visualization and usability improvements.',
+      'Delivered the system architecture and new AI-driven monitoring features to engineering leadership, backed by a system design document and live technical demo of visualization and usability improvements.',
     ],
   },
   {
@@ -101,7 +101,7 @@ const EXPERIENCE = [
     date: 'Jan 2026 - Present',
     piece: 'j' as Piece,
     bullets: [
-      'Co-authoring an academic research paper for the Symposium On Usable Privacy and Security investigating how users seek security and privacy advice from LLMs, with findings to be presented at the Annual Celebration of Women in Computing 2026 Conference (CAN-CWiC) and IEEE S&P.',
+      'Co-authoring an academic research paper for the Symposium On Usable Privacy and Security investigating how users seek security and privacy advice from Large Language Models (LLMs), with findings to be presented at the Annual Celebration of Women in Computing 2026 Conference (CAN-CWiC) and IEEE S&P.',
       'Constructed a validated golden-answer dataset from 54 online databases and analyzed 2 LLMs against 100 privacy and security prompts across 15 demographic and thematic categories, using a rubric co-developed with 3 security and HCI researchers to score comprehensibility, actionability, and technical efficacy.',
     ],
   },
@@ -128,14 +128,14 @@ const RESUME_PROJECTS = [
     location: 'Waterloo, ON',
     date: 'Sep 2025 - Aug 2026',
     piece: 't' as Piece,
-    tools: ['React', 'JavaScript', 'PostgreSQL', 'pgvector', 'Node.js', 'PyTorch', 'ONNX', 'Vercel'],
+    tools: ['React', 'TypeScript', 'PostgreSQL', 'pgvector', 'Node.js', 'PyTorch', 'ONNX', 'Vercel'],
     bullets: [
-      'Built full-stack RAG application using React, Node.js, and PostgreSQL with pgvector to help women in CS manage imposter syndrome by enabling semantic search across 200+ journal entries via HNSW vector embeddings, generating personalized emotional trend reports across 5 analytics views.',
-      'Detected imposter syndrome at 0.92 F1 on 200 hand-labeled entries by training a DistilBERT classifier, calibrating its confidence scores and exporting to ONNX with INT8 quantization to run in-browser.',
+      'Built full-stack Retrieval-Augmented Generation (RAG) application using React, Node.js, and PostgreSQL with pgvector to help women in CS manage imposter syndrome by enabling semantic search across 200+ journal entries via HNSW vector embeddings, generating personalized emotional trend reports across 5 analytics views.',
+      'Detected imposter syndrome at 0.92 F1 on 200 hand-labeled entries by training a DistilBERT classifier with an object-oriented ML pipeline, calibrating confidence scores and exporting to ONNX with INT8 quantization.',
     ],
   },
   {
-    title: 'Project Tech Careers Hackathon',
+    title: 'Project Tech Careers',
     role: 'Platform Designer and UI/UX Developer',
     location: 'Ottawa, ON',
     date: 'May - Jun 2024',
@@ -149,10 +149,10 @@ const RESUME_PROJECTS = [
 ]
 
 const SKILLS: { label: string; piece: Piece; items: string[] }[] = [
-  { label: 'Languages',          piece: 'i', items: ['Python', 'JavaScript', 'HTML/CSS', 'C/C++', 'Racket', 'SQL', 'Bash', 'Swift'] },
+  { label: 'Languages',          piece: 'i', items: ['Python', 'C/C++', 'Java', 'JavaScript', 'TypeScript', 'HTML/CSS', 'SQL', 'Bash', 'Swift', 'R'] },
   { label: 'Data and Analytics', piece: 'o', items: ['MongoDB Atlas', 'InfluxDB', 'pandas', 'NumPy', 'Grafana', 'PostgreSQL', 'pgvector', 'scikit-learn'] },
   { label: 'Frameworks and APIs',piece: 't', items: ['React', 'Gemini API', 'Node.js', 'REST APIs', 'SQLAlchemy', 'Uvicorn', 'Resend API', 'PyTorch'] },
-  { label: 'Tools and Systems',  piece: 's', items: ['Git/Github', 'Linux', 'Google Cloud Platform', 'VirtualBox', 'VS Code', 'Xcode', 'Vercel'] },
+  { label: 'Tools and Systems',  piece: 's', items: ['Git/GitHub', 'Linux', 'Google Cloud Platform', 'VirtualBox', 'VS Code', 'Xcode', 'Vercel', 'AWS'] },
 ]
 
 const CONTACT = [
