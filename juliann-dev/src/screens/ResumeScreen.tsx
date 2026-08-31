@@ -85,12 +85,12 @@ const EXPERIENCE = [
     sub: 'Network Services Department',
     role: 'Network Engineering Intern',
     location: 'Ottawa, ON',
-    date: 'May 2026 - Present',
+    date: 'May 2026 - Sep 2026',
     piece: 's' as Piece,
     bullets: [
       'Developed 8 Grafana dashboards with MySQL data pipelines to monitor satellite network performance across 12 metrics, cutting load times by 86% through dynamic filtering and optimized SQL queries.',
-      'Shipped an AI-driven analytics service that generates summaries, detects unusual network activity, extends predictive forecasting by 60x, cuts pipeline runtime by 78%, and lowers false-positive anomaly alerts by 80%.',
-      'Delivered the system architecture and new AI-driven monitoring features to engineering leadership, backed by a system design document and live technical demo of visualization and usability improvements.',
+      'Shipped an AI-driven analytics service using FastAPI, APScheduler, PyMySQL, Jinja2, and MariaDB that extends predictive forecasting by 60x, cuts pipeline runtime by 78%, and lowers false-positive anomaly alerts by 80%.',
+      'Delivered the system architecture and AI-driven monitoring features to engineering leadership, supported by a system design document and live technical demo.',
     ],
   },
   {
@@ -101,7 +101,8 @@ const EXPERIENCE = [
     date: 'Jan 2026 - Present',
     piece: 'j' as Piece,
     bullets: [
-      'Co-authoring an academic research paper for the Symposium On Usable Privacy and Security investigating how users seek security and privacy advice from Large Language Models (LLMs), with findings to be presented at the Annual Celebration of Women in Computing 2026 Conference (CAN-CWiC) and IEEE S&P.',
+      'Co-authoring a research paper for the Symposium On Usable Privacy and Security on how users seek security and privacy advice from Large Language Models (LLMs).',
+      'Presented at the Annual Celebration of Women in Computing 2026 Conference (CAN-CWiC) and IEEE S&P.',
       'Constructed a validated golden-answer dataset from 54 online databases and analyzed 2 LLMs against 100 privacy and security prompts across 15 demographic and thematic categories, using a rubric co-developed with 3 security and HCI researchers to score comprehensibility, actionability, and technical efficacy.',
     ],
   },
@@ -117,7 +118,7 @@ const RESUME_PROJECTS = [
     piece: 'l' as Piece,
     tools: ['Swift', 'Python', 'C++', 'SwiftUI', 'MongoDB Atlas', 'Auth0', 'Gemini API', 'Vercel', 'Websockets'],
     bullets: [
-      'Built a clip-on white cane module that detects overhead hazards within a 4m range for visually impaired users, pairing ToF sensors and 30 FPS YOLOv6 camera detection on an Arduino UNO Q feed into a Python/FastAPI pipeline to classify hazards via Gemini vision and narrate within 3 seconds via ElevenLabs.',
+      'Built a clip-on white cane module to detect overhead hazards within a 4m range for visually impaired users, pairing ToF sensors and 30 FPS YOLOv6 camera detection on an Arduino UNO Q with a Python/FastAPI pipeline to classify hazards via Gemini vision and narrate within 3 seconds via ElevenLabs.',
       'Developed companion SwiftUI iPhone and Apple Watch apps with directional haptics, 4-tier SOS alerts, and Auth0-secured sync of incidents and contacts to MongoDB Atlas via a Node.js serverless proxy.',
     ],
   },
@@ -130,7 +131,7 @@ const RESUME_PROJECTS = [
     piece: 't' as Piece,
     tools: ['React', 'TypeScript', 'PostgreSQL', 'pgvector', 'Node.js', 'PyTorch', 'ONNX', 'Vercel'],
     bullets: [
-      'Built full-stack Retrieval-Augmented Generation (RAG) application using React, Node.js, and PostgreSQL with pgvector to help women in CS manage imposter syndrome by enabling semantic search across 200+ journal entries via HNSW vector embeddings, generating personalized emotional trend reports across 5 analytics views.',
+      'Built full-stack Retrieval-Augmented Generation (RAG) application using React, Node.js, and PostgreSQL with pgvector to support women in CS managing imposter syndrome, enabling semantic search across 200+ journal entries via HNSW vector embeddings and generating personalized reports across 5 analytics views.',
       'Detected imposter syndrome at 0.92 F1 on 200 hand-labeled entries by training a DistilBERT classifier with an object-oriented ML pipeline, calibrating confidence scores and exporting to ONNX with INT8 quantization.',
     ],
   },
@@ -142,17 +143,17 @@ const RESUME_PROJECTS = [
     piece: 'z' as Piece,
     tools: ['JavaScript', 'HTML', 'CSS', 'VS Code'],
     bullets: [
-      'Designed a 4-stage platform, curating 100+ resources, to help women in computer science industries at different stages of their education find mentorship, scholarships, programs, and community resources.',
-      'Awarded the Gender Equality Track Award over 45 competing teams for innovation, design, and impact in addressing the UN Sustainable Development Goals by addressing the gender gap.',
+      'Designed a 4-stage platform, curating 100+ resources, to help women in CS find mentorship, scholarships, programs, and community resources across different stages of their education.',
+      'Awarded the Gender Equality Track Award over 45 competing teams for innovation, design, and impact in addressing the UN Sustainable Development Goals.',
     ],
   },
 ]
 
 const SKILLS: { label: string; piece: Piece; items: string[] }[] = [
   { label: 'Languages',          piece: 'i', items: ['Python', 'C/C++', 'Java', 'JavaScript', 'TypeScript', 'HTML/CSS', 'SQL', 'Bash', 'Swift', 'R'] },
-  { label: 'Data and Analytics', piece: 'o', items: ['MongoDB Atlas', 'InfluxDB', 'pandas', 'NumPy', 'Grafana', 'PostgreSQL', 'pgvector', 'scikit-learn'] },
-  { label: 'Frameworks and APIs',piece: 't', items: ['React', 'Gemini API', 'Node.js', 'REST APIs', 'SQLAlchemy', 'Uvicorn', 'Resend API', 'PyTorch'] },
-  { label: 'Tools and Systems',  piece: 's', items: ['Git/GitHub', 'Linux', 'Google Cloud Platform', 'VirtualBox', 'VS Code', 'Xcode', 'Vercel', 'AWS'] },
+  { label: 'Frameworks and APIs',piece: 'o', items: ['React', 'Node.js', 'REST APIs', 'PyTorch', 'SQLAlchemy', 'Gemini API', 'Uvicorn', 'Resend API'] },
+  { label: 'Data and Analytics', piece: 't', items: ['PostgreSQL', 'MongoDB Atlas', 'pgvector', 'InfluxDB', 'pandas', 'NumPy', 'Grafana', 'scikit-learn'] },
+  { label: 'Tools and Systems',  piece: 's', items: ['Git/GitHub', 'Linux', 'AWS', 'Google Cloud Platform', 'Vercel', 'VS Code', 'Xcode', 'VirtualBox'] },
 ]
 
 const CONTACT = [
@@ -241,7 +242,7 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
 
         {/* experience */}
         <section style={{ marginBottom: 44 }}>
-          <Kicker piece="s">Relevant Experience</Kicker>
+          <Kicker piece="s">Experience</Kicker>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             {EXPERIENCE.map((e) => (
               <Card key={e.title} accent={e.piece} accentBar>
