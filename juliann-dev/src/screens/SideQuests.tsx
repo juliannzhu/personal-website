@@ -322,7 +322,7 @@ const QUESTS: QuestCard[] = [
     images: [VOLLEYBALL_GALLERY[0].src],
     layout: 'bento',
     gallery: VOLLEYBALL_GALLERY,
-    videos: videosFor('volleyball', 4),
+    videos: videosFor('volleyball', [1, 3]),
   },
   {
     id: 'piano',
