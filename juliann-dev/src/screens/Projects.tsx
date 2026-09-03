@@ -67,7 +67,7 @@ const PROJECTS: Project[] = [
     writeup: [
       'The Network Services Team monitors satellite performance, data usage, and network telemetry across a lot of moving parts, and most of that lived in dashboards that could tell you what happened without telling you what it meant. I built an AI layer on top of the existing data: a service that produces forecasts, flags unusual network activity, monitors the performance metrics, and writes plain-language dashboard summaries to reflect signal quality stats.',
       'The part I found most interesting was that Grafana can only chart what a data source hands it, so I built a new data source for the AI output and a Python service behind it that generates the results, schedules the jobs, and writes them somewhere the dashboards can query. The forecasting, anomaly flagging, and generated summaries arrive as panels rather than as a separate tool.',
-      'I built my own dashboards on top of it and pushed the work into the engineering repo so it could run in production. Near the end I added colour overrides by regex so my panels matched the conventions of the dashboards the team already used, and kept the high-level design document updated under version control as the design shifted.',
+      'I built my own dashboards on top of it and pushed the work into the engineering repo so it could run in production, keeping the high-level design document updated under version control as the design shifted.',
     ],
   },
   {
