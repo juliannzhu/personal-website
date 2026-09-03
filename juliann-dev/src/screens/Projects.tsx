@@ -58,7 +58,7 @@ const PROJECTS: Project[] = [
     tagline: 'Satellite system monitoring dashboards built with Grafana and MySQL data sources, reduced dashboard load time by 86% through SQL query optimization.',
     tags: ['MySQL', 'SQLAlchemy', 'FastAPI', 'APScheduler', 'MariaDB'],
     cat: 'ai',
-    year: '2026',
+    year: 'May 2026 - Sep 2026',
     images: [
       { src: P('Grafana-Dashboards', 'architecture.svg'), caption: 'system architecture: scheduled analysis pipeline between the source and results databases' },
       { src: P('Grafana-Dashboards', 'ai-layer-traffic.webp'), caption: 'the AI layer: traffic averages, 60-day forecasts, anomaly detail and a generated summary. panel titles and data changed for confidentiality, every series is Grafana random walk' },
@@ -67,7 +67,7 @@ const PROJECTS: Project[] = [
     writeup: [
       'The Network Services Team monitors satellite performance, data usage, and network telemetry across a lot of moving parts, and most of that lived in dashboards that could tell you what happened without telling you what it meant. I built an AI layer on top of the existing data: a service that produces forecasts, flags unusual network activity, monitors the performance metrics, and writes plain-language dashboard summaries to reflect signal quality stats.',
       'The part I found most interesting was that Grafana can only chart what a data source hands it, so I built a new data source for the AI output and a Python service behind it that generates the results, schedules the jobs, and writes them somewhere the dashboards can query. The forecasting, anomaly flagging, and generated summaries arrive as panels rather than as a separate tool.',
-      'I am building my own dashboards on top of it and pushing the work into the engineering repo so it can run in production. Currently, I am adding colour overrides by regex so my panels match the conventions of the dashboards the team already uses, and keeping the high-level design document updated under version control as the design shifts.',
+      'I built my own dashboards on top of it and pushed the work into the engineering repo so it could run in production. Near the end I added colour overrides by regex so my panels matched the conventions of the dashboards the team already used, and kept the high-level design document updated under version control as the design shifted.',
     ],
   },
   {
@@ -80,7 +80,7 @@ const PROJECTS: Project[] = [
     year: '2026',
     writeup: [
       'Large language models (LLMs) have become common advisors for the security and privacy questions people once brought to forums, documentation, or a knowledgeable friend. This work examines the quality and accuracy of LLM-generated responses and evaluates them against expert judgement.',
-      'Building the dataset was the bulk of the work, inputting 78 usable security and privacy prompts drawn from 54 online sources through two models. I am currently writing the results section, which centres on where ChatGPT and Claude converge and diverge when compared to a golden dataset. We are finalizing everything for submission, with findings also going to CAN-CWiC and IEEE S&P.',
+      'Building the dataset was the bulk of the work, inputting 78 usable security and privacy prompts drawn from 54 online sources through two models. I am currently writing the results section, which centres on where ChatGPT and Claude converge and diverge when compared to a golden dataset. We are finalizing everything for submission, and the findings have already been presented at CAN-CWiC and IEEE S&P.',
     ],
     images: [
       { src: P('LLM-Security-Research', 'paper-fade.webp'), caption: 'paper preview' },

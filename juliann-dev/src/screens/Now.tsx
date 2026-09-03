@@ -9,7 +9,7 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   {
     piece: 'i',
     label: 'Building',
-    text: 'MySQL and Grafana dashboards for satellite telemetry at ORBCOMM.',
+    text: 'This website. Still adding projects, side quests, and details nobody asked for.',
   },
   {
     piece: 'o',
@@ -51,7 +51,7 @@ const UPCOMING: { piece: Piece; title: string; text: string; when?: string }[] =
 // Bump this whenever the copy above actually changes. Deliberately hand-written rather than
 // derived from the build date — this should say when the Now section was last true, not when
 // the site last happened to deploy.
-const LAST_UPDATED = 'August 2026'
+const LAST_UPDATED = 'September 2026'
 
 // One cell, then the date: the smallest thing that still reads as a Tetris stamp.
 function LastUpdated() {

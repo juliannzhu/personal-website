@@ -29,7 +29,7 @@ const TIMELINE: { piece: PK; when: string; what: string; where: string; links?: 
     links: [{ text: 'University of Waterloo', href: 'https://uwaterloo.ca/future-students/programs/computer-science' }],
   },
   {
-    piece: 'l', when: 'May 2026 – Present', what: 'Network Engineering Intern',
+    piece: 'l', when: 'May 2026 – Sep 2026', what: 'Network Engineering Intern',
     where: 'ORBCOMM / Skywave: satellite system dashboards, SQL, Grafana',
     links: [{ text: 'ORBCOMM', href: 'https://www.orbcomm.com' }],
   },
