@@ -39,12 +39,12 @@ const TIMELINE: { piece: PK; when: string; what: string; where: string; links?: 
     links: [{ text: 'SOUPS', href: 'https://www.usenix.org/conferences/byname/108' }],
   },
   { piece: 't', when: 'May 2024',            what: 'Hackathon: Gender Equality Award', where: 'Project Tech Careers: platform for women in CS (UN SDG track)' },
-  { piece: 'j', when: 'Sep 2021 – Jun 2025', what: 'Volleyball Team Captain, NCSSAA Tier 1 Finalist', where: "Merivale HS Volleyball Club: 2x MVP, 4 straight Marauder's Cups" },
   {
-    piece: 'o', when: 'Sep 2012 – Jun 2025', what: 'RCM Level 10 Piano Certificate',
-    where: 'Royal Conservatory of Music: 13 years of lessons, 10 hours / week',
-    links: [{ text: 'Royal Conservatory of Music', href: 'https://www.rcmusic.com' }],
+    piece: 'o', when: 'Aug 2026', what: 'Google AI Essentials Certificate',
+    where: 'Google via Coursera: 5 courses on prompting, AI tools, and responsible use',
+    links: [{ text: 'Google', href: 'https://coursera.org/verify/specialization/V32OHGOGXWIQ' }],
   },
+  { piece: 'j', when: 'Sep 2021 – Jun 2025', what: 'Volleyball Team Captain, NCSSAA Tier 1 Finalist', where: "Merivale HS Volleyball Club: 2x MVP, 4 straight Marauder's Cups" },
 ]
 
 // Splits `where` on each link's text and swaps those spans for <a> tags, leaving
