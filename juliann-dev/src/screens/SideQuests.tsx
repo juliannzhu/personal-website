@@ -334,13 +334,14 @@ const QUESTS: QuestCard[] = [
     images: [Q('piano/piano-5.webp')],
     layout: 'bento',
     gallery: PIANO_GALLERY,
-    videos: videosFor('piano', [1, 8, 3, 4, 5, 6, 7, 9, 10, 11, 12], {
+    videos: videosFor('piano', [1, 8, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13], {
       1: 'Romantic Flight from How to Train Your Dragon by John Powell',
       8: "Mia & Sebastian's Theme by Justin Hurwitz",
       9: 'Someone Like You by Adele',
       10: 'Perfect by Ed Sheeran',
       11: 'Directed by Robert B. Weide',
       12: 'Piano Man by Billy Joel',
+      13: 'Just the Two of Us by Grover Washington Jr. and Bill Withers',
     }),
   },
   {
