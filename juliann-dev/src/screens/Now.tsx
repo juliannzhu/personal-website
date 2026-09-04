@@ -14,7 +14,7 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   {
     piece: 'o',
     label: 'Learning',
-    text: 'Google AI Essentials, a course on using AI tools in everyday work.',
+    text: 'Getting the AWS Practitioner certification through AWS Educate.',
   },
   {
     piece: 's',
@@ -24,7 +24,7 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   {
     piece: 't',
     label: 'Playing',
-    text: 'Learning Just the Two of Us by Grover Washington Jr. and Bill Withers on piano.',
+    text: 'Learning Everybody Wants to Rule the World by Tears for Fears on piano.',
   },
 ]
 

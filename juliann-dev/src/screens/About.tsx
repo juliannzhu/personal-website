@@ -38,12 +38,12 @@ const TIMELINE: { piece: PK; when: string; what: string; where: string; links?: 
     where: 'UW Security & Privacy Research: SOUPS paper on LLM advice',
     links: [{ text: 'SOUPS', href: 'https://www.usenix.org/conferences/byname/108' }],
   },
-  { piece: 't', when: 'May 2024',            what: 'Hackathon: Gender Equality Award', where: 'Project Tech Careers: platform for women in CS (UN SDG track)' },
   {
     piece: 'o', when: 'Aug 2026', what: 'Google AI Essentials Certificate',
     where: 'Google via Coursera: 5 courses on prompting, AI tools, and responsible use',
     links: [{ text: 'Google', href: 'https://coursera.org/verify/specialization/V32OHGOGXWIQ' }],
   },
+  { piece: 't', when: 'May 2024',            what: 'Hackathon: Gender Equality Award', where: 'Project Tech Careers: platform for women in CS (UN SDG track)' },
   { piece: 'j', when: 'Sep 2021 – Jun 2025', what: 'Volleyball Team Captain, NCSSAA Tier 1 Finalist', where: "Merivale HS Volleyball Club: 2x MVP, 4 straight Marauder's Cups" },
 ]
 
