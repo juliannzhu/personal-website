@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Card } from '../components/ds/Card'
 import { ProgressBar } from '../components/ds/ProgressBar'
 import { Tag } from '../components/ds/Tag'
@@ -6,6 +6,7 @@ import { Tetromino } from '../components/ds/Tetromino'
 import { Avatar } from '../components/ds/Avatar'
 import { RadarChart } from '../components/ds/RadarChart'
 import { Tabs } from '../components/ds/Tabs'
+import { useReducedMotion } from '../lib/reducedMotion'
 import { ScrollTetromino3D } from '../components/ScrollTetromino3D'
 
 const SKILLS = [
@@ -143,6 +144,42 @@ export function About() {
   const [statsCardHeight, setStatsCardHeight] = useState<number>()
   const [jstrisHeight, setJstrisHeight] = useState<number>()
   const [statsTab, setStatsTab] = useState<'skills' | 'stack'>('skills')
+  // The card opens on The Stack and flips itself to Attributes a few seconds in, so the
+  // radar chart gets seen without the reader having to discover the tab. Three constraints
+  // shape this:
+  //   1. Every section is mounted at once (App renders REST_IDS together), so a plain mount
+  //      timer would fire while the reader is still up at the hero. The countdown is gated
+  //      on the card actually being on screen, and resets if it scrolls back off.
+  //   2. It happens once. After that the tab belongs to the reader.
+  //   3. Touching a tab cancels it outright. A panel that swaps itself out from under a
+  //      deliberate choice is worse than one that never moves.
+  const statsCardRef = useRef<HTMLDivElement>(null)
+  const tabTouchedRef = useRef(false)
+  const [autoAdvanced, setAutoAdvanced] = useState(false)
+  const reducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    if (autoAdvanced || reducedMotion) return
+    const el = statsCardRef.current
+    if (!el) return
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !timer) {
+        timer = setTimeout(() => {
+          if (!tabTouchedRef.current) setStatsTab('stack')
+          setAutoAdvanced(true)
+        }, 5000)
+      } else if (!entry.isIntersecting && timer) {
+        clearTimeout(timer)
+        timer = undefined
+      }
+      // Observing the tab strip rather than the whole stats column: the column is taller
+      // than a laptop viewport, so its intersection ratio is unreliable, whereas the strip is
+      // either on screen or it is not.
+    }, { threshold: 1 })
+    io.observe(el)
+    return () => { io.disconnect(); if (timer) clearTimeout(timer) }
+  }, [autoAdvanced, reducedMotion])
 
   // Two alignments, both only meaningful in the two-column (desktop) layout:
   // the Player Stats card's bottom (plus the 20px gap above the Jstris card)
@@ -265,13 +302,13 @@ export function About() {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <Card accent="i" accentBar style={{ height: statsCardHeight, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.875rem', color: 'var(--text-strong)', margin: '0 0 12px', textTransform: 'uppercase' }}>Player Stats</h3>
-            <div style={{ marginBottom: 12 }}>
+            <div ref={statsCardRef} style={{ marginBottom: 12 }}>
               <Tabs
                 piece="i"
                 full
                 items={[{ value: 'skills', label: 'The Stack' }, { value: 'stack', label: 'Attributes' }]}
                 value={statsTab}
-                onChange={(v) => setStatsTab(v as 'skills' | 'stack')}
+                onChange={(v) => { tabTouchedRef.current = true; setStatsTab(v as 'skills' | 'stack') }}
               />
             </div>
             {statsTab === 'skills' ? (
