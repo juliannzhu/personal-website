@@ -33,7 +33,7 @@ const UPCOMING: { piece: Piece; title: string; text: string; when?: string }[] =
   {
     piece: 'z',
     title: 'TEDx Ottawa',
-    when: 'Nov 2026',
+    when: 'Nov 7, 2026',
     text: 'Writing and delivering a TEDxOttawa talk exploring this year\'s theme, Continuum, and the ideas it sparks for me.',
   },
   {
