@@ -110,6 +110,13 @@ function SectionTitle({ kicker, children, size = 26 }: { kicker: string; childre
 }
 
 const ABOUT_CSS = `
+/* Panel contents step in one after another when a tab is entered for the first time.
+   Matches the site's entrance idiom: short travel, --ease-snap, and fill mode both so item N is
+   invisible during its delay rather than flashing in place first. The per-item delay is
+   set inline, since it depends on the index. */
+@keyframes tj-stat-in { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.tj-stat-in { animation: tj-stat-in 220ms var(--ease-snap) both; }
+
 @keyframes tj-about-float-a {
   0%, 100% { transform: translateY(0)   rotate(0deg);   }
   40%       { transform: translateY(-8px) rotate(6deg);  }
@@ -157,6 +164,20 @@ export function About() {
   const tabTouchedRef = useRef(false)
   const [autoAdvanced, setAutoAdvanced] = useState(false)
   const reducedMotion = useReducedMotion()
+
+  // The panel steps its contents in the first time you land on a tab, and only then. The
+  // initial paint is not a transition, so The Stack sits there plainly on arrival; once a
+  // tab has animated once it stays static for the rest of the visit.
+  const enteredTabsRef = useRef(new Set<string>())
+  const firstPaintRef = useRef(true)
+  const [panelAnim, setPanelAnim] = useState(false)
+
+  useEffect(() => {
+    if (firstPaintRef.current) { firstPaintRef.current = false; return }
+    if (enteredTabsRef.current.has(statsTab)) { setPanelAnim(false); return }
+    enteredTabsRef.current.add(statsTab)
+    setPanelAnim(true)
+  }, [statsTab])
 
   useEffect(() => {
     if (autoAdvanced || reducedMotion) return
@@ -217,6 +238,10 @@ export function About() {
       revealEl?.removeEventListener('transitionend', recompute)
     }
   }, [])
+
+  // 55ms apart: fast enough to read as one motion, slow enough to see the order.
+  const stagger = (i: number) =>
+    panelAnim ? { className: 'tj-stat-in', style: { animationDelay: `${i * 55}ms` } } : {}
 
   return (
     <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 72px', position: 'relative' }}>
@@ -313,13 +338,15 @@ export function About() {
             </div>
             {statsTab === 'skills' ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
-                {SKILLS.map((s) => (
-                  <ProgressBar key={s.name} value={s.value} piece={s.piece} label={s.name} cells={12} cellHeight={11} />
+                {SKILLS.map((s, i) => (
+                  <div key={s.name} {...stagger(i)}>
+                    <ProgressBar value={s.value} piece={s.piece} label={s.name} cells={12} cellHeight={11} />
+                  </div>
                 ))}
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
-                <div style={{ marginTop: 14 }}>
+                <div className={panelAnim ? 'tj-stat-in' : undefined} style={{ marginTop: 14 }}>
                   <RadarChart size={320} points={ATTRIBUTES.map((a) => ({ key: a.key, label: a.label, value: a.value, piece: a.piece }))} />
                 </div>
                 {/* This spacer fills everything below the chart, then centers the
@@ -327,8 +354,9 @@ export function About() {
                     chart's bottom and the panel's bottom, not glued to either. */}
                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1, width: '100%' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(3, auto)', gridAutoFlow: 'column', gap: '16px 16px', width: '100%' }}>
-                    {ATTRIBUTES.map((a) => (
-                      <div key={a.key} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    {ATTRIBUTES.map((a, i) => (
+                      <div key={a.key} className={panelAnim ? 'tj-stat-in' : undefined}
+                        style={{ display: 'flex', gap: 8, alignItems: 'center', ...(panelAnim ? { animationDelay: `${(i + 1) * 55}ms` } : {}) }}>
                         <span style={{ width: 6, height: 6, borderRadius: '50%', background: `var(--piece-${a.piece})`, flexShrink: 0 }} />
                         <div style={{ display: 'flex', gap: 6, alignItems: 'baseline', minWidth: 0 }}>
                           <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.06em', flexShrink: 0 }}>{a.label}</span>
