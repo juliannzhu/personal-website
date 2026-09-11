@@ -44,6 +44,7 @@ const UPCOMING: { piece: Piece; title: string; text: string; when?: string }[] =
   {
     piece: 's',
     title: 'WiM Directed Reading',
+    when: 'Dec 2026',
     text: 'Studying privacy-preserving techniques for database query processing in the Women in Math Directed Reading Program.',
   },
 ]
