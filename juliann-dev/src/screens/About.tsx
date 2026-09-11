@@ -165,17 +165,15 @@ export function About() {
   const [autoAdvanced, setAutoAdvanced] = useState(false)
   const reducedMotion = useReducedMotion()
 
-  // The panel steps its contents in the first time you land on a tab, and only then. The
-  // initial paint is not a transition, so The Stack sits there plainly on arrival; once a
-  // tab has animated once it stays static for the rest of the visit.
-  const enteredTabsRef = useRef(new Set<string>())
+  // The panel steps its contents in on every tab change. The initial paint is not a toggle,
+  // so The Stack sits there plainly on arrival; from the first switch onward every toggle
+  // replays the cascade. The animation itself restarts for free because the two panels are
+  // separate subtrees, so each toggle mounts fresh nodes.
   const firstPaintRef = useRef(true)
   const [panelAnim, setPanelAnim] = useState(false)
 
   useEffect(() => {
     if (firstPaintRef.current) { firstPaintRef.current = false; return }
-    if (enteredTabsRef.current.has(statsTab)) { setPanelAnim(false); return }
-    enteredTabsRef.current.add(statsTab)
     setPanelAnim(true)
   }, [statsTab])
 
