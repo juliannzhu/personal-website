@@ -33,12 +33,13 @@ const UPCOMING: { piece: Piece; title: string; text: string; when?: string }[] =
   {
     piece: 'z',
     title: 'TEDx Ottawa',
-    when: 'Nov 7, 2026',
+    when: 'Nov 2026',
     text: 'Writing and delivering a TEDxOttawa talk exploring this year\'s theme, Continuum, and the ideas it sparks for me.',
   },
   {
     piece: 'j',
     title: 'UR2PhD @ Waterloo',
+    when: 'Dec 2026',
     text: 'Researching gamified attention training for children with ADHD through Waterloo\'s UR2PhD program.',
   },
   {
