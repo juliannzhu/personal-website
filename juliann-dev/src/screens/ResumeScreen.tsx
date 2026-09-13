@@ -81,7 +81,7 @@ function EntryHeader({ title, sub, role, location, date, piece }: { title: strin
 
 const EXPERIENCE = [
   {
-    title: 'ORBCOMM, SKYWAVE',
+    title: 'ORBCOMM',
     sub: 'Network Services Department',
     role: 'Network Engineering Intern',
     location: 'Ottawa, ON',
@@ -89,8 +89,8 @@ const EXPERIENCE = [
     piece: 's' as Piece,
     bullets: [
       'Developed 8 Grafana dashboards with MySQL data pipelines to monitor satellite network performance across 12 metrics, cutting load times by 86% through dynamic filtering and optimized SQL queries.',
-      'Shipped an AI-driven analytics service using FastAPI, APScheduler, PyMySQL, Jinja2, and MariaDB that extends predictive forecasting by 60x, cuts pipeline runtime by 78%, and lowers false-positive anomaly alerts by 80%.',
-      'Delivered the system architecture and AI-driven monitoring features to engineering leadership, supported by a system design document and live technical demo.',
+      'Shipped an AI-driven analytics service to extend predictive forecasting by 60x, cut pipeline runtime by 78%, and lower false-positive anomaly alerts by 80% using FastAPI, APScheduler, PyMySQL, Jinja2, and MariaDB.',
+      'Launched the service internally for 7 engineering teams by presenting to leadership with a system design document and live demo, pushing production code to the company GitHub repository.',
     ],
   },
   {
@@ -101,9 +101,8 @@ const EXPERIENCE = [
     date: 'Jan 2026 - Present',
     piece: 'j' as Piece,
     bullets: [
-      'Co-authoring a research paper for the Symposium On Usable Privacy and Security on how users seek security and privacy advice from Large Language Models (LLMs).',
-      'Presented at the Annual Celebration of Women in Computing 2026 Conference (CAN-CWiC) and IEEE S&P.',
-      'Constructed a validated golden-answer dataset from 54 online databases and analyzed 2 LLMs against 100 privacy and security prompts across 15 demographic and thematic categories, using a rubric co-developed with 3 security and HCI researchers to score comprehensibility, actionability, and technical efficacy.',
+      'Reached 500+ attendees from 30+ institutions at CAN-CWiC and IEEE S&P by co-authoring a research paper on how users seek security and privacy advice from Large Language Models (LLMs).',
+      'Evaluated 2 LLMs against 100 security and privacy prompts across 15 categories by building a validated 54-database golden-answer dataset and scoring rubric with 3 security and HCI researchers.',
     ],
   },
 ]
@@ -118,33 +117,35 @@ const RESUME_PROJECTS = [
     piece: 'l' as Piece,
     tools: ['Swift', 'Python', 'C++', 'SwiftUI', 'MongoDB Atlas', 'Auth0', 'Gemini API', 'Vercel', 'Websockets'],
     bullets: [
-      'Built a clip-on white cane module to detect overhead hazards within a 4m range for visually impaired users, pairing ToF sensors and 30 FPS YOLOv6 camera detection on an Arduino UNO Q with a Python/FastAPI pipeline to classify hazards via Gemini vision and narrate within 3 seconds via ElevenLabs.',
+      'Built a clip-on white cane module for visually impaired users, pairing ToF sensors with 30 FPS YOLOv6 camera detection on an Arduino UNO Q within a 4m hazard-detection range, feeding a Python/FastAPI pipeline.',
+      'Classified hazards via Gemini vision and narrated results within 3 seconds via ElevenLabs, reaching 98% accuracy through the pipeline\'s real-time on-device inference, giving users time to react safely.',
       'Developed companion SwiftUI iPhone and Apple Watch apps with directional haptics, 4-tier SOS alerts, and Auth0-secured sync of incidents and contacts to MongoDB Atlas via a Node.js serverless proxy.',
     ],
   },
   {
     title: 'TrulyHer',
-    sub: 'Technova',
+    sub: 'TechNova',
     role: 'AI Integration & Full Stack Developer',
     location: 'Waterloo, ON',
     date: 'Sep 2025 - Aug 2026',
     piece: 't' as Piece,
     tools: ['React', 'TypeScript', 'PostgreSQL', 'pgvector', 'Node.js', 'PyTorch', 'ONNX', 'Vercel'],
     bullets: [
-      'Built full-stack Retrieval-Augmented Generation (RAG) application using React, Node.js, and PostgreSQL with pgvector to support women in CS managing imposter syndrome, enabling semantic search across 200+ journal entries via HNSW vector embeddings and generating personalized reports across 5 analytics views.',
-      'Detected imposter syndrome at 0.92 F1 on 200 hand-labeled entries by training a DistilBERT classifier with an object-oriented ML pipeline, calibrating confidence scores and exporting to ONNX with INT8 quantization.',
+      'Built a full-stack Retrieval-Augmented Generation (RAG) application to help women in CS manage imposter syndrome, enabling semantic search across 200+ journal entries via HNSW vector embeddings and generating personalized reports across 5 analytics views using React, Node.js, and PostgreSQL with pgvector.',
+      'Detected imposter syndrome at 0.92 F1 on 200 hand-labeled entries using an ML pipeline that trains a DistilBERT classifier, calibrates its confidence scores, and exports to ONNX with INT8 quantization.',
     ],
   },
   {
     title: 'Project Tech Careers',
+    sub: 'PTCHacks',
     role: 'Platform Designer and UI/UX Developer',
     location: 'Ottawa, ON',
     date: 'May - Jun 2024',
     piece: 'z' as Piece,
     tools: ['JavaScript', 'HTML', 'CSS', 'VS Code'],
     bullets: [
-      'Designed a 4-stage platform, curating 100+ resources, to help women in CS find mentorship, scholarships, programs, and community resources across different stages of their education.',
-      'Awarded the Gender Equality Track Award over 45 competing teams for innovation, design, and impact in addressing the UN Sustainable Development Goals.',
+      'Designed a 4-stage platform, curating 100+ resources, to help women in CS find mentorship, scholarships, programs, and community resources across different stages of their education using JavaScript and HTML.',
+      'Awarded the Gender Equality Track Award over 45 competing teams for innovation, design, and impact in addressing the United Nations Sustainable Development Goals.',
     ],
   },
 ]
@@ -213,9 +214,10 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
                 <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.8125rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>University of Waterloo</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: 8 }}>BCS, Honours Computer Science with Co-operative Program, GPA: 3.7/4.0</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--piece-o)', marginTop: 8 }}>President Scholarship of Distinction</div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: 8, lineHeight: 1.6 }}>Relevant coursework: Data Structures &amp; Algorithms, Object-Oriented Programming, Functional Programming, Logic &amp; Computation, Software Development Tools &amp; Techniques</div>
               </div>
               <div className="tj-resume-meta tj-resume-meta-flush" style={{ textAlign: 'right', flexShrink: 0 }}>
-                <div className="tj-resume-date" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Sep 2025 - Present</div>
+                <div className="tj-resume-date" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Sep 2025 - Apr 2030</div>
                 <div className="tj-resume-loc" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)', marginTop: 2 }}>Waterloo, ON</div>
               </div>
             </div>
