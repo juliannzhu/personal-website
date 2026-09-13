@@ -34,19 +34,19 @@ const UPCOMING: { piece: Piece; title: string; text: string; when?: string }[] =
     piece: 'z',
     title: 'TEDx Ottawa',
     when: 'Nov 2026',
-    text: 'Writing and delivering a TEDxOttawa talk exploring this year\'s theme, Continuum, and the ideas it sparks for me.',
+    text: 'Writing a talk on planned obsolescence for this year\'s Continuum theme: we are the most documented generation in history, and I think we might still leave the least behind.',
   },
   {
     piece: 'j',
     title: 'UR2PhD @ Waterloo',
     when: 'Dec 2026',
-    text: 'Researching gamified attention training for children with ADHD through Waterloo\'s UR2PhD program.',
+    text: 'A CS 399 research course paired with a graduate student whose work uses headbands that read brain activity to measure focus in children. We are turning that into a game.',
   },
   {
     piece: 's',
     title: 'WiM Directed Reading',
     when: 'Dec 2026',
-    text: 'Studying privacy-preserving techniques for database query processing in the Women in Math Directed Reading Program.',
+    text: 'A differential privacy reading group led by a graduate mentor. Each session pairs a paper with a small Python lab, building toward a group project and a final presentation.',
   },
 ]
 
