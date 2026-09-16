@@ -266,9 +266,6 @@ export function About() {
             <div>
               <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.25rem', color: 'var(--text-strong)' }}>JULIANN ZHU</div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 8 }}>CS @ UWaterloo · she/her · 📍 Ottawa, ON</div>
-              {/* Own line rather than another dot-separated item: it is a status, not part of
-                  the identity, and it comes off cleanly once the term is signed. */}
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--piece-o)', marginTop: 6 }}>Open to Winter 2027 co-op</div>
             </div>
           </div>
           <p style={{ fontSize: '1.0625rem', lineHeight: 1.7, color: 'var(--text-body)' }}>
@@ -290,6 +287,11 @@ export function About() {
             <Tag piece="t">UI/UX Design</Tag>
             <Tag piece="j">Security Research</Tag>
             <Tag piece="l">Full Stack Development</Tag>
+          </div>
+          {/* Its own row rather than a seventh chip in the row above: everything up there is a
+              skill, and an availability note sitting among them reads as one at a glance. */}
+          <div style={{ display: 'flex', marginTop: 10 }}>
+            <Tag piece="s">Open to Winter 2027 co-op</Tag>
           </div>
 
           <div style={{ marginTop: 40 }}>
