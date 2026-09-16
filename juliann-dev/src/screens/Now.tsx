@@ -97,6 +97,7 @@ export function Now() {
           A sneak peek of what's on my board right now.
         </p>
         <Badge piece="s" dot>live</Badge>
+        <Badge piece="o">open to Winter 2027 co-op</Badge>
       </div>
 
       <div className="tj-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
