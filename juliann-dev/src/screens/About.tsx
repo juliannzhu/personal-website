@@ -265,7 +265,10 @@ export function About() {
             <Avatar initials="JZ" piece="t" size="xl" />
             <div>
               <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.25rem', color: 'var(--text-strong)' }}>JULIANN ZHU</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 8 }}>CS @ UWaterloo · she/her · 📍 Ottawa, ON · open to Winter 2027 co-op</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 8 }}>CS @ UWaterloo · she/her · 📍 Ottawa, ON</div>
+              {/* Own line rather than another dot-separated item: it is a status, not part of
+                  the identity, and it comes off cleanly once the term is signed. */}
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--piece-o)', marginTop: 6 }}>Open to Winter 2027 co-op</div>
             </div>
           </div>
           <p style={{ fontSize: '1.0625rem', lineHeight: 1.7, color: 'var(--text-body)' }}>
