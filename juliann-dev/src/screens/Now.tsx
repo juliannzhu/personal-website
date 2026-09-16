@@ -48,6 +48,12 @@ const UPCOMING: { piece: Piece; title: string; text: string; when?: string }[] =
     when: 'Dec 2026',
     text: 'Reading through differential privacy with a graduate mentor, pairing a paper with a short Python lab each session and working toward a group project and a final presentation by the end of term.',
   },
+  {
+    piece: 'o',
+    title: 'Winter 2027 Co-op',
+    when: 'Jan 2027',
+    text: 'Looking for a Winter 2027 co-op placement, ideally somewhere I can work across backend systems, data pipelines, or applied AI, and ship something that real people end up putting to use.',
+  },
 ]
 
 // Bump this whenever the copy above actually changes. Deliberately hand-written rather than
@@ -97,7 +103,6 @@ export function Now() {
           A sneak peek of what's on my board right now.
         </p>
         <Badge piece="s" dot>live</Badge>
-        <Badge piece="o">open to Winter 2027 co-op</Badge>
       </div>
 
       <div className="tj-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
