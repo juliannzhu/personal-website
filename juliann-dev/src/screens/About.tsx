@@ -114,6 +114,17 @@ const ABOUT_CSS = `
    Matches the site's entrance idiom: short travel, --ease-snap, and fill mode both so item N is
    invisible during its delay rather than flashing in place first. The per-item delay is
    set inline, since it depends on the index. */
+/* ---- Phone: the stats column ----
+   Both of these boxes set a min-content floor wider than a phone screen, via nowrap text
+   inside a two/three-column grid. Below 720px the captions are allowed to wrap and the
+   grids collapse, so the column can shrink to the viewport instead of pushing past it. */
+@media (max-width: 720px) {
+  .tj-attr-legend { grid-template-columns: 1fr !important; grid-auto-flow: row !important; grid-template-rows: auto !important; }
+  .tj-attr-desc   { white-space: normal !important; }
+  .tj-jstris-pb   { grid-template-columns: 38px 1fr !important; }
+  .tj-jstris-date { grid-column: 2; white-space: normal !important; }
+}
+
 @keyframes tj-stat-in { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 .tj-stat-in { animation: tj-stat-in 220ms var(--ease-snap) both; }
 
@@ -259,8 +270,11 @@ export function About() {
         mouseFollow
         style={{ position: 'absolute', top: 85, left: 420, opacity: 0.72, zIndex: 1 }}
       />
+      {/* minWidth:0 on both columns: grid items default to min-width:auto, so one nowrap
+          descendant (the attribute captions, the Jstris dates) sets a min-content floor the
+          column cannot shrink below, and the whole page ends up wider than a phone viewport. */}
       <div className="tj-about-grid" style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 40, alignItems: 'start' }}>
-        <div ref={leftColRef}>
+        <div ref={leftColRef} style={{ minWidth: 0 }}>
           <div style={{ display: 'flex', gap: 18, alignItems: 'center', marginBottom: 24 }}>
             <Avatar initials="JZ" piece="t" size="xl" />
             <div>
@@ -327,7 +341,7 @@ export function About() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           <Card accent="i" accentBar style={{ height: statsCardHeight, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.875rem', color: 'var(--text-strong)', margin: '0 0 12px', textTransform: 'uppercase' }}>Player Stats</h3>
             <div ref={statsCardRef} style={{ marginBottom: 12 }}>
@@ -356,14 +370,14 @@ export function About() {
                     attribute list within it — so the list sits evenly between the
                     chart's bottom and the panel's bottom, not glued to either. */}
                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1, width: '100%' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(3, auto)', gridAutoFlow: 'column', gap: '16px 16px', width: '100%' }}>
+                  <div className="tj-attr-legend" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(3, auto)', gridAutoFlow: 'column', gap: '16px 16px', width: '100%' }}>
                     {ATTRIBUTES.map((a, i) => (
                       <div key={a.key} className={panelAnim ? 'tj-stat-in' : undefined}
                         style={{ display: 'flex', gap: 8, alignItems: 'center', ...(panelAnim ? { animationDelay: `${(i + 1) * 55}ms` } : {}) }}>
                         <span style={{ width: 6, height: 6, borderRadius: '50%', background: `var(--piece-${a.piece})`, flexShrink: 0 }} />
                         <div style={{ display: 'flex', gap: 6, alignItems: 'baseline', minWidth: 0 }}>
                           <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '0.06em', flexShrink: 0 }}>{a.label}</span>
-                          <span style={{ fontSize: '0.6875rem', color: 'var(--text-faint)', whiteSpace: 'nowrap' }}>{a.desc}</span>
+                          <span className="tj-attr-desc" style={{ fontSize: '0.6875rem', color: 'var(--text-faint)', whiteSpace: 'nowrap' }}>{a.desc}</span>
                         </div>
                       </div>
                     ))}
@@ -406,10 +420,10 @@ export function About() {
               <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 10 }}>PERSONAL BESTS</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {JSTRIS_PBS.map((pb) => (
-                  <div key={pb.label} style={{ display: 'grid', gridTemplateColumns: '38px 1fr auto', gap: 8, alignItems: 'baseline' }}>
+                  <div key={pb.label} className="tj-jstris-pb" style={{ display: 'grid', gridTemplateColumns: '38px 1fr auto', gap: 8, alignItems: 'baseline' }}>
                     <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: `var(--piece-${pb.piece})` }}>{pb.label}</span>
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-strong)' }}>{pb.time} <span style={{ color: 'var(--text-faint)', fontSize: '0.625rem' }}>· {pb.blocks} blocks</span></span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)', whiteSpace: 'nowrap' }}>{pb.date}</span>
+                    <span className="tj-jstris-date" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)', whiteSpace: 'nowrap' }}>{pb.date}</span>
                   </div>
                 ))}
               </div>
