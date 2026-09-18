@@ -13,6 +13,16 @@ const CSS = `
    permanently clips anything inside that visually bleeds past this box (e.g. a
    tilted/rotated 3D decoration), even though the inset is nominally a no-op. */
 .tj-reveal--settled { clip-path: none; }
+
+/* Phone: sections are several times taller than the viewport, so a threshold measured as a
+   fraction of the element meant scrolling a long way into a section that was still at
+   opacity 0. The observer options are loosened below; here the motion itself is shortened
+   so it reads as a settle rather than a slide, and the clip-path inset is dropped because
+   on a short screen it hides a visible band of the section while it animates. */
+@media (max-width: 720px) {
+  .tj-reveal { transform: translateY(10px) scale(1); transition-duration: 300ms; }
+  .tj-reveal, .tj-reveal--visible { clip-path: none; }
+}
 `
 let injected = false
 function ensure() {
@@ -20,6 +30,9 @@ function ensure() {
     const s = document.createElement('style'); s.setAttribute('data-tj', 'reveal'); s.textContent = CSS; document.head.appendChild(s); injected = true
   }
 }
+
+const mobile = () =>
+  typeof window !== 'undefined' && window.matchMedia('(max-width: 720px)').matches
 
 export function RevealOnScroll({ children, className = '', style, threshold = 0.15 }: { children: ReactNode; className?: string; style?: CSSProperties; threshold?: number }) {
   ensure()
@@ -34,7 +47,13 @@ export function RevealOnScroll({ children, className = '', style, threshold = 0.
       entries.forEach((entry) => {
         if (entry.isIntersecting) { setVisible(true); io.unobserve(el) }
       })
-    }, { threshold, rootMargin: '0px 0px -6% 0px' })
+      // On a phone the element is much taller than the root, so any threshold expressed as a
+      // fraction of the element resolves to hundreds of pixels of scrolling before it trips.
+      // Fire on the first pixel instead, and expand the root downward so the section has
+      // already begun revealing by the time it reaches the screen.
+    }, mobile()
+      ? { threshold: 0, rootMargin: '0px 0px 20% 0px' }
+      : { threshold, rootMargin: '0px 0px -6% 0px' })
     io.observe(el)
     return () => io.disconnect()
   }, [threshold])
