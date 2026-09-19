@@ -302,10 +302,23 @@ export function About() {
             <Tag piece="j">Security Research</Tag>
             <Tag piece="l">Full Stack Development</Tag>
           </div>
-          {/* Its own row rather than a seventh chip in the row above: everything up there is a
-              skill, and an availability note sitting among them reads as one at a glance. */}
-          <div style={{ display: 'flex', marginTop: 10 }}>
-            <Tag piece="s">Open to Winter 2027 co-op</Tag>
+          {/* Availability strip. Borrows the Coming Soon tile grammar from the Now page
+              (tinted well, hairline border, 4px accent edge, piece glyph) rather than
+              inventing a new treatment: it reads as a status line instead of a seventh
+              skill chip, and stays quiet enough to sit under the tags without shouting. */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 12,
+            marginTop: 22, padding: '13px 14px',
+            background: 'color-mix(in srgb, var(--piece-s) 7%, var(--bg-well))',
+            border: '2px solid var(--border-hairline)',
+            borderLeft: '4px solid var(--piece-s)',
+            borderRadius: 'var(--radius-1)',
+          }}>
+            <div style={{ flexShrink: 0 }}><Tetromino piece="s" size={9} /></div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-s)' }}>// Available</div>
+              <div style={{ fontSize: '0.9375rem', color: 'var(--text-strong)', marginTop: 5, lineHeight: 1.4 }}>Open to a Winter 2027 co-op term</div>
+            </div>
           </div>
 
           <div style={{ marginTop: 40 }}>
