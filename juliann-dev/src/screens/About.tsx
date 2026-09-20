@@ -294,21 +294,13 @@ export function About() {
             usually find me learning a new song on the piano, taking cute photos of my friends, or
             chasing a new side quest.
           </p>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 24 }}>
-            <Tag piece="i">React</Tag>
-            <Tag piece="o">Python</Tag>
-            <Tag piece="s">SQL & Grafana</Tag>
-            <Tag piece="t">UI/UX Design</Tag>
-            <Tag piece="j">Security Research</Tag>
-            <Tag piece="l">Full Stack Development</Tag>
-          </div>
           {/* Availability strip. Borrows the Coming Soon tile grammar from the Now page
               (tinted well, hairline border, 4px accent edge, piece glyph) rather than
               inventing a new treatment: it reads as a status line instead of a seventh
               skill chip, and stays quiet enough to sit under the tags without shouting. */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 12,
-            marginTop: 22, padding: '13px 14px',
+            marginTop: 24, padding: '13px 14px',
             background: 'color-mix(in srgb, var(--piece-s) 7%, var(--bg-well))',
             border: '2px solid var(--border-hairline)',
             borderLeft: '4px solid var(--piece-s)',
@@ -319,6 +311,14 @@ export function About() {
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-s)' }}>// Available</div>
               <div style={{ fontSize: '0.9375rem', color: 'var(--text-strong)', marginTop: 5, lineHeight: 1.4 }}>Open to a Winter 2027 co-op term</div>
             </div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 14 }}>
+            <Tag piece="i">React</Tag>
+            <Tag piece="o">Python</Tag>
+            <Tag piece="s">SQL & Grafana</Tag>
+            <Tag piece="t">UI/UX Design</Tag>
+            <Tag piece="j">Security Research</Tag>
+            <Tag piece="l">Full Stack Development</Tag>
           </div>
 
           <div style={{ marginTop: 40 }}>
