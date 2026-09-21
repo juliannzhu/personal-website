@@ -366,8 +366,12 @@ export function About() {
                 onChange={(v) => { tabTouchedRef.current = true; setStatsTab(v as 'skills' | 'stack') }}
               />
             </div>
+            {/* The skills panel uses flex:1 + space-between so the meters spread down the card.
+                The card's height is pinned to the left column (see the alignment effect), so at
+                some widths it is taller than seven bars need, and stacking them at the top left
+                a gap underneath. */}
             {statsTab === 'skills' ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24, flex: 1, justifyContent: 'space-between' }}>
                 {SKILLS.map((s, i) => (
                   <div key={s.name} {...stagger(i)}>
                     <ProgressBar value={s.value} piece={s.piece} label={s.name} cells={12} cellHeight={11} />
@@ -403,7 +407,10 @@ export function About() {
           {/* Jstris profile card is sized so its own bottom edge lines up with the
               bottom of the last Achievements Unlocked tile (RCM Piano Certificate). */}
           <div style={{
-            marginTop: 20, height: jstrisHeight, flexShrink: 0,
+            // minHeight, not height: the box still fills the column when there is slack, but
+            // at widths where the left column is short the all-time stats no longer get cut
+            // off by the card's own overflow:hidden.
+            marginTop: 20, minHeight: jstrisHeight, flexShrink: 0,
             border: '2px solid var(--border-hairline)', borderRadius: 'var(--radius-1)',
             background: 'var(--bg-well)', overflow: 'hidden',
             display: 'flex', flexDirection: 'column',
@@ -429,7 +436,7 @@ export function About() {
               </div>
             </div>
 
-            <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-hairline)' }}>
+            <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-hairline)', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 10 }}>PERSONAL BESTS</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {JSTRIS_PBS.map((pb) => (
