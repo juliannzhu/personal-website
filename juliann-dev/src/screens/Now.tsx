@@ -43,12 +43,6 @@ const UPCOMING: { piece: Piece; title: string; text: string; when?: string }[] =
     text: 'Building a game out of brain-activity research for CS 399, working alongside a graduate student whose headbands measure how well children hold their focus and turning those readings into something playable.',
   },
   {
-    piece: 's',
-    title: 'WiM Directed Reading',
-    when: 'Dec 2026',
-    text: 'Reading through differential privacy with a graduate mentor, pairing a paper with a short Python lab each session and working toward a group project and a final presentation by the end of term.',
-  },
-  {
     piece: 'o',
     title: 'Winter 2027 Co-op',
     when: 'Jan 2027',
