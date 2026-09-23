@@ -394,11 +394,12 @@ export function About() {
                 <div className={panelAnim ? 'tj-stat-in' : undefined} style={{ marginTop: 14 }}>
                   <RadarChart size={320} points={ATTRIBUTES.map((a) => ({ key: a.key, label: a.label, value: a.value, piece: a.piece }))} />
                 </div>
-                {/* This spacer fills everything below the chart, then centers the
-                    attribute list within it — so the list sits evenly between the
-                    chart's bottom and the panel's bottom, not glued to either. */}
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1, width: '100%' }}>
-                  <div className="tj-attr-legend" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(3, auto)', gridAutoFlow: 'column', gap: '16px 16px', width: '100%' }}>
+                {/* This fills everything below the chart and hands it to the list, which
+                    spreads its rows down that space instead of sitting centred with a band
+                    of nothing under it. The card's height is pinned to the left column, so
+                    how much room is left here varies with the viewport. */}
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, width: '100%' }}>
+                  <div className="tj-attr-legend" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(3, auto)', gridAutoFlow: 'column', gap: '16px 16px', flex: 1, alignContent: 'space-evenly', width: '100%' }}>
                     {ATTRIBUTES.map((a, i) => (
                       <div key={a.key} className={panelAnim ? 'tj-stat-in' : undefined}
                         style={{ display: 'flex', gap: 8, alignItems: 'center', ...(panelAnim ? { animationDelay: `${(i + 1) * 55}ms` } : {}) }}>
