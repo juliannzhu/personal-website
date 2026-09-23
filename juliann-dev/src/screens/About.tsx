@@ -160,7 +160,9 @@ export function About() {
   const leftColRef = useRef<HTMLDivElement>(null)
   const firstTileRef = useRef<HTMLDivElement>(null)
   const [statsCardHeight, setStatsCardHeight] = useState<number>()
-  const [jstrisHeight, setJstrisHeight] = useState<number>()
+  const [colHeight, setColHeight] = useState<number>()
+  const jstrisRef = useRef<HTMLDivElement>(null)
+  const [jstrisMin, setJstrisMin] = useState<number>()
   const [statsTab, setStatsTab] = useState<'skills' | 'stack'>('skills')
   // The card opens on The Stack and flips itself to Attributes a few seconds in, so the
   // radar chart gets seen without the reader having to discover the tab. Three constraints
@@ -224,13 +226,22 @@ export function About() {
     const recompute = () => {
       if (window.innerWidth <= ABOUT_GRID_BREAKPOINT) {
         setStatsCardHeight(undefined)
-        setJstrisHeight(undefined)
+        setColHeight(undefined)
         return
       }
-      const colRect = col.getBoundingClientRect()
-      const cardHeight = tile.getBoundingClientRect().top - colRect.top - 20
-      setStatsCardHeight(cardHeight)
-      setJstrisHeight(colRect.height - cardHeight - 20)
+      // getBoundingClientRect reports post-transform pixels, and the ancestor
+      // RevealOnScroll animates through scale(0.98). Measuring mid-flight and pinning a
+      // height to the result locks in a value ~2% short, which is what pulled the right
+      // column up off the left one. offsetHeight is a layout value and ignores transforms,
+      // so use it for the height and use the same ratio to un-scale the tile offset.
+      const colH = col.offsetHeight
+      const scale = col.getBoundingClientRect().height / (colH || 1)
+      const gap = tile.getBoundingClientRect().top - col.getBoundingClientRect().top
+      setColHeight(colH)
+      setStatsCardHeight(gap / (scale || 1) - 20)
+      // scrollHeight reports what the content needs even while it is being clipped.
+      const j = jstrisRef.current
+      if (j) setJstrisMin(j.scrollHeight + 4)
     }
     const ro = new ResizeObserver(recompute)
     ro.observe(col)
@@ -354,8 +365,8 @@ export function About() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-          <Card accent="i" accentBar style={{ height: statsCardHeight, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, height: colHeight }}>
+          <Card accent="i" accentBar style={{ height: statsCardHeight, flexShrink: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.875rem', color: 'var(--text-strong)', margin: '0 0 12px', textTransform: 'uppercase' }}>Player Stats</h3>
             <div ref={statsCardRef} style={{ marginBottom: 12 }}>
               <Tabs
@@ -406,11 +417,13 @@ export function About() {
 
           {/* Jstris profile card is sized so its own bottom edge lines up with the
               bottom of the last Achievements Unlocked tile (RCM Piano Certificate). */}
-          <div style={{
-            // minHeight, not height: the box still fills the column when there is slack, but
-            // at widths where the left column is short the all-time stats no longer get cut
-            // off by the card's own overflow:hidden.
-            marginTop: 20, minHeight: jstrisHeight, flexShrink: 0,
+          <div ref={jstrisRef} style={{
+            // No computed height: flexGrow takes exactly the space the card above leaves,
+            // so the two column bottoms match regardless of rounding. minHeight is the
+            // content floor, because a flex item with overflow:hidden has its automatic
+            // minimum size resolve to 0 and would otherwise be squeezed until the last
+            // stat row is clipped. Any squeeze is absorbed by the card instead.
+            marginTop: 20, flexGrow: 1, flexShrink: 0, minHeight: jstrisMin,
             border: '2px solid var(--border-hairline)', borderRadius: 'var(--radius-1)',
             background: 'var(--bg-well)', overflow: 'hidden',
             display: 'flex', flexDirection: 'column',

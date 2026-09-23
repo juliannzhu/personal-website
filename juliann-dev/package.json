@@ -10,7 +10,8 @@
     "sitemap": "node scripts/build-sitemap.mjs",
     "prebuild": "node scripts/build-icons.mjs && node scripts/build-sitemap.mjs",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "leaderboard:dedupe": "node scripts/dedupe-leaderboard.mjs"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",
