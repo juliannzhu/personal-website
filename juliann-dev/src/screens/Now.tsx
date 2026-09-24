@@ -18,8 +18,8 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   },
   {
     piece: 's',
-    label: 'Reading',
-    text: '"Designing Data-Intensive Applications" and an IEEE article on query optimization for a systems report.',
+    label: 'Studying',
+    text: 'Back on campus for a study term after wrapping up my co-op in September.',
   },
   {
     piece: 't',
