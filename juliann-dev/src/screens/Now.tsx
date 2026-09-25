@@ -43,7 +43,7 @@ const UPCOMING: { piece: Piece; title: string; text: string; when?: string }[] =
     text: 'Building a game out of brain-activity research for CS 399, working alongside a graduate student whose headbands measure how well children hold their focus and turning those readings into something playable.',
   },
   {
-    piece: 'o',
+    piece: 's',
     title: 'Winter 2027 Co-op',
     when: 'Jan 2027',
     text: 'Looking for a Winter 2027 co-op placement, ideally somewhere I can work across backend systems, data pipelines, or applied AI, and ship something that real people end up putting to use.',
