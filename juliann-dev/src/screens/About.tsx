@@ -161,8 +161,6 @@ export function About() {
   const firstTileRef = useRef<HTMLDivElement>(null)
   const [statsCardHeight, setStatsCardHeight] = useState<number>()
   const [colHeight, setColHeight] = useState<number>()
-  const jstrisRef = useRef<HTMLDivElement>(null)
-  const [jstrisMin, setJstrisMin] = useState<number>()
   const [statsTab, setStatsTab] = useState<'skills' | 'stack'>('skills')
   // The card opens on The Stack and flips itself to Attributes a few seconds in, so the
   // radar chart gets seen without the reader having to discover the tab. Three constraints
@@ -239,9 +237,6 @@ export function About() {
       const gap = tile.getBoundingClientRect().top - col.getBoundingClientRect().top
       setColHeight(colH)
       setStatsCardHeight(gap / (scale || 1) - 20)
-      // scrollHeight reports what the content needs even while it is being clipped.
-      const j = jstrisRef.current
-      if (j) setJstrisMin(j.scrollHeight + 4)
     }
     const ro = new ResizeObserver(recompute)
     ro.observe(col)
@@ -366,7 +361,7 @@ export function About() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, height: colHeight }}>
-          <Card accent="i" accentBar style={{ height: statsCardHeight, flexShrink: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <Card accent="i" accentBar style={{ height: statsCardHeight, flexShrink: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.875rem', color: 'var(--text-strong)', margin: '0 0 12px', textTransform: 'uppercase' }}>Player Stats</h3>
             <div ref={statsCardRef} style={{ marginBottom: 12 }}>
               <Tabs
@@ -418,13 +413,12 @@ export function About() {
 
           {/* Jstris profile card is sized so its own bottom edge lines up with the
               bottom of the last Achievements Unlocked tile (RCM Piano Certificate). */}
-          <div ref={jstrisRef} style={{
-            // No computed height: flexGrow takes exactly the space the card above leaves,
-            // so the two column bottoms match regardless of rounding. minHeight is the
-            // content floor, because a flex item with overflow:hidden has its automatic
-            // minimum size resolve to 0 and would otherwise be squeezed until the last
-            // stat row is clipped. Any squeeze is absorbed by the card instead.
-            marginTop: 20, flexGrow: 1, flexShrink: 0, minHeight: jstrisMin,
+          <div style={{
+            // No computed height. The card above is flexShrink:0 at its measured height, so
+            // its bottom edge stays level with the top of the first achievement tile; this
+            // box then flexGrows into exactly what is left, putting its own bottom level
+            // with the bottom of the last tile. Both alignments hold without arithmetic.
+            marginTop: 20, flexGrow: 1, flexShrink: 1, minHeight: 0,
             border: '2px solid var(--border-hairline)', borderRadius: 'var(--radius-1)',
             background: 'var(--bg-well)', overflow: 'hidden',
             display: 'flex', flexDirection: 'column',
