@@ -1,5 +1,12 @@
 let ctx: AudioContext | null = null
-let enabled = false
+
+// Audio is on by default. Note what that can and cannot mean: browsers refuse to let an
+// AudioContext produce sound until the visitor has interacted with the page, so "on by
+// default" cannot be "plays the instant the page loads". What it means here is that the
+// engine starts armed rather than muted, and the first real interaction anywhere on the
+// page kicks it off, without the visitor having to find the sound toggle. Anyone who
+// would rather have silence hits the toggle and it stops, same as before.
+let enabled = true
 
 function getCtx(): AudioContext | null {
   if (!enabled) return null
@@ -111,6 +118,21 @@ export function setEnabled(on: boolean) {
   if (on) { getCtx(); void startBg() }
   else stopBg()
 }
+
+// The first gesture of any kind is enough to unblock playback. These listeners fire once
+// and then detach; if the visitor muted before ever clicking, `enabled` is false by the
+// time this runs and it stays silent. Attached in the capture phase so a handler that
+// stops propagation (the game board, a dialog backdrop) still counts as the gesture.
+function armAutostart() {
+  if (typeof document === 'undefined') return
+  const events = ['pointerdown', 'keydown', 'touchstart'] as const
+  const start = () => {
+    events.forEach((e) => document.removeEventListener(e, start, true))
+    if (enabled) { getCtx(); void startBg() }
+  }
+  events.forEach((e) => document.addEventListener(e, start, true))
+}
+armAutostart()
 
 export function isEnabled() { return enabled }
 
