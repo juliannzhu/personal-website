@@ -119,20 +119,42 @@ export function setEnabled(on: boolean) {
   else stopBg()
 }
 
-// The first gesture of any kind is enough to unblock playback. These listeners fire once
-// and then detach; if the visitor muted before ever clicking, `enabled` is false by the
-// time this runs and it stays silent. Attached in the capture phase so a handler that
-// stops propagation (the game board, a dialog backdrop) still counts as the gesture.
+// Kicks the music off once the site is actually on screen. App calls this after the loader
+// has cleared and the hero has settled, deliberately not before, so nothing plays over the
+// loading screen.
+//
+// It tries immediately. That succeeds where the browser already trusts this site: Chrome
+// remembers sites whose audio you have played before (its media engagement score), and any
+// visitor who clicked or typed during the load has already provided the gesture. Where it
+// does not succeed, the browser is refusing on autoplay grounds and no amount of code gets
+// around it, so the first interaction after this point starts the music instead.
+export function startWhenReady() {
+  if (!enabled) return
+  const c = getCtx()
+  if (c && c.state === 'suspended') void c.resume().catch(() => { /* blocked, gesture will do it */ })
+  void startBg()
+  armAutostart()
+}
+
+let autostartArmed = false
+
+// Fallback for when autoplay is refused: the first gesture of any kind unblocks playback.
+// Listeners fire once and detach. Capture phase, so a handler that stops propagation (the
+// game board, a dialog backdrop) still counts as the gesture.
 function armAutostart() {
-  if (typeof document === 'undefined') return
+  if (typeof document === 'undefined' || autostartArmed) return
+  autostartArmed = true
   const events = ['pointerdown', 'keydown', 'touchstart'] as const
   const start = () => {
     events.forEach((e) => document.removeEventListener(e, start, true))
-    if (enabled) { getCtx(); void startBg() }
+    autostartArmed = false
+    if (!enabled) return
+    const c = getCtx()
+    if (c && c.state === 'suspended') void c.resume()
+    void startBg()
   }
   events.forEach((e) => document.addEventListener(e, start, true))
 }
-armAutostart()
 
 export function isEnabled() { return enabled }
 

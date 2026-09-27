@@ -2,6 +2,7 @@ import { useState, useRef, useLayoutEffect, useEffect, useCallback, lazy, Suspen
 import { TopNav, FixedFooter, type Screen } from './components/layout/TopNav'
 import { AchievementToast } from './components/SiteAchievements'
 import { unlock, markSection } from './lib/achievements'
+import { startWhenReady } from './audio/soundEngine'
 import { useRoute, navigate, back, routeToPath, type Overlay, type Route } from './lib/router'
 import { FallingField } from './components/layout/FallingField'
 import { RevealOnScroll } from './components/ds/RevealOnScroll'
@@ -126,6 +127,9 @@ const SECTION_TITLES: Record<Screen, string> = {
   contact: 'Contact · Juliann Zhu',
 }
 
+// Long enough for the hero's name-drop to finish before the music arrives.
+const HERO_SETTLE_MS = 700
+
 export default function App() {
   ensureCSS()
   // The URL is the source of truth for what's on screen: which section, whether a
@@ -181,6 +185,16 @@ export default function App() {
   // isn't hidden behind the loading screen), then mark each section as the scroll-spy
   // surfaces it (so scrolling OR clicking nav both count toward "Explorer").
   useEffect(() => { if (!loading) unlock('welcome') }, [loading])
+
+  // Start the music once the site is actually on screen. Waiting for `loading` to clear
+  // keeps it off the loading screen, and the short delay after that lets the hero's
+  // entrance play first so the piano comes in under a settled page rather than over the
+  // animation. See startWhenReady for what happens when the browser refuses autoplay.
+  useEffect(() => {
+    if (loading) return
+    const t = setTimeout(startWhenReady, HERO_SETTLE_MS)
+    return () => clearTimeout(t)
+  }, [loading])
   useEffect(() => { markSection(activeSection) }, [activeSection])
 
   useEffect(() => {
