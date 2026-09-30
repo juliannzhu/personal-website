@@ -24,7 +24,7 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   {
     piece: 't',
     label: 'Playing',
-    text: 'Learning Everybody Wants to Rule the World by Tears for Fears on piano.',
+    text: 'Learning Just the Two of Us by Grover Washington Jr. and Bill Withers on piano.',
   },
 ]
 
