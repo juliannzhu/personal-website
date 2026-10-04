@@ -76,20 +76,78 @@ const MINI_BOARD: (PK | 0)[][] = [
   ['i','i', 'i', 'i', 'o', 'o', 't', 't', 't', 'j', 'j', 'j', 'o', 'o'],
 ]
 
-const JSTRIS_PBS = [
-  { label: '20L',  piece: 'i' as const, time: '24.115',    blocks: '51',  date: 'MAY 31, 2022' },
-  { label: '40L',  piece: 'o' as const, time: '45.480',    blocks: '103', date: 'DEC 27, 2022' },
-  { label: '100L', piece: 't' as const, time: '2:12.887',  blocks: '253', date: 'DEC 31, 2021' },
-]
+type JstrisPb = { label: string; piece: 'i' | 'o' | 't'; time: string; blocks: string; date: string }
+type JstrisData = { pbs: JstrisPb[]; stats: [string, string, string, string][] }
 
-const JSTRIS_STATS: [string, string, string, string][] = [
-  ['Games',        '1,591',    'Max. APM',     '121.49'],
-  ['Total time',   '48 hours', 'Max. Combo',   '11'],
-  ['Lines sent',   '70,956',   'Longest game', '3.07 min'],
-  ['Lines received', '66,895', 'Total B2Bs',   '2,010'],
-  ['Placed blocks', '218,216', 'Most sent',    '132'],
-  ['10-games APM', '13.54',    '10-games PPS', '0.75'],
-]
+// Shown on first paint and whenever /api/jstris can't be reached (including plain
+// `npm run dev`, which doesn't serve /api). Live numbers replace these once they load.
+const JSTRIS_FALLBACK: JstrisData = {
+  pbs: [
+    { label: '20L',  piece: 'i', time: '24.115',   blocks: '51',  date: 'MAY 31, 2022' },
+    { label: '40L',  piece: 'o', time: '45.480',   blocks: '103', date: 'DEC 27, 2022' },
+    { label: '100L', piece: 't', time: '2:12.887', blocks: '253', date: 'DEC 31, 2021' },
+  ],
+  stats: [
+    ['Games',        '1,612',       'Max. APM',     '121.49'],
+    ['Total time',   '48.34 hours', 'Max. Combo',   '11'],
+    ['Lines sent',   '71,530',      'Longest game', '3.07 min'],
+    ['Sprint runs',  '293',         'Most sent',    '132'],
+    ['Placed blocks', '219,826',    'Last played',  'OCT 4, 2026'],
+    ['10-games APM', '28.75',       '10-games PPS', '1.23'],
+  ],
+}
+
+const PB_PIECE: Record<string, JstrisPb['piece']> = { '20L': 'i', '40L': 'o', '100L': 't' }
+const int = (n: number) => Math.round(n).toLocaleString('en-US')
+const sprintTime = (s: number) =>
+  s >= 60 ? `${Math.floor(s / 60)}:${(s % 60).toFixed(3).padStart(6, '0')}` : s.toFixed(3)
+// Jstris timestamps are "YYYY-MM-DD hh:mm:ss"; only the date is shown.
+const jstrisDate = (ts: string) =>
+  new Date(ts.slice(0, 10) + 'T12:00:00Z')
+    .toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
+    .toUpperCase()
+
+type JstrisApi = {
+  pbs: { label: string; time?: number; blocks: number | null; date?: string }[]
+  stats: {
+    games: number; seconds: number; sent: number; blocks: number; maxApm: number; maxCombo: number
+    longestSec: number; mostSent: number; sprintRuns: number; lastPlayed: string | null
+    tenApm: number | null; tenPps: number | null
+  }
+}
+
+function toJstrisData({ pbs, stats: s }: JstrisApi): JstrisData {
+  return {
+    pbs: pbs.filter((p) => p.time != null).map((p) => ({
+      label: p.label,
+      piece: PB_PIECE[p.label] ?? 't',
+      time: sprintTime(p.time!),
+      blocks: p.blocks != null ? String(p.blocks) : '—',
+      date: p.date ? jstrisDate(p.date) : '',
+    })),
+    stats: [
+      ['Games',         int(s.games),                     'Max. APM',     s.maxApm.toFixed(2)],
+      ['Total time',    `${(s.seconds / 3600).toFixed(2)} hours`, 'Max. Combo', String(s.maxCombo)],
+      ['Lines sent',    int(s.sent),                      'Longest game', `${(s.longestSec / 60).toFixed(2)} min`],
+      ['Sprint runs',   int(s.sprintRuns),                'Most sent',    int(s.mostSent)],
+      ['Placed blocks', int(s.blocks),                    'Last played',  s.lastPlayed ? jstrisDate(s.lastPlayed) : '—'],
+      ['10-games APM',  s.tenApm?.toFixed(2) ?? '—',      '10-games PPS', s.tenPps?.toFixed(2) ?? '—'],
+    ],
+  }
+}
+
+function useJstris(): JstrisData {
+  const [data, setData] = useState(JSTRIS_FALLBACK)
+  useEffect(() => {
+    let live = true
+    fetch('/api/jstris')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d: JstrisApi) => { if (live) setData(toJstrisData(d)) })
+      .catch(() => {})
+    return () => { live = false }
+  }, [])
+  return data
+}
 
 const ATTRIBUTES = [
   { key: 'str', label: 'STR', desc: 'Backend & systems',       value: 6, piece: 'z' as const },
@@ -157,6 +215,8 @@ const ABOUT_GRID_BREAKPOINT = 720
 
 export function About() {
   ensureAboutCSS()
+  const jstris = useJstris()
+  const pb40 = jstris.pbs.find((p) => p.label === '40L')
   const leftColRef = useRef<HTMLDivElement>(null)
   const firstTileRef = useRef<HTMLDivElement>(null)
   const [statsCardHeight, setStatsCardHeight] = useState<number>()
@@ -431,7 +491,7 @@ export function About() {
             <div style={{ padding: '12px 16px', display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-hairline)' }}>
               <div>
                 <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.9375rem', color: 'var(--text-strong)' }}>JAMBO722</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)', marginTop: 6 }}>40L PB 45.480 · 103 BLOCKS</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)', marginTop: 6 }}>{pb40 ? `40L PB ${pb40.time} · ${pb40.blocks} BLOCKS` : 'JSTRIS'}</div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(14, 6px)', gridTemplateRows: 'repeat(6, 6px)', gap: 1, flexShrink: 0, transform: 'translate(-8px, -8px)' }}>
                 {MINI_BOARD.flat().map((cell, i) => (
@@ -447,7 +507,7 @@ export function About() {
             <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-hairline)', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 10 }}>PERSONAL BESTS</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {JSTRIS_PBS.map((pb) => (
+                {jstris.pbs.map((pb) => (
                   <div key={pb.label} className="tj-jstris-pb" style={{ display: 'grid', gridTemplateColumns: '38px 1fr auto', gap: 8, alignItems: 'baseline' }}>
                     <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.625rem', color: `var(--piece-${pb.piece})` }}>{pb.label}</span>
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-strong)' }}>{pb.time} <span style={{ color: 'var(--text-faint)', fontSize: '0.625rem' }}>· {pb.blocks} blocks</span></span>
@@ -460,7 +520,7 @@ export function About() {
             <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.5625rem', color: 'var(--text-faint)', letterSpacing: '0.08em', marginBottom: 11 }}>ALL-TIME STATS</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 16px' }}>
-                {JSTRIS_STATS.flatMap(([l1, v1, l2, v2]) => [[l1, v1], [l2, v2]]).map(([label, value], i) => (
+                {jstris.stats.flatMap(([l1, v1, l2, v2]) => [[l1, v1], [l2, v2]]).map(([label, value], i) => (
                   <div key={i}>
                     <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
                     <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.6875rem', color: 'var(--text-strong)', marginTop: 3 }}>{value}</div>
