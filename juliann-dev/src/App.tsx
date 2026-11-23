@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect, useEffect, useCallback, lazy, Suspense } from 'react'
+import { Fragment, useState, useRef, useLayoutEffect, useEffect, useCallback, lazy, Suspense } from 'react'
 import { TopNav, FixedFooter, type Screen } from './components/layout/TopNav'
 import { AchievementToast } from './components/SiteAchievements'
 import { unlock, markSection } from './lib/achievements'
@@ -10,6 +10,7 @@ import { Hero } from './screens/Hero'
 import { About } from './screens/About'
 import { Projects, projectTitle } from './screens/Projects'
 import { Now } from './screens/Now'
+import { Tedx } from './screens/Tedx'
 import { Contact } from './screens/Contact'
 import { SideQuests, questTitle } from './screens/SideQuests'
 import { HoldBox } from './features/tetris/HoldBox'
@@ -317,13 +318,17 @@ export default function App() {
               <RevealOnScroll><Hero onNav={go} play={!loading} /></RevealOnScroll>
             </div>
             {REST_IDS.map((id) => (
-              <div key={id} data-section={id} ref={(el) => { sectionRefs.current[id] = el }}>
+              <Fragment key={id}>
+              {/* Not a nav stop (yet): it rides along under About in the scroll-spy. */}
+              {id === 'projects' && <RevealOnScroll><Tedx /></RevealOnScroll>}
+              <div data-section={id} ref={(el) => { sectionRefs.current[id] = el }}>
                 <RevealOnScroll>{
                   id === 'sidequests' ? <SideQuests openId={openQuestId} onOpen={openQuest} onBack={() => closeTo('sidequests')} />
                   : id === 'projects' ? <Projects openId={openProjectId} onOpen={openProject} onBack={() => closeTo('projects')} />
                   : STACK_SCREENS[id]
                 }</RevealOnScroll>
               </div>
+              </Fragment>
             ))}
           </main>
         </div>
