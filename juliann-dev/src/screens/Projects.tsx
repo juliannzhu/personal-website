@@ -79,13 +79,18 @@ const PROJECTS: Project[] = [
     cat: 'research',
     year: '2026',
     writeup: [
-      'Large language models (LLMs) have become common advisors for the security and privacy questions people once brought to forums, documentation, or a knowledgeable friend. This work examines the quality and accuracy of LLM-generated responses and evaluates them against expert judgement.',
-      'Building the dataset was the bulk of the work, inputting 78 usable security and privacy prompts drawn from 54 online sources through two models. I am currently writing the results section, which centres on where ChatGPT and Claude converge and diverge when compared to a golden dataset. We are finalizing everything for submission, and the findings have already been presented at CAN-CWiC and IEEE S&P.',
+      'Large language models (LLMs) have become common advisors for the security and privacy questions people once brought to forums, documentation, or a knowledgeable friend. This work asks how that advice changes depending on the user\'s demographic and situational context, and evaluates the answers against expert judgement.',
+      'Working with two LLMs across 100 questions, we found that the models make assumptions about a user\'s location, age, or circumstances, and the people getting these answers are often the least equipped to evaluate their accuracy. I am currently writing the results section, which centres on where ChatGPT and Claude converge and diverge when compared to a golden dataset, and we are finalizing everything for submission.',
+      'In November 2026 I presented the research as a lightning talk at the 16th annual Canadian Celebration of Women in Computing (CAN-CWiC), hosted by CS-CAN | INFO-CAN at the University of Waterloo. This year\'s event brought together 475 students from 50 faculties and 29 schools across Canada, and it was truly a room of extraordinary women. The findings have also been presented at IEEE S&P.',
     ],
     images: [
       { src: P('LLM-Security-Research', 'paper-fade.webp'), caption: 'paper preview' },
       { src: P('LLM-Security-Research', 'usenix-flat.webp'), caption: 'aiming for the USENIX SOUPS symposium' },
-      { src: P('LLM-Security-Research', 'cancwic-crop.webp'), caption: 'presenting at CAN-CWiC 2026, University of Waterloo' },
+      { src: P('LLM-Security-Research', 'cancwic-lightning-talk.webp'), caption: 'my lightning talk: Same Question, Different Answer?' },
+      { src: P('LLM-Security-Research', 'cancwic-backdrop.webp'), caption: 'at CAN-CWiC 2026, University of Waterloo' },
+      { src: P('LLM-Security-Research', 'cancwic-crowd.webp'), caption: '475 students from 29 schools across Canada' },
+      { src: P('LLM-Security-Research', 'cancwic-main-stage.webp'), caption: 'the main stage at CAN-CWiC' },
+      { src: P('LLM-Security-Research', 'cancwic-crop.webp'), caption: 'CAN-CWiC 2026, November 20 and 21' },
     ],
   },
   {
