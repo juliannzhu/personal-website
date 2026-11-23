@@ -58,7 +58,7 @@ function Bullets({ items, piece }: { items: string[]; piece: Piece }) {
   )
 }
 
-function EntryHeader({ title, sub, role, location, date, piece }: { title: string; sub?: string; role: string; location: string; date: string; piece: Piece }) {
+function EntryHeader({ title, sub, role, location, date, piece }: { title: string; sub?: string; role?: string; location: string; date: string; piece: Piece }) {
   return (
     <div className="tj-resume-entry-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
       <div>
@@ -67,7 +67,7 @@ function EntryHeader({ title, sub, role, location, date, piece }: { title: strin
           <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.8125rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>{title}</span>
         </div>
         {sub && <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: 4, marginLeft: 19 }}>{sub}</div>}
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: `var(--piece-${piece})`, marginTop: 6, marginLeft: 19 }}>{role}</div>
+        {role && <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: `var(--piece-${piece})`, marginTop: 6, marginLeft: 19 }}>{role}</div>}
       </div>
       {/* Desktop: right-aligned date-over-location column. Mobile: this reflows to a single
           left-aligned "date · location" line under the role (see the media query in CSS). */}
@@ -79,47 +79,80 @@ function EntryHeader({ title, sub, role, location, date, piece }: { title: strin
   )
 }
 
-const EXPERIENCE = [
+// Mirrors public/assets/JuliannZhu-resume.pdf. Update both together.
+const EXPERIENCE: { title: string; sub?: string; role?: string; location: string; date: string; piece: Piece; bullets: string[] }[] = [
   {
     title: 'ORBCOMM',
     sub: 'Network Services Department',
     role: 'Network Engineering Intern',
     location: 'Ottawa, ON',
     date: 'May 2026 - Sep 2026',
-    piece: 's' as Piece,
+    piece: 's',
     bullets: [
-      'Developed 8 Grafana dashboards with MySQL data pipelines to monitor satellite network performance across 12 metrics, cutting load times by 86% through dynamic filtering and optimized SQL queries.',
-      'Shipped an AI-driven analytics service to extend predictive forecasting by 60x, cut pipeline runtime by 78%, and lower false-positive anomaly alerts by 80% using FastAPI, APScheduler, PyMySQL, Jinja2, and MariaDB.',
-      'Launched the service internally for 7 engineering teams by presenting to leadership with a system design document and live demo, pushing production code to the company GitHub repository.',
+      'Developed 8 Grafana dashboards with MySQL pipelines monitoring satellite network performance metrics.',
+      'Cut dashboard load times by 86% through dynamic filtering and optimized SQL queries across the pipeline.',
+      'Shipped an AI analytics service extending predictive forecasting 60x and cutting pipeline runtime 78%.',
+      'Lowered false-positive anomaly alerts by 80% using FastAPI, APScheduler, PyMySQL, Jinja2, and MariaDB.',
+      'Launched the service internally for 7 engineering teams, presenting system design and a live demo to leadership.',
     ],
   },
   {
     title: 'Usable Security & Privacy Research',
     sub: 'University of Waterloo',
-    role: 'Undergraduate Research Mentee',
+    role: 'Undergraduate Research Assistant',
     location: 'Waterloo, ON',
     date: 'Jan 2026 - Present',
-    piece: 'j' as Piece,
+    piece: 'j',
     bullets: [
-      'Reached 500+ attendees from 30+ institutions at CAN-CWiC and IEEE S&P by co-authoring a research paper on how users seek security and privacy advice from Large Language Models (LLMs).',
-      'Evaluated 2 LLMs against 100 security and privacy prompts across 15 categories by building a validated 54-database golden-answer dataset and scoring rubric with 3 security and HCI researchers.',
+      'Co-authored a research paper on how users seek security and privacy advice from Large Language Models (LLMs).',
+      'Reached 500+ attendees from 50 faculties and 29 schools across Canada presenting at CAN-CWiC conference.',
+      'Evaluated 2 LLMs against 100 security and privacy prompts spanning 15 categories of user concerns.',
+      'Built a validated 54-database golden-answer dataset and scoring rubric with Master\'s and PhD researchers.',
+    ],
+  },
+  {
+    title: 'TEDxOttawa',
+    sub: '"The Paradox of Digital Permanence"',
+    role: 'TEDx Speaker',
+    location: 'Ottawa, ON',
+    date: 'Nov 2026',
+    piece: 'z',
+    bullets: [
+      'Selected as 1 of 12 speakers from 363 applicants (top 3%) to deliver a talk at TEDxOttawa\'s Continuum event.',
+      'Examined the impact of digital convenience and cloud infrastructure on how future generations inherit memory.',
+      'Synthesized complex topics into a compelling, accessible narrative through iterative speaker coaching.',
     ],
   },
 ]
 
-const RESUME_PROJECTS = [
+const RESUME_PROJECTS: { title: string; sub?: string; role?: string; location: string; date: string; piece: Piece; tools: string[]; bullets: string[] }[] = [
+  {
+    title: 'Lighthouse Keepers',
+    sub: 'EEG Neurofeedback Game',
+    location: 'Waterloo, ON',
+    date: 'Sep 2026 - Dec 2026',
+    piece: 'i',
+    tools: ['Python', 'Swift', 'JavaScript', 'Bluetooth RFCOMM'],
+    bullets: [
+      'Co-designing a brain-computer interface (BCI) attention trainer for children with ADHD and a parent.',
+      'Built a Python hardware bridge that decodes raw EEG and band-power packets from the ThinkGear protocol.',
+      'Engineered serial, Bluetooth RFCOMM, and TCP data paths through a custom Swift/IOBluetooth helper.',
+      'Streamed EEG data to the browser via Server-Sent Events and rendered hand-built HTML5 Canvas charts.',
+    ],
+  },
   {
     title: 'CaneOS',
     sub: 'Hack the 6ix',
     role: 'Full Stack & Embedded Developer',
     location: 'Toronto, ON',
     date: 'Jul 2026',
-    piece: 'l' as Piece,
+    piece: 'l',
     tools: ['Swift', 'Python', 'C++', 'SwiftUI', 'MongoDB Atlas', 'Auth0', 'Gemini API', 'Vercel', 'Websockets'],
     bullets: [
-      'Built a clip-on white cane module for visually impaired users, pairing ToF sensors with 30 FPS YOLOv6 camera detection on an Arduino UNO Q within a 4m hazard-detection range, feeding a Python/FastAPI pipeline.',
-      'Classified hazards via Gemini vision and narrated results within 3 seconds via ElevenLabs, reaching 98% accuracy through the pipeline\'s real-time on-device inference, giving users time to react safely.',
-      'Developed companion SwiftUI iPhone and Apple Watch apps with directional haptics, 4-tier SOS alerts, and Auth0-secured sync of incidents and contacts to MongoDB Atlas via a Node.js serverless proxy.',
+      'Built a clip-on white cane module for visually impaired users using ToF sensors and an Arduino UNO Q.',
+      'Ran 30 FPS YOLOv6 camera detection within a 4m hazard-detection range, feeding a Python/FastAPI pipeline.',
+      'Classified hazards via Gemini vision and narrated results in 3 seconds via ElevenLabs at 98% accuracy.',
+      'Developed companion SwiftUI iPhone and Apple Watch apps with directional haptics and 4-tier SOS alerts.',
     ],
   },
   {
@@ -128,24 +161,13 @@ const RESUME_PROJECTS = [
     role: 'AI Integration & Full Stack Developer',
     location: 'Waterloo, ON',
     date: 'Sep 2025 - Aug 2026',
-    piece: 't' as Piece,
+    piece: 't',
     tools: ['React', 'TypeScript', 'PostgreSQL', 'pgvector', 'Node.js', 'PyTorch', 'ONNX', 'Vercel'],
     bullets: [
-      'Built a full-stack Retrieval-Augmented Generation (RAG) application to help women in CS manage imposter syndrome, enabling semantic search across 200+ journal entries via HNSW vector embeddings and generating personalized reports across 5 analytics views using React, Node.js, and PostgreSQL with pgvector.',
-      'Detected imposter syndrome at 0.92 F1 on 200 hand-labeled entries using an ML pipeline that trains a DistilBERT classifier, calibrates its confidence scores, and exports to ONNX with INT8 quantization.',
-    ],
-  },
-  {
-    title: 'Project Tech Careers',
-    sub: 'PTCHacks',
-    role: 'Platform Designer and UI/UX Developer',
-    location: 'Ottawa, ON',
-    date: 'May - Jun 2024',
-    piece: 'z' as Piece,
-    tools: ['JavaScript', 'HTML', 'CSS', 'VS Code'],
-    bullets: [
-      'Designed a 4-stage platform, curating 100+ resources, to help women in CS find mentorship, scholarships, programs, and community resources across different stages of their education using JavaScript and HTML.',
-      'Awarded the Gender Equality Track Award over 45 competing teams for innovation, design, and impact in addressing the United Nations Sustainable Development Goals.',
+      'Built a full-stack RAG app with React, Node.js, and PostgreSQL to help women manage imposter syndrome.',
+      'Enabled semantic search across 200+ journal entries using pgvector and HNSW vector embeddings.',
+      'Detected imposter syndrome at 0.92 F1 on 200 hand-labeled journal entries using a DistilBERT classifier.',
+      'Calibrated the classifier\'s confidence scores and exported it to ONNX with INT8 quantization.',
     ],
   },
 ]
@@ -214,31 +236,13 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
                 <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.8125rem', color: 'var(--text-strong)', textTransform: 'uppercase' }}>University of Waterloo</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: 8 }}>BCS, Honours Computer Science with Co-operative Program, GPA: 3.7/4.0</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--piece-o)', marginTop: 8 }}>President Scholarship of Distinction</div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: 8, lineHeight: 1.6 }}>Relevant coursework: Data Structures &amp; Algorithms, Object-Oriented Programming, Functional Programming, Logic &amp; Computation, Software Development Tools &amp; Techniques</div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: 8, lineHeight: 1.6 }}>Relevant coursework: Data Structures &amp; Algorithms, Object-Oriented Programming, Functional Programming, Logic &amp; Computation</div>
               </div>
               <div className="tj-resume-meta tj-resume-meta-flush" style={{ textAlign: 'right', flexShrink: 0 }}>
-                <div className="tj-resume-date" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Sep 2025 - Apr 2030</div>
+                <div className="tj-resume-date" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Sep 2025 - Apr 2029</div>
                 <div className="tj-resume-loc" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-faint)', marginTop: 2 }}>Waterloo, ON</div>
               </div>
             </div>
-          </Card>
-        </section>
-
-        {/* skills */}
-        <section style={{ marginBottom: 44 }}>
-          <Kicker piece="i">Technical Skills</Kicker>
-          <Card accent="i" accentBar style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {SKILLS.map((s, i) => (
-              <div key={s.label} style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingBottom: i < SKILLS.length - 1 ? 12 : 0, borderBottom: i < SKILLS.length - 1 ? '1px solid var(--border-hairline)' : 'none' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ width: 8, height: 8, flexShrink: 0, background: `var(--piece-${s.piece})`, boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.4), inset -1px -1px 0 rgba(0,0,0,0.3)' }} />
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: `var(--piece-${s.piece})`, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{s.label}</span>
-                </div>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  {s.items.map((it) => <Tag key={it} piece={s.piece}>{it}</Tag>)}
-                </div>
-              </div>
-            ))}
           </Card>
         </section>
 
@@ -256,7 +260,7 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
         </section>
 
         {/* projects */}
-        <section>
+        <section style={{ marginBottom: 44 }}>
           <Kicker piece="l">Projects</Kicker>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             {RESUME_PROJECTS.map((p) => (
@@ -269,6 +273,24 @@ export function ResumeScreen({ onClose }: { onClose: () => void }) {
               </Card>
             ))}
           </div>
+        </section>
+
+        {/* skills */}
+        <section>
+          <Kicker piece="i">Technical Skills</Kicker>
+          <Card accent="i" accentBar style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {SKILLS.map((s, i) => (
+              <div key={s.label} style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingBottom: i < SKILLS.length - 1 ? 12 : 0, borderBottom: i < SKILLS.length - 1 ? '1px solid var(--border-hairline)' : 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ width: 8, height: 8, flexShrink: 0, background: `var(--piece-${s.piece})`, boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.4), inset -1px -1px 0 rgba(0,0,0,0.3)' }} />
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: `var(--piece-${s.piece})`, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{s.label}</span>
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {s.items.map((it) => <Tag key={it} piece={s.piece}>{it}</Tag>)}
+                </div>
+              </div>
+            ))}
+          </Card>
         </section>
 
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 56 }}>
