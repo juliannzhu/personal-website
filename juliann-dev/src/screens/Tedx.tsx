@@ -80,7 +80,7 @@ export function Tedx() {
 
   return (
     <section style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px' }}>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-o)' }}>// Speaker mode</div>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--piece-o)' }}>// Taking the stage</div>
       <h2 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.625rem', color: 'var(--text-strong)', margin: '14px 0 12px', textTransform: 'uppercase' }}>TEDx Talk</h2>
       <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: 'var(--text-muted)', margin: 0 }}>The Paradox of Digital Permanence · TEDxOttawa · Nov 7, 2026</p>
 
@@ -89,17 +89,17 @@ export function Tedx() {
       <div className="tj-tedx-grid">
         <div className="tj-tedx-col">
           {/* The "screen": a framed still with a part readout and a segmented progress bar. */}
-          <div style={{ background: 'var(--bg-well)', border: '3px solid var(--border-hairline)', padding: 14 }}>
+          <div style={{ background: 'var(--bg-well)', border: '3px solid var(--border-hairline)', padding: 12 }}>
             <div style={{ position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden', background: 'var(--ink-800)' }}>
               <img src={part.photo} alt={part.alt} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: part.focus ?? 'center', display: 'block' }} />
               <div aria-hidden="true" style={{ position: 'absolute', inset: 0, backgroundImage: 'var(--scanlines)', backgroundSize: '100% 4px', opacity: 0.35, pointerEvents: 'none' }} />
               <a href={PHOTOGRAPHER.url} target="_blank" rel="noopener noreferrer" style={{ position: 'absolute', bottom: 8, left: 10, fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'rgba(255,255,255,0.75)', background: 'rgba(5,5,9,0.6)', padding: '3px 7px', textDecoration: 'none' }}>Photo: {PHOTOGRAPHER.name}</a>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12, marginTop: 14 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12, marginTop: 12 }}>
               <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', color: c, textTransform: 'uppercase' }}>Part {active + 1} · {part.title}</span>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>VIDEO COMING SOON</span>
             </div>
-            <div style={{ display: 'flex', gap: 4, marginTop: 12 }}>
+            <div style={{ display: 'flex', gap: 4, marginTop: 10 }}>
               {PARTS.map((l, i) => {
                 return (
                   <span key={l.title} style={{
@@ -114,17 +114,17 @@ export function Tedx() {
             </div>
           </div>
 
-          <p style={{ margin: '12px 0 0', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-faint)', lineHeight: 1.6 }}>
+          <p style={{ margin: '10px 0 0', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-faint)', lineHeight: 1.6 }}>
             Photography by <a href={PHOTOGRAPHER.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--piece-i)' }}>{PHOTOGRAPHER.name} ↗</a>. Huge thank you for capturing the day.
           </p>
 
-          <div style={{ marginTop: 14, flex: 1, background: 'var(--surface-raised)', border: '2px solid var(--border-hairline)', borderLeft: `4px solid ${c}`, padding: '14px 20px' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-faint)', marginBottom: 8 }}>Key idea</div>
+          <div style={{ marginTop: 10, flex: 1, background: 'var(--surface-raised)', border: '2px solid var(--border-hairline)', borderLeft: `4px solid ${c}`, padding: '10px 18px' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-faint)', marginBottom: 4 }}>Key idea</div>
             {/* Every idea sits in the same grid cell so the box is always as tall as the longest
                 one, and switching parts never shifts the layout. */}
             <div style={{ display: 'grid' }}>
               {PARTS.map((p, i) => (
-                <p key={p.title} aria-hidden={i !== active} style={{ gridArea: '1 / 1', margin: 0, fontSize: '0.9375rem', color: 'var(--text-strong)', lineHeight: 1.55, visibility: i === active ? 'visible' : 'hidden' }}>{p.idea}</p>
+                <p key={p.title} aria-hidden={i !== active} style={{ gridArea: '1 / 1', margin: 0, fontSize: '0.875rem', color: 'var(--text-strong)', lineHeight: 1.5, visibility: i === active ? 'visible' : 'hidden' }}>{p.idea}</p>
               ))}
             </div>
           </div>
