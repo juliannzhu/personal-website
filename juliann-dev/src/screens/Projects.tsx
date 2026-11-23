@@ -74,7 +74,7 @@ const PROJECTS: Project[] = [
     id: 'llm-security-research',
     title: 'LLM SECURITY RESEARCH',
     piece: 'j',
-    tagline: 'Co-authoring a Symposium on Usable Privacy and Security (SOUPS) research paper on how users seek security and privacy advice from large language models, evaluating the accuracy of that advice against expert guidance.',
+    tagline: 'Co-authored a Symposium on Usable Privacy and Security (SOUPS) research paper on how users seek security and privacy advice from large language models, evaluating the accuracy of that advice against expert guidance.',
     tags: ['Research', 'LLMs', 'Security', 'Privacy', 'SOUPS'],
     cat: 'research',
     paper: 'https://vaniea.com/projects/security-advice-by-llms/wip-paper.pdf',
@@ -83,12 +83,12 @@ const PROJECTS: Project[] = [
     writeup: [
       'Large language models (LLMs) have become common advisors for the security and privacy questions people once brought to forums, documentation, or a knowledgeable friend. This research asks how that advice changes depending on the user\'s demographic and situational context.',
       'Working with two LLMs across 100 questions, we found that the models make assumptions about a user\'s location, age, or circumstances, and the people getting these answers are often the least equipped to evaluate their accuracy.',
-      'In November 2026, I presented the research as a lightning talk at the 16th annual Canadian Celebration of Women in Computing (CAN-CWiC), hosted by CS-CAN | INFO-CAN at the University of Waterloo. This year\'s event brought together 475 students from 50 faculties and 29 schools across Canada, and it was truly a room of extraordinary women.',
+      'In November 2026, I presented the research as a lightning talk at the 16th annual Canadian Celebration of Women in Computing (CAN-CWiC), hosted by CS-CAN | INFO-CAN at the University of Waterloo. This year\'s event brought together 500+ attendees from 50 faculties and 29 schools across Canada, and it was truly a room of extraordinary women.',
     ],
     images: [
       { src: P('LLM-Security-Research', 'cancwic-lightning-talk.webp'), caption: 'my lightning talk: Same Question, Different Answer?' },
       { src: P('LLM-Security-Research', 'cancwic-backdrop.webp'), caption: 'at CAN-CWiC 2026, University of Waterloo' },
-      { src: P('LLM-Security-Research', 'cancwic-crowd.webp'), caption: '475 students from 29 schools across Canada' },
+      { src: P('LLM-Security-Research', 'cancwic-crowd.webp'), caption: '500+ attendees from 29 schools across Canada' },
       { src: P('LLM-Security-Research', 'cancwic-main-stage.webp'), caption: 'Keynote speaker: Edith Law' },
       { src: P('LLM-Security-Research', 'cancwic-crop.webp'), caption: 'CAN-CWiC 2026, November 20 and 21' },
     ],
