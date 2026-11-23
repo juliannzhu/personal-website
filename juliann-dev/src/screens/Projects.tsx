@@ -18,7 +18,7 @@ type ProjectImage = string | { src: string; caption?: string }
 // where the screenshots would go. The card in the grid is left alone deliberately.
 // `writeup` is one entry per paragraph, shown under the carousel — the longer version of the
 // story for projects worth more than the one-line tagline. Not every project needs one.
-type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; github?: string; devpost?: string; images?: ProjectImage[]; wip?: boolean; writeup?: string[] }
+type Project = { id: string; title: string; piece: Piece; tagline: string; tags: string[]; cat: Exclude<Cat, 'all'>; year: string; link?: string; github?: string; devpost?: string; paper?: string; site?: string; images?: ProjectImage[]; wip?: boolean; writeup?: string[] }
 
 // images live in /public/assets/project-portfolio/<folder>/
 const P = (folder: string, file: string) => `/assets/project-portfolio/${folder}/${file}`
@@ -77,6 +77,8 @@ const PROJECTS: Project[] = [
     tagline: 'Co-authoring a Symposium on Usable Privacy and Security (SOUPS) research paper on how users seek security and privacy advice from large language models, evaluating the accuracy of that advice against expert guidance.',
     tags: ['Research', 'LLMs', 'Security', 'Privacy', 'SOUPS'],
     cat: 'research',
+    paper: 'https://vaniea.com/projects/security-advice-by-llms/wip-paper.pdf',
+    site: 'https://vaniea.com/projects/security-advice-by-llms/',
     year: '2026',
     writeup: [
       'Large language models (LLMs) have become common advisors for the security and privacy questions people once brought to forums, documentation, or a knowledgeable friend. This research asks how that advice changes depending on the user\'s demographic and situational context.',
@@ -470,8 +472,18 @@ function ProjectDetail({ p, onBack }: { p: Project; onBack: () => void }) {
 
       {p.writeup && <Writeup paragraphs={p.writeup} c={c} />}
 
-      {(p.link || p.github || p.devpost) && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 40 }}>
+      {(p.link || p.github || p.devpost || p.paper || p.site) && (
+        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 16, marginTop: 40 }}>
+          {p.paper && (
+            <a href={p.paper} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+              <Button variant="secondary" leftIcon={<Icon icon="pixelarticons:file" />}>WIP Paper</Button>
+            </a>
+          )}
+          {p.site && (
+            <a href={p.site} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+              <Button variant="secondary" leftIcon={<Icon icon="pixelarticons:external-link" />}>Project Page</Button>
+            </a>
+          )}
           {p.github && (
             <a href={p.github} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
               <Button variant="secondary" leftIcon={<Icon icon="pixelarticons:github" />}>GitHub</Button>
