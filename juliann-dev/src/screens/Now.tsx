@@ -24,18 +24,13 @@ const NOW: { piece: Piece; label: string; text: string }[] = [
   {
     piece: 't',
     label: 'Playing',
-    text: 'Learning La Maritza by Sylvie Vartan on piano.',
+    text: 'Currently learning La Maritza by Sylvie Vartan on the piano in my free time.',
   },
 ]
 
 // `when` replaces the generic SOON badge once a date is actually known.
-const UPCOMING: { piece: Piece; title: string; text: string; when?: string }[] = [
-  {
-    piece: 'z',
-    title: 'TEDx Ottawa',
-    when: 'Nov 2026',
-    text: 'Writing a talk on planned obsolescence for this year\'s Continuum theme, arguing that we are the most documented generation in history and might still be the one that leaves the least behind.',
-  },
+// `id` lets other sections link straight to a card (the TEDx section's video button does).
+const UPCOMING: { id?: string; piece: Piece; title: string; text: string; when?: string }[] = [
   {
     piece: 'j',
     title: 'UR2PhD @ Waterloo',
@@ -48,12 +43,19 @@ const UPCOMING: { piece: Piece; title: string; text: string; when?: string }[] =
     when: 'Jan 2027',
     text: 'Looking for a Winter 2027 co-op placement, ideally somewhere I can work across backend systems, data pipelines, or applied AI, and ship something that real people end up putting to use.',
   },
+  {
+    piece: 'z',
+    id: 'now-tedx',
+    title: 'TEDx Ottawa Video',
+    when: 'Feb 2027',
+    text: 'Waiting on the recording of my TEDxOttawa talk, The Paradox of Digital Permanence, which explores what happens to our memories when they all live behind our screens and what we choose to leave behind.',
+  },
 ]
 
 // Bump this whenever the copy above actually changes. Deliberately hand-written rather than
 // derived from the build date — this should say when the Now section was last true, not when
 // the site last happened to deploy.
-const LAST_UPDATED = 'September 2026'
+const LAST_UPDATED = 'November 2026'
 
 // One cell, then the date: the smallest thing that still reads as a Tetris stamp.
 function LastUpdated() {
@@ -122,7 +124,7 @@ export function Now() {
           {UPCOMING.map((u) => {
             const c = `var(--piece-${u.piece})`
             return (
-              <div key={u.title} style={{
+              <div key={u.title} id={u.id} style={{
                 display: 'flex', gap: 12, alignItems: 'flex-start',
                 padding: '16px 12px 16px 14px',
                 background: `color-mix(in srgb, ${c} 7%, var(--bg-well))`,
